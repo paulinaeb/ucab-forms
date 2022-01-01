@@ -22,7 +22,12 @@ const UserProvider = ({ children }) => {
 
       if (user) {
         unsubscribeUser = onSnapshot(doc(db, "users", user.uid), (doc) => {
-          setUser(doc.data());
+          const userData = {
+            id: user.uid,
+            ...doc.data(),
+          };
+
+          setUser(userData);
           setLoading(false);
         });
 
