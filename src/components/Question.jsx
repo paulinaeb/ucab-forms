@@ -1,5 +1,8 @@
 import { useEffect, memo } from "react";
 import { Card, TextField, MenuItem } from "@mui/material";
+import { saveQuestion } from "../api/forms";
+import useAutoSave from "../hooks/useAutoSave";
+import QuestionPreview from "./QuestionPreview";
 
 const questionTypes = [
   {
@@ -14,34 +17,50 @@ const questionTypes = [
     value: "radio",
     label: "Opción múltiple",
   },
+  {
+    value: "checkbox",
+    label: "Casillas de verificación",
+  },
 ];
 
-const Question = ({ question, setQuestions }) => {
+const Question = ({ formId, question, setQuestions }) => {
+  const autoSave = useAutoSave();
+
   const handleChangeTitle = (e) => {
     const title = e.target.value;
 
+    const newQuestion = { ...question, title };
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
     setQuestions((questions) =>
-      questions.map((q) => (q.id === question.id ? { ...q, title } : q))
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
     );
   };
 
   const handleChangeType = (e) => {
     const type = e.target.value;
 
+    const newQuestion = { ...question, type };
+
+    if (type !== "radio" && type !== "checkbox") {
+      delete newQuestion.options;
+    }
+
+    if (!newQuestion.options && (type === "radio" || type === "checkbox")) {
+      newQuestion.options = ["Opción 1"];
+    }
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
     setQuestions((questions) =>
-      questions.map((q) => {
-        if (q.id === question.id) {
-          const newQuestion = { ...q, type };
-
-          if (type === "radio") {
-            newQuestion.options = ["Opción 1"];
-          }
-
-          return newQuestion;
-        }
-
-        return q;
-      })
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
     );
   };
 
@@ -66,6 +85,11 @@ const Question = ({ question, setQuestions }) => {
           </MenuItem>
         ))}
       </TextField>
+      <QuestionPreview
+        formId={formId}
+        question={question}
+        setQuestions={setQuestions}
+      />
     </Card>
   );
 };

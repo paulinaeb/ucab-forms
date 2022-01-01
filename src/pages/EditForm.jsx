@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField } from "@mui/material";
+import { Box, Typography, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
-import {
-  getForm,
-  getQuestions,
-  saveForm,
-  insertQuestion,
-  defaultQuestion,
-  updateForm,
-} from "../api/forms";
+import { getForm, getQuestions, saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
+import useAutoSave from "../hooks/useAutoSave";
 import QuestionsList from "../components/QuestionsList";
 
 const EditForm = () => {
@@ -18,7 +12,7 @@ const EditForm = () => {
   const [form, setForm] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [loadingForm, setLoadingForm] = useState(true);
-  const [timeoutId, setTimeoutId] = useState(null);
+  const autoSave = useAutoSave();
 
   useEffect(() => {
     const unsubscribeForms = getForm(formId, (form) => {
@@ -52,27 +46,15 @@ const EditForm = () => {
   }, [formId]);
 
   const handleChange = (field) => (e) => {
-    clearTimeout(timeoutId);
     const value = e.target.value;
     const newForm = { ...form, [field]: value };
 
-    const id = setTimeout(async () => {
-      await updateForm(newForm);
+    autoSave(async () => {
+      await saveForm(newForm);
       alert("Encuesta guardada");
-    }, 2000);
+    });
 
-    setTimeoutId(id);
     setForm(newForm);
-  };
-
-  const save = async () => {
-    const saved = await saveForm(form, questions);
-
-    if (saved) {
-      return alert("Encuesta guardada");
-    }
-
-    alert("Error al guardar la encuesta");
   };
 
   if (loadingForm) {
@@ -104,7 +86,6 @@ const EditForm = () => {
         value={form.description}
         onChange={handleChange("description")}
       />
-      <Button onClick={save}>Save</Button>
       <Typography variant="h2">Questions</Typography>
       <QuestionsList
         formId={formId}

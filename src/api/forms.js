@@ -7,7 +7,6 @@ import {
   query,
   where,
   updateDoc,
-  increment,
   orderBy,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
@@ -93,7 +92,7 @@ export const insertQuestion = async (formId, question) => {
   }
 };
 
-export const updateForm = async (form) => {
+export const saveForm = async (form) => {
   try {
     const { id: formId, ...formData } = form;
     const formRef = doc(db, "forms", formId);
@@ -101,26 +100,38 @@ export const updateForm = async (form) => {
 
     return { form: formRef };
   } catch (error) {
-    return { error: { message: "Error al actualizar la encuesta" } };
+    return { error: { message: "Error al guardar la encuesta" } };
   }
 };
 
-export const saveForm = async (form, questions) => {
+export const saveQuestion = async (formId, question) => {
   try {
-    const { id: formId, ...formData } = form;
-    const formRef = doc(db, "forms", formId);
-    await updateDoc(formRef, formData);
+    const { id: questionId, ...questionData } = question;
+    const questionRef = doc(db, "forms", formId, "questions", questionId);
+    await updateDoc(questionRef, questionData);
 
-    await Promise.all(
-      questions.map((question) => {
-        const { id: questionId, ...questionData } = question;
-        const questionRef = doc(db, "forms", formId, "questions", questionId);
-        return updateDoc(questionRef, questionData);
-      })
-    );
-
-    return true;
+    return { question: questionRef };
   } catch (error) {
-    return false;
+    return { error: { message: "Error al guardar la pregunta" } };
   }
 };
+
+// export const saveAll = async (form, questions) => {
+//   try {
+//     const { id: formId, ...formData } = form;
+//     const formRef = doc(db, "forms", formId);
+//     await updateDoc(formRef, formData);
+
+//     await Promise.all(
+//       questions.map((question) => {
+//         const { id: questionId, ...questionData } = question;
+//         const questionRef = doc(db, "forms", formId, "questions", questionId);
+//         return updateDoc(questionRef, questionData);
+//       })
+//     );
+
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };

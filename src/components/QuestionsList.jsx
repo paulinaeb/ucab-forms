@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Box, Button } from "@mui/material";
 import { defaultQuestion, insertQuestion } from "../api/forms";
 import Question from "../components/Question";
@@ -26,8 +26,13 @@ const QuestionsList = ({ formId, questions, setQuestions }) => {
 
   return questions.map((question, i) => (
     <Box key={i}>
-      <Question question={question} setQuestions={setQuestions} />
+      <Question
+        formId={formId}
+        question={question}
+        setQuestions={setQuestions}
+      />
       <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
+      {/* <Button onClick={() => deleteQuestion(i)}>Delete question</Button> */}
     </Box>
   ));
 };

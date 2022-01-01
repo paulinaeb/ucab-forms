@@ -3,11 +3,50 @@ import {
   FormControl,
   FormLabel,
   RadioGroup,
+  FormGroup,
   FormControlLabel,
   Radio,
+  Checkbox,
+  Button,
 } from "@mui/material";
+import { saveQuestion } from "../api/forms";
+import useAutoSave from "../hooks/useAutoSave";
 
-const QuestionPreview = ({ question, setQuestions }) => {
+const QuestionPreview = ({ formId, question, setQuestions }) => {
+  const autoSave = useAutoSave();
+
+  const handleChangeOption = (i) => (e) => {
+    const option = e.target.value;
+
+    const options = [...question.options];
+    options[i] = option;
+
+    const newQuestion = { ...question, options };
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
+    setQuestions((questions) =>
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
+    );
+  };
+
+  const addOption = () => {
+    const option = "Opción " + (question.options.length + 1);
+    const newQuestion = { ...question, options: [...question.options, option] };
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
+    setQuestions((questions) =>
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
+    );
+  };
+
   switch (question.type) {
     case "text":
       return (
@@ -27,18 +66,50 @@ const QuestionPreview = ({ question, setQuestions }) => {
       );
     case "radio":
       return (
-        <FormControl disabled component="fieldset">
+        <FormControl component="fieldset">
           <FormLabel component="legend">Opciones</FormLabel>
           <RadioGroup>
             {question.options.map((option, i) => (
               <FormControlLabel
                 key={i}
+                disabled
                 value={option}
                 control={<Radio />}
-                label={option}
+                label={
+                  <TextField
+                    variant="standard"
+                    value={option}
+                    onChange={handleChangeOption(i)}
+                  />
+                }
               />
             ))}
           </RadioGroup>
+          <Button onClick={addOption}>Agregar opción</Button>
+        </FormControl>
+      );
+    case "checkbox":
+      return (
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Opciones</FormLabel>
+          <FormGroup>
+            {question.options.map((option, i) => (
+              <FormControlLabel
+                key={i}
+                disabled
+                value={option}
+                control={<Checkbox />}
+                label={
+                  <TextField
+                    variant="standard"
+                    value={option}
+                    onChange={handleChangeOption(i)}
+                  />
+                }
+              />
+            ))}
+          </FormGroup>
+          <Button onClick={addOption}>Agregar opción</Button>
         </FormControl>
       );
     default:
