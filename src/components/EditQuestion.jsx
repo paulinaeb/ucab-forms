@@ -27,6 +27,10 @@ const questionTypes = [
     value: "checkbox",
     label: "Casillas de verificación",
   },
+  {
+    value: "select",
+    label: "Lista desplegable",
+  },
 ];
 
 const EditQuestion = ({ formId, question, setQuestions }) => {
@@ -52,11 +56,13 @@ const EditQuestion = ({ formId, question, setQuestions }) => {
 
     const newQuestion = { ...question, type };
 
-    if (type !== "radio" && type !== "checkbox") {
+    const hasOptions = ["radio", "checkbox", "select"].includes(type);
+
+    if (!hasOptions) {
       delete newQuestion.options;
     }
 
-    if (!newQuestion.options && (type === "radio" || type === "checkbox")) {
+    if (!newQuestion.options && hasOptions) {
       newQuestion.options = ["Opción 1"];
     }
 
@@ -113,7 +119,7 @@ const EditQuestion = ({ formId, question, setQuestions }) => {
       />
       <FormControlLabel
         control={<Switch />}
-        value={question.required}
+        checked={question.required}
         onChange={handleChangeRequired}
         label="Obligatoria"
       />

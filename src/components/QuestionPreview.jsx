@@ -1,4 +1,5 @@
 import {
+  Typography,
   TextField,
   FormControl,
   FormLabel,
@@ -134,6 +135,24 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           </FormGroup>
           <Button onClick={addOption}>Agregar opción</Button>
         </FormControl>
+      );
+    case "select":
+      return (
+        <Box>
+          {question.options.map((option, i) => (
+            <Box key={i}>
+              <Typography>{i + 1}.</Typography>
+              <TextField
+                variant="standard"
+                value={option}
+                onChange={handleChangeOption(i)}
+              />
+
+              <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
+            </Box>
+          ))}
+          <Button onClick={addOption}>Agregar opción</Button>
+        </Box>
       );
     default:
       return null;

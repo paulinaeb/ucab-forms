@@ -23,7 +23,7 @@ const Dashboard = () => {
       return alert(error.message);
     }
 
-    navigate("/forms/" + form.id);
+    navigate("/forms/edit" + form.id);
   };
 
   return (
@@ -33,7 +33,7 @@ const Dashboard = () => {
       <Button onClick={createNewForm}>Crear nueva encuesta</Button>
       <Button onClick={signOut}>Sign Out</Button>
       {forms.map((form) => (
-        <Box component={Link} to={`/forms/${form.id}`} key={form.id}>
+        <Box component={Link} to={`/forms/edit/${form.id}`} key={form.id}>
           <Typography variant="h4">{form.title}</Typography>
           <Typography variant="h5">{form.description}</Typography>
         </Box>

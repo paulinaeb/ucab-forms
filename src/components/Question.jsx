@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   Radio,
   Checkbox,
+  MenuItem,
 } from "@mui/material";
 
 const Question = ({ question, answers, setAnswers }) => {
@@ -85,6 +86,24 @@ const Question = ({ question, answers, setAnswers }) => {
               />
             ))}
           </FormControl>
+        );
+      case "select":
+        return (
+          <TextField
+            select
+            label={question.title}
+            required={question.required}
+            value={answers[question.id] || ""}
+            onChange={(e) =>
+              setAnswers({ ...answers, [question.id]: e.target.value })
+            }
+          >
+            {question.options.map((option, i) => (
+              <MenuItem key={i} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
         );
       default:
         return <Typography>No se puede mostrar la pregunta</Typography>;
