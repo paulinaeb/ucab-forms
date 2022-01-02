@@ -7,7 +7,9 @@ const QuestionsList = ({ formId, questions, setQuestions }) => {
   const addQuestionAfter = async (i) => {
     let newIndex;
 
-    if (i === questions.length - 1) {
+    if (i === -1) {
+      newIndex = questions[0] ? questions[0].index - 1 : 0;
+    } else if (i === questions.length - 1) {
       newIndex = questions[i].index + 1;
     } else {
       newIndex = (questions[i].index + questions[i + 1].index) / 2;
@@ -34,19 +36,24 @@ const QuestionsList = ({ formId, questions, setQuestions }) => {
     alert("Pregunta eliminada");
   };
 
-  return questions.map((question, i) => (
-    <Box key={i}>
-      <Question
-        formId={formId}
-        question={question}
-        setQuestions={setQuestions}
-      />
-      <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
-      <Button onClick={() => removeQuestion(question.id)}>
-        Delete question
-      </Button>
-    </Box>
-  ));
+  return (
+    <>
+      <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button>
+      {questions.map((question, i) => (
+        <Box key={i}>
+          <Question
+            formId={formId}
+            question={question}
+            setQuestions={setQuestions}
+          />
+          <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
+          <Button onClick={() => removeQuestion(question.id)}>
+            Delete question
+          </Button>
+        </Box>
+      ))}
+    </>
+  );
 };
 
 export default memo(QuestionsList);
