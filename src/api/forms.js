@@ -16,6 +16,7 @@ const formsRef = collection(db, "forms");
 export const defaultQuestion = {
   title: "Pregunta sin título",
   type: "text",
+  required: false,
 };
 
 export const createForm = async (userId) => {
@@ -124,6 +125,17 @@ export const deleteQuestion = async (formId, questionId) => {
     return { question: questionRef };
   } catch (error) {
     return { error: { message: "Error al eliminar la pregunta" } };
+  }
+};
+
+export const submitAnswers = async (formId, answers) => {
+  try {
+    const answersRef = collection(db, "forms", formId, "answers");
+    await addDoc(answersRef, answers);
+
+    return { answers: answersRef };
+  } catch (error) {
+    return { error: { message: "Error al guardar las respuestas" } };
   }
 };
 

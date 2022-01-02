@@ -1,9 +1,9 @@
 import { memo } from "react";
 import { Box, Button } from "@mui/material";
 import { defaultQuestion, insertQuestion, deleteQuestion } from "../api/forms";
-import Question from "../components/Question";
+import EditQuestion from "./EditQuestion";
 
-const QuestionsList = ({ formId, questions, setQuestions }) => {
+const EditQuestionsList = ({ formId, questions, setQuestions }) => {
   const addQuestionAfter = async (i) => {
     let newIndex;
 
@@ -41,7 +41,7 @@ const QuestionsList = ({ formId, questions, setQuestions }) => {
       <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button>
       {questions.map((question, i) => (
         <Box key={i}>
-          <Question
+          <EditQuestion
             formId={formId}
             question={question}
             setQuestions={setQuestions}
@@ -56,4 +56,4 @@ const QuestionsList = ({ formId, questions, setQuestions }) => {
   );
 };
 
-export default memo(QuestionsList);
+export default memo(EditQuestionsList);

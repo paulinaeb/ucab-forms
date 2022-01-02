@@ -1,97 +1,102 @@
-import { useEffect, memo } from "react";
-import { Card, TextField, MenuItem } from "@mui/material";
-import { saveQuestion } from "../api/forms";
-import useAutoSave from "../hooks/useAutoSave";
-import QuestionPreview from "./QuestionPreview";
+import {
+  Box,
+  Typography,
+  TextField,
+  FormLabel,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  Checkbox,
+} from "@mui/material";
 
-const questionTypes = [
-  {
-    value: "text",
-    label: "Respuesta breve",
-  },
-  {
-    value: "textarea",
-    label: "Respuesta larga",
-  },
-  {
-    value: "radio",
-    label: "Opción múltiple",
-  },
-  {
-    value: "checkbox",
-    label: "Casillas de verificación",
-  },
-];
+const Question = ({ question, answers, setAnswers }) => {
+  console.log(answers);
 
-const Question = ({ formId, question, setQuestions }) => {
-  const autoSave = useAutoSave();
-
-  const handleChangeTitle = (e) => {
-    const title = e.target.value;
-
-    const newQuestion = { ...question, title };
-
-    autoSave(async () => {
-      await saveQuestion(formId, newQuestion);
-      alert("Pregunta guardada");
-    });
-
-    setQuestions((questions) =>
-      questions.map((q) => (q.id === question.id ? newQuestion : q))
-    );
-  };
-
-  const handleChangeType = (e) => {
-    const type = e.target.value;
-
-    const newQuestion = { ...question, type };
-
-    if (type !== "radio" && type !== "checkbox") {
-      delete newQuestion.options;
+  const renderQuestion = () => {
+    switch (question.type) {
+      case "text":
+        return (
+          <TextField
+            label={question.title}
+            required={question.required}
+            value={answers[question.id] || ""}
+            onChange={(e) =>
+              setAnswers({ ...answers, [question.id]: e.target.value })
+            }
+          />
+        );
+      case "textarea":
+        return (
+          <TextField
+            label={question.title}
+            multiline
+            required={question.required}
+            value={answers[question.id] || ""}
+            onChange={(e) =>
+              setAnswers({ ...answers, [question.id]: e.target.value })
+            }
+          />
+        );
+      case "radio":
+        return (
+          <FormControl>
+            <FormLabel>{question.title}</FormLabel>
+            {question.options.map((option, i) => (
+              <FormControlLabel
+                key={i}
+                control={<Radio />}
+                label={option}
+                checked={answers[question.id] === option}
+                onChange={(e) =>
+                  setAnswers({ ...answers, [question.id]: option })
+                }
+              />
+            ))}
+          </FormControl>
+        );
+      case "checkbox":
+        return (
+          <FormControl>
+            <FormLabel>{question.title}</FormLabel>
+            {question.options.map((option, i) => (
+              <FormControlLabel
+                key={i}
+                control={<Checkbox />}
+                label={option}
+                checked={
+                  !!answers[question.id] &&
+                  answers[question.id].includes(option)
+                }
+                onChange={(e) => {
+                  const newAnswers = { ...answers };
+                  newAnswers[question.id] = newAnswers[question.id] || [];
+                  if (e.target.checked) {
+                    newAnswers[question.id] = [
+                      ...newAnswers[question.id],
+                      option,
+                    ];
+                  } else {
+                    newAnswers[question.id] = newAnswers[question.id].filter(
+                      (o) => o !== option
+                    );
+                  }
+                  setAnswers(newAnswers);
+                }}
+              />
+            ))}
+          </FormControl>
+        );
+      default:
+        return <Typography>No se puede mostrar la pregunta</Typography>;
     }
-
-    if (!newQuestion.options && (type === "radio" || type === "checkbox")) {
-      newQuestion.options = ["Opción 1"];
-    }
-
-    autoSave(async () => {
-      await saveQuestion(formId, newQuestion);
-      alert("Pregunta guardada");
-    });
-
-    setQuestions((questions) =>
-      questions.map((q) => (q.id === question.id ? newQuestion : q))
-    );
   };
 
   return (
-    <Card>
-      <TextField
-        variant="standard"
-        multiline
-        placeholder="Título de la pregunta"
-        value={question.title}
-        onChange={handleChangeTitle}
-      />
-      <TextField
-        variant="outlined"
-        select
-        value={question.type}
-        onChange={handleChangeType}
-      >
-        {questionTypes.map((type) => (
-          <MenuItem key={type.value} value={type.value}>
-            {type.label}
-          </MenuItem>
-        ))}
-      </TextField>
-      <QuestionPreview
-        formId={formId}
-        question={question}
-        setQuestions={setQuestions}
-      />
-    </Card>
+    <Box>
+      <Typography variant="h4">{question.title}</Typography>
+      {renderQuestion()}
+    </Box>
   );
 };
 
-export default memo(Question);
+export default Question;

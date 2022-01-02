@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EditForm from "./pages/EditForm";
+import AnswerForm from "./pages/AnswerForm";
 
 const App = () => {
   return (
@@ -33,13 +34,14 @@ const App = () => {
           }
         />
         <Route
-          path="/forms/:id"
+          path="/forms/edit/:id"
           element={
             <AuthPage>
               <EditForm />
             </AuthPage>
           }
         />
+        <Route path="/forms/answer/:id" element={<AnswerForm />} />
       </Routes>
     </UserProvider>
   );

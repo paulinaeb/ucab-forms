@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { getForm, getQuestions, saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import useAutoSave from "../hooks/useAutoSave";
-import QuestionsList from "../components/QuestionsList";
+import EditQuestionsList from "../components/EditQuestionsList";
 
 const EditForm = () => {
   const user = useUser();
@@ -15,7 +15,7 @@ const EditForm = () => {
   const autoSave = useAutoSave();
 
   useEffect(() => {
-    const unsubscribeForms = getForm(formId, (form) => {
+    const unsubscribeForm = getForm(formId, (form) => {
       setForm(form);
       setLoadingForm(false);
     });
@@ -40,7 +40,7 @@ const EditForm = () => {
     });
 
     return () => {
-      unsubscribeForms();
+      unsubscribeForm();
       unsubscribeQuestions();
     };
   }, [formId]);
@@ -87,7 +87,7 @@ const EditForm = () => {
         onChange={handleChange("description")}
       />
       <Typography variant="h2">Questions</Typography>
-      <QuestionsList
+      <EditQuestionsList
         formId={formId}
         questions={questions}
         setQuestions={setQuestions}
