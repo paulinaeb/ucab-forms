@@ -3,7 +3,7 @@ import {
   addDoc,
   doc,
   onSnapshot,
-  setDoc,
+  deleteDoc,
   query,
   where,
   updateDoc,
@@ -113,6 +113,17 @@ export const saveQuestion = async (formId, question) => {
     return { question: questionRef };
   } catch (error) {
     return { error: { message: "Error al guardar la pregunta" } };
+  }
+};
+
+export const deleteQuestion = async (formId, questionId) => {
+  try {
+    const questionRef = doc(db, "forms", formId, "questions", questionId);
+    await deleteDoc(questionRef);
+
+    return { question: questionRef };
+  } catch (error) {
+    return { error: { message: "Error al eliminar la pregunta" } };
   }
 };
 

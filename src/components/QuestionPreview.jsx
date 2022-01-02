@@ -8,6 +8,7 @@ import {
   Radio,
   Checkbox,
   Button,
+  Box,
 } from "@mui/material";
 import { saveQuestion } from "../api/forms";
 import useAutoSave from "../hooks/useAutoSave";
@@ -47,6 +48,22 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
     );
   };
 
+  const deleteOption = (i) => {
+    const options = [...question.options];
+    options.splice(i, 1);
+
+    const newQuestion = { ...question, options };
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
+    setQuestions((questions) =>
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
+    );
+  };
+
   switch (question.type) {
     case "text":
       return (
@@ -70,19 +87,22 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           <FormLabel component="legend">Opciones</FormLabel>
           <RadioGroup>
             {question.options.map((option, i) => (
-              <FormControlLabel
-                key={i}
-                disabled
-                value={option}
-                control={<Radio />}
-                label={
-                  <TextField
-                    variant="standard"
-                    value={option}
-                    onChange={handleChangeOption(i)}
-                  />
-                }
-              />
+              <Box key={i}>
+                <FormControlLabel
+                  key={i}
+                  disabled
+                  value={option}
+                  control={<Radio />}
+                  label={
+                    <TextField
+                      variant="standard"
+                      value={option}
+                      onChange={handleChangeOption(i)}
+                    />
+                  }
+                />
+                <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
+              </Box>
             ))}
           </RadioGroup>
           <Button onClick={addOption}>Agregar opción</Button>
@@ -94,19 +114,22 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           <FormLabel component="legend">Opciones</FormLabel>
           <FormGroup>
             {question.options.map((option, i) => (
-              <FormControlLabel
-                key={i}
-                disabled
-                value={option}
-                control={<Checkbox />}
-                label={
-                  <TextField
-                    variant="standard"
-                    value={option}
-                    onChange={handleChangeOption(i)}
-                  />
-                }
-              />
+              <Box key={i}>
+                <FormControlLabel
+                  key={i}
+                  disabled
+                  value={option}
+                  control={<Checkbox />}
+                  label={
+                    <TextField
+                      variant="standard"
+                      value={option}
+                      onChange={handleChangeOption(i)}
+                    />
+                  }
+                />
+                <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
+              </Box>
             ))}
           </FormGroup>
           <Button onClick={addOption}>Agregar opción</Button>
