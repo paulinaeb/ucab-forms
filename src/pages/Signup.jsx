@@ -1,10 +1,10 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
+import { signUp } from "../api/auth";
 import TextField from "../components/TextField";
 import PasswordField from "../components/PasswordField";
 import Link from "../components/Link";
-import { signUp } from "../api/auth";
 
 const initialValues = {
   name: "",

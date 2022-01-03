@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Typography } from "@mui/material";
 import { UserProvider } from "./hooks/useUser";
 import AuthPage from "./components/AuthPage";

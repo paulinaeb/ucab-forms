@@ -1,18 +1,16 @@
 import {
   Box,
-  Typography,
-  TextField,
-  FormLabel,
+  Checkbox,
   FormControl,
   FormControlLabel,
-  Radio,
-  Checkbox,
+  FormLabel,
   MenuItem,
+  Radio,
+  TextField,
+  Typography,
 } from "@mui/material";
 
-const Question = ({ question, answers, setAnswers }) => {
-  console.log(answers);
-
+const Question = ({ answers, question, setAnswers }) => {
   const renderQuestion = () => {
     switch (question.type) {
       case "text":

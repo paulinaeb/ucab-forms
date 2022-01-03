@@ -67,6 +67,6 @@
     "react-app-rewired": "^2.1.9"
   },
   "lint-staged": {
-    "*.{js,css,md}": "prettier --write"
+    "*.{js,jsx,css,md}": "prettier --write"
   }
 }
