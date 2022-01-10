@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { getForm, getQuestions, submitAnswers } from "../api/forms";
+import { getForm, getQuestions, submitResponse } from "../api/forms";
 import Question from "../components/Question";
 
 const AnswerForm = () => {
@@ -18,23 +18,8 @@ const AnswerForm = () => {
       setLoadingForm(false);
     });
 
-    const unsubscribeQuestions = getQuestions(formId, (changes) => {
-      setQuestions((oldQuestions) => {
-        const questions = [...oldQuestions];
-
-        changes.forEach((change) => {
-          if (change.type === "added") {
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "modified") {
-            questions.splice(change.oldIndex, 1);
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "removed") {
-            questions.splice(change.oldIndex, 1);
-          }
-        });
-
-        return questions;
-      });
+    const unsubscribeQuestions = getQuestions(formId, (questions) => {
+      setQuestions(questions);
     });
 
     return () => {
@@ -46,7 +31,7 @@ const AnswerForm = () => {
   const submit = async (e) => {
     e.preventDefault();
 
-    const { error } = await submitAnswers(formId, answers);
+    const { error } = await submitResponse(formId, answers);
 
     if (error) {
       alert(error.message);

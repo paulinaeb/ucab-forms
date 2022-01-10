@@ -31,6 +31,10 @@ const questionTypes = [
     value: "select",
     label: "Lista desplegable",
   },
+  {
+    value: "slider",
+    label: "Escala lineal",
+  },
 ];
 
 const EditQuestion = ({ formId, question, setQuestions }) => {
@@ -56,14 +60,26 @@ const EditQuestion = ({ formId, question, setQuestions }) => {
 
     const newQuestion = { ...question, type };
 
-    const hasOptions = ["radio", "checkbox", "select"].includes(type);
+    const needsOptions = ["radio", "checkbox", "select"].includes(type);
 
-    if (!hasOptions) {
-      delete newQuestion.options;
+    if (!needsOptions) {
+      newQuestion.options = null;
     }
 
-    if (!newQuestion.options && hasOptions) {
+    if (!newQuestion.options && needsOptions) {
       newQuestion.options = ["Opción 1"];
+    }
+
+    if (type !== "slider") {
+      newQuestion.min = null;
+      newQuestion.max = null;
+      newQuestion.minLabel = null;
+      newQuestion.maxLabel = null;
+    }
+
+    if (type === "slider") {
+      newQuestion.min = 1;
+      newQuestion.max = 5;
     }
 
     autoSave(async () => {

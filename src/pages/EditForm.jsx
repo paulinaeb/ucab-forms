@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { getForm, getQuestions, saveForm } from "../api/forms";
+import { getForm, getQuestionsChanges, saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import useAutoSave from "../hooks/useAutoSave";
 import EditQuestionsList from "../components/EditQuestionsList";
@@ -20,7 +20,7 @@ const EditForm = () => {
       setLoadingForm(false);
     });
 
-    const unsubscribeQuestions = getQuestions(formId, (changes) => {
+    const unsubscribeQuestions = getQuestionsChanges(formId, (changes) => {
       setQuestions((oldQuestions) => {
         const questions = [...oldQuestions];
 

@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
+  MenuItem,
   Radio,
   RadioGroup,
   TextField,
@@ -13,6 +14,9 @@ import {
 } from "@mui/material";
 import { saveQuestion } from "../api/forms";
 import useAutoSave from "../hooks/useAutoSave";
+
+const sliderMinValues = [0, 1];
+const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const QuestionPreview = ({ formId, question, setQuestions }) => {
   const autoSave = useAutoSave();
@@ -24,6 +28,21 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
     options[i] = option;
 
     const newQuestion = { ...question, options };
+
+    autoSave(async () => {
+      await saveQuestion(formId, newQuestion);
+      alert("Pregunta guardada");
+    });
+
+    setQuestions((questions) =>
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
+    );
+  };
+
+  const handleChange = (field) => (e) => {
+    const value = e.target.value;
+
+    const newQuestion = { ...question, [field]: value };
 
     autoSave(async () => {
       await saveQuestion(formId, newQuestion);
@@ -147,11 +166,51 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
                 value={option}
                 onChange={handleChangeOption(i)}
               />
-
               <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
             </Box>
           ))}
           <Button onClick={addOption}>Agregar opción</Button>
+        </Box>
+      );
+    case "slider":
+      return (
+        <Box>
+          <TextField
+            select
+            label="Desde"
+            value={question.min}
+            onChange={handleChange("min")}
+          >
+            {sliderMinValues.map((n) => (
+              <MenuItem key={n} value={n}>
+                {n}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            label="Hasta"
+            value={question.max}
+            onChange={handleChange("max")}
+          >
+            {sliderMaxValues.map((n) => (
+              <MenuItem key={n} value={n}>
+                {n}
+              </MenuItem>
+            ))}
+          </TextField>
+          <Typography>{question.min}</Typography>
+          <TextField
+            variant="standard"
+            value={question.minLabel ?? ""}
+            onChange={handleChange("minLabel")}
+          />
+          <Typography>{question.max}</Typography>
+          <TextField
+            variant="standard"
+            value={question.maxLabel ?? ""}
+            onChange={handleChange("maxLabel")}
+          />
         </Box>
       );
     default:

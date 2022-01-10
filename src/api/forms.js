@@ -70,6 +70,22 @@ export const getQuestions = (id, callback) => {
   const q = query(questionsRef, orderBy("index"));
 
   return onSnapshot(q, (snapshot) => {
+    const questions = snapshot.docs.map((doc) => {
+      const question = doc.data();
+      question.id = doc.id;
+      return question;
+    });
+
+    callback(questions);
+  });
+};
+
+export const getQuestionsChanges = (id, callback) => {
+  const questionsRef = collection(db, "forms", id, "questions");
+
+  const q = query(questionsRef, orderBy("index"));
+
+  return onSnapshot(q, (snapshot) => {
     const changes = snapshot.docChanges().map((change) => ({
       type: change.type,
       oldIndex: change.oldIndex,
@@ -128,15 +144,29 @@ export const deleteQuestion = async (formId, questionId) => {
   }
 };
 
-export const submitAnswers = async (formId, answers) => {
+export const submitResponse = async (formId, response) => {
   try {
-    const answersRef = collection(db, "forms", formId, "answers");
-    await addDoc(answersRef, answers);
+    const responsesRef = collection(db, "forms", formId, "responses");
+    const responseRef = await addDoc(responsesRef, response);
 
-    return { answers: answersRef };
+    return { response: responseRef };
   } catch (error) {
     return { error: { message: "Error al guardar las respuestas" } };
   }
+};
+
+export const getResponses = (formId, callback) => {
+  const responsesRef = collection(db, "forms", formId, "responses");
+
+  return onSnapshot(responsesRef, (snapshot) => {
+    const responses = snapshot.docs.map((doc) => {
+      const response = doc.data();
+      response.id = doc.id;
+      return response;
+    });
+
+    callback(responses);
+  });
 };
 
 // export const saveAll = async (form, questions) => {

@@ -23,7 +23,7 @@ const Dashboard = () => {
       return alert(error.message);
     }
 
-    navigate("/forms/edit" + form.id);
+    navigate("/forms/edit/" + form.id);
   };
 
   return (
