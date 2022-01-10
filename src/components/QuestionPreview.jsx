@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import { saveQuestion } from "../api/forms";
 import useAutoSave from "../hooks/useAutoSave";
 
@@ -212,6 +213,36 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
             onChange={handleChange("maxLabel")}
           />
         </Box>
+      );
+    case "date":
+      return (
+        <DatePicker
+          label="Día, mes, año"
+          disabled
+          value={null}
+          onChange={() => null}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      );
+    case "time":
+      return (
+        <TimePicker
+          label="Hora"
+          disabled
+          value={null}
+          onChange={() => null}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      );
+    case "datetime":
+      return (
+        <DateTimePicker
+          label="Fecha y hora"
+          disabled
+          value={null}
+          onChange={() => null}
+          renderInput={(params) => <TextField {...params} />}
+        />
       );
     default:
       return null;

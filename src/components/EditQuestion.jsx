@@ -35,6 +35,18 @@ const questionTypes = [
     value: "slider",
     label: "Escala lineal",
   },
+  {
+    value: "date",
+    label: "Fecha",
+  },
+  {
+    value: "time",
+    label: "Hora",
+  },
+  {
+    value: "datetime",
+    label: "Fecha y hora",
+  },
 ];
 
 const EditQuestion = ({ formId, question, setQuestions }) => {

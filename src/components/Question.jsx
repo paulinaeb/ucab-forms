@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 
 const sliderMarks = (question) => {
   const marks = [];
@@ -132,6 +133,45 @@ const Question = ({ answers, question, setAnswers }) => {
               }
             />
           </Box>
+        );
+      case "date":
+        return (
+          <DatePicker
+            label={question.title}
+            value={answers[question.id]}
+            onChange={(value) =>
+              setAnswers({ ...answers, [question.id]: value })
+            }
+            renderInput={(params) => (
+              <TextField {...params} required={question.required} />
+            )}
+          />
+        );
+      case "time":
+        return (
+          <TimePicker
+            label={question.title}
+            value={answers[question.id]}
+            onChange={(value) =>
+              setAnswers({ ...answers, [question.id]: value })
+            }
+            renderInput={(params) => (
+              <TextField {...params} required={question.required} />
+            )}
+          />
+        );
+      case "datetime":
+        return (
+          <DateTimePicker
+            label={question.title}
+            value={answers[question.id]}
+            onChange={(value) =>
+              setAnswers({ ...answers, [question.id]: value })
+            }
+            renderInput={(params) => (
+              <TextField {...params} required={question.required} />
+            )}
+          />
         );
       default:
         return <Typography>No se puede mostrar la pregunta</Typography>;
