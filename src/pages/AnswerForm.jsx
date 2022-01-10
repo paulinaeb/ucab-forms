@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { getForm, getQuestions, submitResponse } from "../api/forms";
+import { getForm } from "../api/forms";
+import { getQuestions } from "../api/questions";
+import { submitResponse } from "../api/responses";
 import Question from "../components/Question";
 
 const AnswerForm = () => {

@@ -1,7 +1,17 @@
 import { Box, Typography, Container } from "@mui/material";
-
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import {
+  CHECKBOX,
+  DATE,
+  DATETIME,
+  RADIO,
+  SELECT,
+  SLIDER,
+  TEXT,
+  TEXTAREA,
+  TIME,
+} from "../constants/questions";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -14,12 +24,12 @@ const QuestionSummary = ({ question, responses }) => {
 
   let data = {};
 
-  if (["radio", "select"].includes(question.type)) {
+  if ([RADIO, SELECT].includes(question.type)) {
     data = {
       labels: question.options,
       datasets: [
         {
-          label: "# of Votes",
+          label: "# of Responses",
           data: question.options.map(
             (option) =>
               responses.filter((r) => r[question.id] === option).length
@@ -46,18 +56,10 @@ const QuestionSummary = ({ question, responses }) => {
     };
   }
 
-  // if (question.type === "checkbox") {
-  //   question.options.forEach((option) => {
-  //     data[option] = responses.filter((r) =>
-  //       r[question.id].includes(option)
-  //     ).length;
-  //   });
-  // }
-
   switch (question.type) {
-    case "text":
+    case TEXT:
       return <Typography variant="body1">{numberOfResponsesText}</Typography>;
-    case "radio":
+    case RADIO:
       return (
         <>
           <Typography variant="body1">{numberOfResponsesText}</Typography>
@@ -66,11 +68,11 @@ const QuestionSummary = ({ question, responses }) => {
           </Container>
         </>
       );
-    case "checkbox":
+    case CHECKBOX:
       return <Typography variant="body1">{numberOfResponsesText}</Typography>;
-    case "textarea":
+    case TEXTAREA:
       return <Typography variant="body1">{numberOfResponsesText}</Typography>;
-    case "select":
+    case SELECT:
       return <Typography variant="body1">{numberOfResponsesText}</Typography>;
     default:
       return null;

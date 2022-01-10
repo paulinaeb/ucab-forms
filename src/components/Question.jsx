@@ -10,6 +10,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  CHECKBOX,
+  DATE,
+  DATETIME,
+  RADIO,
+  SELECT,
+  SLIDER,
+  TEXT,
+  TEXTAREA,
+  TIME,
+} from "../constants/questions";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 
 const sliderMarks = (question) => {
@@ -28,7 +39,7 @@ const sliderMarks = (question) => {
 const Question = ({ answers, question, setAnswers }) => {
   const renderQuestion = () => {
     switch (question.type) {
-      case "text":
+      case TEXT:
         return (
           <TextField
             label={question.title}
@@ -39,7 +50,7 @@ const Question = ({ answers, question, setAnswers }) => {
             }
           />
         );
-      case "textarea":
+      case TEXTAREA:
         return (
           <TextField
             label={question.title}
@@ -51,7 +62,7 @@ const Question = ({ answers, question, setAnswers }) => {
             }
           />
         );
-      case "radio":
+      case RADIO:
         return (
           <FormControl>
             <FormLabel>{question.title}</FormLabel>
@@ -68,7 +79,7 @@ const Question = ({ answers, question, setAnswers }) => {
             ))}
           </FormControl>
         );
-      case "checkbox":
+      case CHECKBOX:
         return (
           <FormControl>
             <FormLabel>{question.title}</FormLabel>
@@ -100,7 +111,7 @@ const Question = ({ answers, question, setAnswers }) => {
             ))}
           </FormControl>
         );
-      case "select":
+      case SELECT:
         return (
           <TextField
             select
@@ -118,7 +129,7 @@ const Question = ({ answers, question, setAnswers }) => {
             ))}
           </TextField>
         );
-      case "slider":
+      case SLIDER:
         return (
           <Box>
             <Slider
@@ -134,7 +145,7 @@ const Question = ({ answers, question, setAnswers }) => {
             />
           </Box>
         );
-      case "date":
+      case DATE:
         return (
           <DatePicker
             label={question.title}
@@ -147,7 +158,7 @@ const Question = ({ answers, question, setAnswers }) => {
             )}
           />
         );
-      case "time":
+      case TIME:
         return (
           <TimePicker
             label={question.title}
@@ -160,7 +171,7 @@ const Question = ({ answers, question, setAnswers }) => {
             )}
           />
         );
-      case "datetime":
+      case DATETIME:
         return (
           <DateTimePicker
             label={question.title}

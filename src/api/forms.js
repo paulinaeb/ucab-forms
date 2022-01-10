@@ -1,23 +1,16 @@
 import {
-  collection,
   addDoc,
+  collection,
   doc,
   onSnapshot,
-  deleteDoc,
   query,
-  where,
   updateDoc,
-  orderBy,
+  where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { defaultQuestion } from "../constants/questions";
 
 const formsRef = collection(db, "forms");
-
-export const defaultQuestion = {
-  title: "Pregunta sin título",
-  type: "text",
-  required: false,
-};
 
 export const createForm = async (userId) => {
   try {
@@ -64,51 +57,6 @@ export const getForm = (id, callback) => {
   });
 };
 
-export const getQuestions = (id, callback) => {
-  const questionsRef = collection(db, "forms", id, "questions");
-
-  const q = query(questionsRef, orderBy("index"));
-
-  return onSnapshot(q, (snapshot) => {
-    const questions = snapshot.docs.map((doc) => {
-      const question = doc.data();
-      question.id = doc.id;
-      return question;
-    });
-
-    callback(questions);
-  });
-};
-
-export const getQuestionsChanges = (id, callback) => {
-  const questionsRef = collection(db, "forms", id, "questions");
-
-  const q = query(questionsRef, orderBy("index"));
-
-  return onSnapshot(q, (snapshot) => {
-    const changes = snapshot.docChanges().map((change) => ({
-      type: change.type,
-      oldIndex: change.oldIndex,
-      newIndex: change.newIndex,
-      question: { ...change.doc.data(), id: change.doc.id },
-    }));
-
-    callback(changes);
-  });
-};
-
-export const insertQuestion = async (formId, question) => {
-  try {
-    const questionsRef = collection(db, "forms", formId, "questions");
-
-    const questionRef = await addDoc(questionsRef, question);
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al insertar la pregunta" } };
-  }
-};
-
 export const saveForm = async (form) => {
   try {
     const { id: formId, ...formData } = form;
@@ -120,71 +68,3 @@ export const saveForm = async (form) => {
     return { error: { message: "Error al guardar la encuesta" } };
   }
 };
-
-export const saveQuestion = async (formId, question) => {
-  try {
-    const { id: questionId, ...questionData } = question;
-    const questionRef = doc(db, "forms", formId, "questions", questionId);
-    await updateDoc(questionRef, questionData);
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al guardar la pregunta" } };
-  }
-};
-
-export const deleteQuestion = async (formId, questionId) => {
-  try {
-    const questionRef = doc(db, "forms", formId, "questions", questionId);
-    await deleteDoc(questionRef);
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al eliminar la pregunta" } };
-  }
-};
-
-export const submitResponse = async (formId, response) => {
-  try {
-    const responsesRef = collection(db, "forms", formId, "responses");
-    const responseRef = await addDoc(responsesRef, response);
-
-    return { response: responseRef };
-  } catch (error) {
-    return { error: { message: "Error al guardar las respuestas" } };
-  }
-};
-
-export const getResponses = (formId, callback) => {
-  const responsesRef = collection(db, "forms", formId, "responses");
-
-  return onSnapshot(responsesRef, (snapshot) => {
-    const responses = snapshot.docs.map((doc) => {
-      const response = doc.data();
-      response.id = doc.id;
-      return response;
-    });
-
-    callback(responses);
-  });
-};
-
-// export const saveAll = async (form, questions) => {
-//   try {
-//     const { id: formId, ...formData } = form;
-//     const formRef = doc(db, "forms", formId);
-//     await updateDoc(formRef, formData);
-
-//     await Promise.all(
-//       questions.map((question) => {
-//         const { id: questionId, ...questionData } = question;
-//         const questionRef = doc(db, "forms", formId, "questions", questionId);
-//         return updateDoc(questionRef, questionData);
-//       })
-//     );
-
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// };

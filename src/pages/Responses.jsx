@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import { getQuestions, getResponses } from "../api/forms";
+import { getQuestions } from "../api/questions";
+import { getResponses } from "../api/responses";
 import QuestionSummary from "../components/QuestionSummary";
 
 const Responses = () => {

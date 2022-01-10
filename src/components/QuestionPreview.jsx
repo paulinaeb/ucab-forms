@@ -12,8 +12,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  CHECKBOX,
+  DATE,
+  DATETIME,
+  RADIO,
+  SELECT,
+  SLIDER,
+  TEXT,
+  TEXTAREA,
+  TIME,
+} from "../constants/questions";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
-import { saveQuestion } from "../api/forms";
+import { saveQuestion } from "../api/questions";
 import useAutoSave from "../hooks/useAutoSave";
 
 const sliderMinValues = [0, 1];
@@ -86,7 +97,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
   };
 
   switch (question.type) {
-    case "text":
+    case TEXT:
       return (
         <TextField
           disabled
@@ -94,7 +105,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           value="Texto de respuesta breve"
         />
       );
-    case "textarea":
+    case TEXTAREA:
       return (
         <TextField
           disabled
@@ -102,7 +113,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           value="Texto de respuesta larga"
         />
       );
-    case "radio":
+    case RADIO:
       return (
         <FormControl component="fieldset">
           <FormLabel component="legend">Opciones</FormLabel>
@@ -129,7 +140,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           <Button onClick={addOption}>Agregar opción</Button>
         </FormControl>
       );
-    case "checkbox":
+    case CHECKBOX:
       return (
         <FormControl component="fieldset">
           <FormLabel component="legend">Opciones</FormLabel>
@@ -156,7 +167,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           <Button onClick={addOption}>Agregar opción</Button>
         </FormControl>
       );
-    case "select":
+    case SELECT:
       return (
         <Box>
           {question.options.map((option, i) => (
@@ -173,7 +184,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           <Button onClick={addOption}>Agregar opción</Button>
         </Box>
       );
-    case "slider":
+    case SLIDER:
       return (
         <Box>
           <TextField
@@ -214,7 +225,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           />
         </Box>
       );
-    case "date":
+    case DATE:
       return (
         <DatePicker
           label="Día, mes, año"
@@ -224,7 +235,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           renderInput={(params) => <TextField {...params} />}
         />
       );
-    case "time":
+    case TIME:
       return (
         <TimePicker
           label="Hora"
@@ -234,7 +245,7 @@ const QuestionPreview = ({ formId, question, setQuestions }) => {
           renderInput={(params) => <TextField {...params} />}
         />
       );
-    case "datetime":
+    case DATETIME:
       return (
         <DateTimePicker
           label="Fecha y hora"

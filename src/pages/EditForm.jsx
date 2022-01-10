@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { getForm, getQuestionsChanges, saveForm } from "../api/forms";
+import { getForm, saveForm } from "../api/forms";
+import { getQuestionsChanges } from "../api/questions";
 import { useUser } from "../hooks/useUser";
 import useAutoSave from "../hooks/useAutoSave";
 import EditQuestionsList from "../components/EditQuestionsList";

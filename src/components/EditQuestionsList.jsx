@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Box, Button } from "@mui/material";
-import { defaultQuestion, deleteQuestion, insertQuestion } from "../api/forms";
+import { defaultQuestion } from "../constants/questions";
+import { deleteQuestion, insertQuestion } from "../api/questions";
 import EditQuestion from "./EditQuestion";
 
 const EditQuestionsList = ({ formId, questions, setQuestions }) => {

@@ -6,48 +6,16 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import { saveQuestion } from "../api/forms";
+import {
+  questionTypes,
+  CHECKBOX,
+  RADIO,
+  SELECT,
+  SLIDER,
+} from "../constants/questions";
+import { saveQuestion } from "../api/questions";
 import useAutoSave from "../hooks/useAutoSave";
 import QuestionPreview from "./QuestionPreview";
-
-const questionTypes = [
-  {
-    value: "text",
-    label: "Respuesta breve",
-  },
-  {
-    value: "textarea",
-    label: "Respuesta larga",
-  },
-  {
-    value: "radio",
-    label: "Opción múltiple",
-  },
-  {
-    value: "checkbox",
-    label: "Casillas de verificación",
-  },
-  {
-    value: "select",
-    label: "Lista desplegable",
-  },
-  {
-    value: "slider",
-    label: "Escala lineal",
-  },
-  {
-    value: "date",
-    label: "Fecha",
-  },
-  {
-    value: "time",
-    label: "Hora",
-  },
-  {
-    value: "datetime",
-    label: "Fecha y hora",
-  },
-];
 
 const EditQuestion = ({ formId, question, setQuestions }) => {
   const autoSave = useAutoSave();
@@ -72,7 +40,7 @@ const EditQuestion = ({ formId, question, setQuestions }) => {
 
     const newQuestion = { ...question, type };
 
-    const needsOptions = ["radio", "checkbox", "select"].includes(type);
+    const needsOptions = [RADIO, CHECKBOX, SELECT].includes(type);
 
     if (!needsOptions) {
       newQuestion.options = null;
@@ -82,14 +50,14 @@ const EditQuestion = ({ formId, question, setQuestions }) => {
       newQuestion.options = ["Opción 1"];
     }
 
-    if (type !== "slider") {
+    if (type !== SLIDER) {
       newQuestion.min = null;
       newQuestion.max = null;
       newQuestion.minLabel = null;
       newQuestion.maxLabel = null;
     }
 
-    if (type === "slider") {
+    if (type === SLIDER) {
       newQuestion.min = 1;
       newQuestion.max = 5;
     }
