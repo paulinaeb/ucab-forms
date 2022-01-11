@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import {
   CHECKBOX,
   DATE,
@@ -21,7 +22,6 @@ import {
   TEXTAREA,
   TIME,
 } from "../constants/questions";
-import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 
 const sliderMarks = (question) => {
   const marks = [];
@@ -149,7 +149,7 @@ const Question = ({ answers, question, setAnswers }) => {
         return (
           <DatePicker
             label={question.title}
-            value={answers[question.id]}
+            value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
@@ -162,7 +162,7 @@ const Question = ({ answers, question, setAnswers }) => {
         return (
           <TimePicker
             label={question.title}
-            value={answers[question.id]}
+            value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
@@ -175,7 +175,7 @@ const Question = ({ answers, question, setAnswers }) => {
         return (
           <DateTimePicker
             label={question.title}
-            value={answers[question.id]}
+            value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }

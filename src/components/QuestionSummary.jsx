@@ -10,6 +10,7 @@ import {
   BarElement,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
+import { format } from "date-fns";
 import {
   CHECKBOX,
   DATE,
@@ -81,7 +82,7 @@ const QuestionSummary = ({ question, responses }) => {
           label: "Respuestas",
           data: question.options.map(
             (option) =>
-              responses.filter((r) => r[question.id].includes(option)).length
+              responses.filter((r) => r[question.id]?.includes(option)).length
           ),
           backgroundColor: [
             "rgba(255, 99, 132, 0.2)",
@@ -143,15 +144,49 @@ const QuestionSummary = ({ question, responses }) => {
   switch (question.type) {
     case TEXT:
     case TEXTAREA:
+      return (
+        <>
+          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          {responses.map((r) => (
+            <Typography key={r.id} variant="body2">
+              {r[question.id]}
+            </Typography>
+          ))}
+        </>
+      );
     case DATE:
+      return (
+        <>
+          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          {responses.map((r) => (
+            <Typography key={r.id} variant="body2">
+              {r[question.id]
+                ? format(r[question.id].toDate(), "dd/MM/yyyy")
+                : ""}
+            </Typography>
+          ))}
+        </>
+      );
     case TIME:
+      return (
+        <>
+          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          {responses.map((r) => (
+            <Typography key={r.id} variant="body2">
+              {r[question.id] ? format(r[question.id].toDate(), "hh:mm a") : ""}
+            </Typography>
+          ))}
+        </>
+      );
     case DATETIME:
       return (
         <>
           <Typography variant="body1">{numberOfResponsesText}</Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
-              {JSON.stringify(r[question.id])}
+              {r[question.id]
+                ? format(r[question.id].toDate(), "dd/MM/yyyy hh:mm a")
+                : ""}
             </Typography>
           ))}
         </>

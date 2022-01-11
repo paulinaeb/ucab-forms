@@ -6,6 +6,7 @@ import { getQuestionsChanges } from "../api/questions";
 import { useUser } from "../hooks/useUser";
 import useAutoSave from "../hooks/useAutoSave";
 import EditQuestionsList from "../components/EditQuestionsList";
+import Link from "../components/Link";
 
 const EditForm = () => {
   const user = useUser();
@@ -87,6 +88,8 @@ const EditForm = () => {
         value={form.description}
         onChange={handleChange("description")}
       />
+      <Link to={`/forms/responses/${formId}`}>Respuestas</Link>
+      <Link to={`/forms/answer/${formId}`}>Enviar</Link>
       <Typography variant="h2">Questions</Typography>
       <EditQuestionsList
         formId={formId}
