@@ -1,65 +1,50 @@
-import { useEffect, useState } from "react";
-import { Box, TextField, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { getForm, saveForm } from "../api/forms";
-import { getQuestionsChanges } from "../api/questions";
+import { useMemo, useState } from "react";
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Menu, Settings } from "@mui/icons-material";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import debounce from "lodash.debounce";
+import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
-import useAutoSave from "../hooks/useAutoSave";
-import EditQuestionsList from "../components/EditQuestionsList";
-import Link from "../components/Link";
+import { useForm } from "../hooks/useForm";
+import Header from "../components/Header";
+import DrawerLayout from "../components/DrawerLayout";
 
 const EditForm = () => {
   const user = useUser();
-  const { id: formId } = useParams();
-  const [form, setForm] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [loadingForm, setLoadingForm] = useState(true);
-  const autoSave = useAutoSave();
+  const { form, setForm, loading } = useForm();
+  const { pathname } = useLocation();
+  const [openDrawer, setOpenDrawer] = useState(false);
 
-  useEffect(() => {
-    const unsubscribeForm = getForm(formId, (form) => {
-      setForm(form);
-      setLoadingForm(false);
-    });
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer);
+  };
 
-    const unsubscribeQuestions = getQuestionsChanges(formId, (changes) => {
-      setQuestions((oldQuestions) => {
-        const questions = [...oldQuestions];
-
-        changes.forEach((change) => {
-          if (change.type === "added") {
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "modified") {
-            questions.splice(change.oldIndex, 1);
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "removed") {
-            questions.splice(change.oldIndex, 1);
-          }
-        });
-
-        return questions;
-      });
-    });
-
-    return () => {
-      unsubscribeForm();
-      unsubscribeQuestions();
-    };
-  }, [formId]);
+  const debouncedSave = useMemo(() => {
+    return debounce(async (form) => {
+      await saveForm(form);
+      alert("Encuesta guardada");
+    }, 3000);
+  }, []);
 
   const handleChange = (field) => (e) => {
     const value = e.target.value;
     const newForm = { ...form, [field]: value };
 
-    autoSave(async () => {
-      await saveForm(newForm);
-      alert("Encuesta guardada");
-    });
-
+    debouncedSave(newForm);
     setForm(newForm);
   };
 
-  if (loadingForm) {
+  if (loading) {
     return <Typography variant="h2">Loading...</Typography>;
   }
 
@@ -73,29 +58,70 @@ const EditForm = () => {
 
   return (
     <Box>
-      <Typography variant="h2">Edit Form</Typography>
-      <TextField
-        variant="standard"
-        multiline
-        placeholder="Título de la encuesta"
-        value={form.title}
-        onChange={handleChange("title")}
+      <Header
+        leftIcon={
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
+            edge="start"
+          >
+            <Menu />
+          </IconButton>
+        }
       />
-      <TextField
-        variant="standard"
-        multiline
-        placeholder="Descripción de la encuesta"
-        value={form.description}
-        onChange={handleChange("description")}
-      />
-      <Link to={`/forms/responses/${formId}`}>Respuestas</Link>
-      <Link to={`/forms/answer/${formId}`}>Enviar</Link>
-      <Typography variant="h2">Questions</Typography>
-      <EditQuestionsList
-        formId={formId}
-        questions={questions}
-        setQuestions={setQuestions}
-      />
+      <DrawerLayout open={openDrawer}>
+        <Stack spacing={2}>
+          <TextField
+            variant="filled"
+            multiline
+            label="Título"
+            value={form.title}
+            onChange={handleChange("title")}
+          />
+          <TextField
+            variant="filled"
+            multiline
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange("description")}
+          />
+        </Stack>
+        {/* <IconButton size="large">
+          <Settings />
+        </IconButton>
+        <Button
+          component={Link}
+          variant="contained"
+          to={`/forms/answer/${form.id}`}
+        >
+          Enviar
+        </Button> */}
+
+        <AppBar position="static">
+          <Tabs
+            value={pathname}
+            indicatorColor="secondary"
+            textColor="inherit"
+            variant="fullWidth"
+          >
+            <Tab
+              label="Preguntas"
+              value={`/forms/edit/${form.id}`}
+              to={`/forms/edit/${form.id}`}
+              component={Link}
+            />
+            <Tab
+              label="Respuestas"
+              value={`/forms/responses/${form.id}`}
+              to={`/forms/responses/${form.id}`}
+              component={Link}
+            />
+          </Tabs>
+        </AppBar>
+
+        <Outlet />
+      </DrawerLayout>
     </Box>
   );
 };

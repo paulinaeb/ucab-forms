@@ -1,60 +1,61 @@
-import { memo } from "react";
+import { useMemo } from "react";
 import { Box, Button } from "@mui/material";
 import { defaultQuestion } from "../constants/questions";
+import { useForm } from "../hooks/useForm";
 import { deleteQuestion, insertQuestion } from "../api/questions";
 import EditQuestion from "./EditQuestion";
 
-const EditQuestionsList = ({ formId, questions, setQuestions }) => {
-  const addQuestionAfter = async (i) => {
-    let newIndex;
+const EditQuestionsList = () => {
+  const { form, questions } = useForm();
 
-    if (i === -1) {
-      newIndex = questions[0] ? questions[0].index - 1 : 0;
-    } else if (i === questions.length - 1) {
-      newIndex = questions[i].index + 1;
-    } else {
-      newIndex = (questions[i].index + questions[i + 1].index) / 2;
-    }
+  return useMemo(() => {
+    const addQuestionAfter = async (i) => {
+      let newIndex;
 
-    const question = { index: newIndex, ...defaultQuestion };
+      if (i === -1) {
+        newIndex = questions[0] ? questions[0].index - 1 : 0;
+      } else if (i === questions.length - 1) {
+        newIndex = questions[i].index + 1;
+      } else {
+        newIndex = (questions[i].index + questions[i + 1].index) / 2;
+      }
 
-    const { error } = await insertQuestion(formId, question);
+      const question = { index: newIndex, ...defaultQuestion };
 
-    if (error) {
-      return alert(error.message);
-    }
+      const { error } = await insertQuestion(form.id, question);
 
-    alert("Pregunta agregada");
-  };
+      if (error) {
+        return alert(error.message);
+      }
 
-  const removeQuestion = async (questionId) => {
-    const { error } = await deleteQuestion(formId, questionId);
+      alert("Pregunta agregada");
+    };
 
-    if (error) {
-      return alert(error.message);
-    }
+    const removeQuestion = async (questionId) => {
+      const { error } = await deleteQuestion(form.id, questionId);
 
-    alert("Pregunta eliminada");
-  };
+      if (error) {
+        return alert(error.message);
+      }
 
-  return (
-    <>
-      <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button>
-      {questions.map((question, i) => (
-        <Box key={i}>
-          <EditQuestion
-            formId={formId}
-            question={question}
-            setQuestions={setQuestions}
-          />
-          <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
-          <Button onClick={() => removeQuestion(question.id)}>
-            Delete question
-          </Button>
-        </Box>
-      ))}
-    </>
-  );
+      alert("Pregunta eliminada");
+    };
+
+    return (
+      <>
+        <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button>
+        {questions.map((question, i) => (
+          <Box key={i}>
+            <EditQuestion question={question} />
+            <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
+            <Button onClick={() => removeQuestion(question.id)}>
+              Delete question
+            </Button>
+          </Box>
+        ))}
+      </>
+    );
+  }, [questions, form.id]);
 };
 
-export default memo(EditQuestionsList);
+export default EditQuestionsList;
