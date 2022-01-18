@@ -9,8 +9,6 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EditForm from "./pages/EditForm";
-import Questions from "./pages/Questions";
-import Responses from "./pages/Responses";
 import AnswerForm from "./pages/AnswerForm";
 
 const App = () => {
@@ -46,15 +44,13 @@ const App = () => {
             }
           />
           <Route
+            path="/forms/edit/:id"
             element={
               <FormProvider>
                 <EditForm />
               </FormProvider>
             }
-          >
-            <Route path="/forms/edit/:id" element={<Questions />} />
-            <Route path="/forms/responses/:id" element={<Responses />} />
-          </Route>
+          />
         </Route>
         <Route path="/forms/answer/:id" element={<AnswerForm />} />
       </Routes>

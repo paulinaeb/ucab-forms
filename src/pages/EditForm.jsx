@@ -6,10 +6,10 @@ import {
   IconButton,
   Stack,
   Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Menu, Settings } from "@mui/icons-material";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import debounce from "lodash.debounce";
@@ -18,12 +18,18 @@ import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
 import Header from "../components/Header";
 import DrawerLayout from "../components/DrawerLayout";
+import Questions from "../components/Questions";
+import Responses from "../components/Responses";
 
 const EditForm = () => {
   const user = useUser();
   const { form, setForm, loading } = useForm();
-  const { pathname } = useLocation();
+  const [currentTab, setCurrentTab] = useState("0");
   const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleChangeTab = (event, value) => {
+    setCurrentTab(value);
+  };
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
@@ -71,7 +77,7 @@ const EditForm = () => {
         }
       />
       <DrawerLayout open={openDrawer}>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <TextField
             variant="filled"
             multiline
@@ -86,6 +92,28 @@ const EditForm = () => {
             value={form.description}
             onChange={handleChange("description")}
           />
+          <Box>
+            <TabContext value={currentTab}>
+              <AppBar position="static">
+                <TabList
+                  onChange={handleChangeTab}
+                  textColor="inherit"
+                  indicatorColor="secondary"
+                  variant="fullWidth"
+                  aria-label="questions/responses tabs"
+                >
+                  <Tab label="Preguntas" value={"0"} />
+                  <Tab label="Respuestas" value={"1"} />
+                </TabList>
+              </AppBar>
+              <TabPanel value={"0"}>
+                <Questions />
+              </TabPanel>
+              <TabPanel value={"1"}>
+                <Responses />
+              </TabPanel>
+            </TabContext>
+          </Box>
         </Stack>
         {/* <IconButton size="large">
           <Settings />
@@ -97,30 +125,6 @@ const EditForm = () => {
         >
           Enviar
         </Button> */}
-
-        <AppBar position="static">
-          <Tabs
-            value={pathname}
-            indicatorColor="secondary"
-            textColor="inherit"
-            variant="fullWidth"
-          >
-            <Tab
-              label="Preguntas"
-              value={`/forms/edit/${form.id}`}
-              to={`/forms/edit/${form.id}`}
-              component={Link}
-            />
-            <Tab
-              label="Respuestas"
-              value={`/forms/responses/${form.id}`}
-              to={`/forms/responses/${form.id}`}
-              component={Link}
-            />
-          </Tabs>
-        </AppBar>
-
-        <Outlet />
       </DrawerLayout>
     </Box>
   );

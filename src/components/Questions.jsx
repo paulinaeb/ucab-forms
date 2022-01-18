@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import EditQuestionsList from "../components/EditQuestionsList";
+import EditQuestionsList from "./EditQuestionsList";
 
 const Questions = () => {
   return (

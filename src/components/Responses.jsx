@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { getQuestions } from "../api/questions";
 import { getResponses } from "../api/responses";
-import QuestionSummary from "../components/QuestionSummary";
+import QuestionSummary from "./QuestionSummary";
 
 const Responses = () => {
   const { id: formId } = useParams();

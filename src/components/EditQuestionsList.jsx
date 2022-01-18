@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Box, Button } from "@mui/material";
 import { defaultQuestion } from "../constants/questions";
 import { useForm } from "../hooks/useForm";
-import { deleteQuestion, insertQuestion } from "../api/questions";
+import { insertQuestion } from "../api/questions";
 import EditQuestion from "./EditQuestion";
 
 const EditQuestionsList = () => {
@@ -31,26 +31,13 @@ const EditQuestionsList = () => {
       alert("Pregunta agregada");
     };
 
-    const removeQuestion = async (questionId) => {
-      const { error } = await deleteQuestion(form.id, questionId);
-
-      if (error) {
-        return alert(error.message);
-      }
-
-      alert("Pregunta eliminada");
-    };
-
     return (
       <>
-        <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button>
+        {/* <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button> */}
         {questions.map((question, i) => (
           <Box key={i}>
             <EditQuestion question={question} />
-            <Button onClick={() => addQuestionAfter(i)}>Add question</Button>
-            <Button onClick={() => removeQuestion(question.id)}>
-              Delete question
-            </Button>
+            {/* <Button onClick={() => addQuestionAfter(i)}>Add question</Button> */}
           </Box>
         ))}
       </>

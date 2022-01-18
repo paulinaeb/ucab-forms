@@ -22,6 +22,7 @@ import {
   Notifications,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+
 const drawerWidth = 240;
 
 const DrawerLayout = ({ open, children }) => {
@@ -73,17 +74,17 @@ const DrawerLayout = ({ open, children }) => {
           flexGrow: 1,
           padding: 3,
           ...(bigScreen && {
+            marginLeft: `-${drawerWidth}px`,
             transition: theme.transitions.create("margin", {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,
             }),
-            marginLeft: `-${drawerWidth}px`,
             ...(open && {
+              marginLeft: 0,
               transition: theme.transitions.create("margin", {
                 easing: theme.transitions.easing.easeOut,
                 duration: theme.transitions.duration.enteringScreen,
               }),
-              marginLeft: 0,
             }),
           }),
         }}

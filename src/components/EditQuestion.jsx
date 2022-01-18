@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import {
   Card,
+  Checkbox,
   FormControlLabel,
+  IconButton,
   MenuItem,
-  Switch,
   TextField,
 } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 import {
   questionTypes,
   CHECKBOX,
@@ -14,7 +16,7 @@ import {
   SLIDER,
 } from "../constants/questions";
 import debounce from "lodash.debounce";
-import { saveQuestion } from "../api/questions";
+import { deleteQuestion, saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
 import QuestionPreview from "./QuestionPreview";
 
@@ -89,17 +91,28 @@ const EditQuestion = ({ question }) => {
       );
     };
 
+    const removeQuestion = async (questionId) => {
+      const { error } = await deleteQuestion(form.id, questionId);
+
+      if (error) {
+        return alert(error.message);
+      }
+
+      alert("Pregunta eliminada");
+    };
+
     return (
       <Card>
         <TextField
-          variant="standard"
+          variant="filled"
           multiline
           placeholder="Título de la pregunta"
           value={question.title}
           onChange={handleChangeTitle}
         />
+
         <TextField
-          variant="outlined"
+          variant="filled"
           select
           value={question.type}
           onChange={handleChangeType}
@@ -112,14 +125,20 @@ const EditQuestion = ({ question }) => {
         </TextField>
         <QuestionPreview question={question} />
         <FormControlLabel
-          control={<Switch />}
+          control={<Checkbox />}
           checked={question.required}
           onChange={handleChangeRequired}
           label="Obligatoria"
         />
+        <IconButton
+          aria-label="eliminar pregunta"
+          onClick={() => removeQuestion(question.id)}
+        >
+          <Delete />
+        </IconButton>
       </Card>
     );
-  }, [debouncedSave, question, setQuestions]);
+  }, [debouncedSave, form.id, question, setQuestions]);
 };
 
 export default EditQuestion;
