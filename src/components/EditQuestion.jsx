@@ -6,6 +6,8 @@ import {
   IconButton,
   MenuItem,
   TextField,
+  Container,
+  Typography,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import {
@@ -103,6 +105,39 @@ const EditQuestion = ({ question }) => {
 
     return (
       <Card>
+        <Container
+          sx={{
+            justifyContent: "space-between",
+            display: "flex",
+            mt: 2,
+            mb: 2,
+          }}
+        >
+          <Typography variant="h5" sx={{ width: 300, mt: 1 }}>
+            Titulo de la pregunta
+          </Typography>
+
+          <Container sx={{ justifyContent: "flex-end", display: "flex" }}>
+            <FormControlLabel
+              control={<Checkbox />}
+              checked={question.required}
+              onChange={handleChangeRequired}
+              label="Obligatoria"
+            />
+
+            <IconButton
+              aria-label="eliminar pregunta"
+              onClick={() => removeQuestion(question.id)}
+            >
+              <Delete />
+            </IconButton>
+          </Container>
+        </Container>
+
+        <QuestionPreview question={question} />
+      </Card>
+
+      /*<Card>
         <TextField
           variant="filled"
           multiline
@@ -136,7 +171,7 @@ const EditQuestion = ({ question }) => {
         >
           <Delete />
         </IconButton>
-      </Card>
+      </Card>*/
     );
   }, [debouncedSave, form.id, question, setQuestions]);
 };

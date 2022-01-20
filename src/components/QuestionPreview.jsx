@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Container,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -118,61 +119,80 @@ const QuestionPreview = ({ question }) => {
         );
       case RADIO:
         return (
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Opciones</FormLabel>
-            <RadioGroup>
-              {question.options.map((option, i) => (
-                <Box key={i}>
-                  <FormControlLabel
-                    key={i}
-                    disabled
-                    value={option}
-                    control={<Radio />}
-                    label={
-                      <TextField
-                        variant="standard"
-                        value={option}
-                        onChange={handleChangeOption(i)}
-                      />
-                    }
-                  />
-                  <Button onClick={() => deleteOption(i)}>
-                    Eliminar opción
-                  </Button>
-                </Box>
-              ))}
-            </RadioGroup>
-            <Button onClick={addOption}>Agregar opción</Button>
-          </FormControl>
+          <Container
+            sx={{ justifyContent: "left-flex", display: "flex" }}
+            maxWidth="lg"
+          >
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Opciones</FormLabel>
+              <RadioGroup>
+                {question.options.map((option, i) => (
+                  <Box key={i} sx={{ width: 900 }}>
+                    <FormControlLabel
+                      key={i}
+                      disabled
+                      value={option}
+                      control={<Radio />}
+                      label={
+                        /*<TextField
+                          variant="standard"
+                          value={option}
+                          onChange={handleChangeOption(i)}
+                          sx={{width:300}}
+                        />*/
+                        <Typography sx={{ mr: 15 }} variant="body1">
+                          holaaaaa
+                        </Typography>
+                      }
+                    />
+                    <Button onClick={() => deleteOption(i)}>
+                      Eliminar opción
+                    </Button>
+                  </Box>
+                ))}
+              </RadioGroup>
+              <Button onClick={addOption} sx={{ width: 170, mt: 1, mb: 1 }}>
+                Agregar opción
+              </Button>
+            </FormControl>
+          </Container>
         );
       case CHECKBOX:
         return (
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Opciones</FormLabel>
-            <FormGroup>
-              {question.options.map((option, i) => (
-                <Box key={i}>
-                  <FormControlLabel
-                    key={i}
-                    disabled
-                    value={option}
-                    control={<Checkbox />}
-                    label={
-                      <TextField
-                        variant="standard"
-                        value={option}
-                        onChange={handleChangeOption(i)}
-                      />
-                    }
-                  />
-                  <Button onClick={() => deleteOption(i)}>
-                    Eliminar opción
-                  </Button>
-                </Box>
-              ))}
-            </FormGroup>
-            <Button onClick={addOption}>Agregar opción</Button>
-          </FormControl>
+          <Box
+            sx={{
+              p: 3,
+              top: 15,
+              right: "20%",
+            }}
+          >
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Opciones</FormLabel>
+              <FormGroup>
+                {question.options.map((option, i) => (
+                  <Box key={i}>
+                    <FormControlLabel
+                      key={i}
+                      disabled
+                      value={option}
+                      control={<Checkbox />}
+                      label={
+                        <TextField
+                          variant="standard"
+                          value={option}
+                          onChange={handleChangeOption(i)}
+                        />
+                      }
+                    />
+                    <Button onClick={() => deleteOption(i)}>
+                      Eliminar opción
+                    </Button>
+                  </Box>
+                ))}
+              </FormGroup>
+              <Button onClick={addOption}>Agregar opción</Button>
+            </FormControl>
+          </Box>
         );
       case SELECT:
         return (
