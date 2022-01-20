@@ -1,9 +1,15 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins",
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
+        body: {
+          backgroundColor: "#f5f5f5",
+        },
         html: {
           "*::-webkit-scrollbar": {
             backgroundColor: "#2b2b2b",

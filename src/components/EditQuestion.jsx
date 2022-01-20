@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
+  Box,
   Card,
+  CardActionArea,
+  CardContent,
   Checkbox,
   FormControlLabel,
   IconButton,
@@ -22,8 +25,9 @@ import { deleteQuestion, saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
 import QuestionPreview from "./QuestionPreview";
 
-const EditQuestion = ({ question }) => {
+const EditQuestion = ({ question, tabIndex }) => {
   const { form, setQuestions } = useForm();
+  const [focused, setFocused] = useState(false);
 
   const debouncedSave = useMemo(
     () =>
@@ -103,37 +107,52 @@ const EditQuestion = ({ question }) => {
       alert("Pregunta eliminada");
     };
 
+    const requiredMark = question.required && (
+      <Typography component="span" color="error">
+        {" "}
+        *
+      </Typography>
+    );
+
     return (
-      <Card>
-        <Container
-          sx={{
-            justifyContent: "space-between",
-            display: "flex",
-            mt: 2,
-            mb: 2,
-          }}
-        >
-          <Typography variant="h5" sx={{ width: 300, mt: 1 }}>
-            Titulo de la pregunta
-          </Typography>
+      <Card
+        sx={{ p: 3 }}
+        tabIndex={tabIndex}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        elevation={focused ? 5 : 0}
+        variant={focused ? "elevation" : "outlined"}
+      >
+        <Typography mb={2}>
+          {question.title}
+          {requiredMark}
+        </Typography>
+        {/* <Container
+            sx={{
+              justifyContent: "space-between",
+              display: "flex",
+            }}
+          >
+            <Typography variant="h5" sx={{ width: 300, mt: 1 }}>
+              Titulo de la pregunta
+            </Typography>
 
-          <Container sx={{ justifyContent: "flex-end", display: "flex" }}>
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={question.required}
-              onChange={handleChangeRequired}
-              label="Obligatoria"
-            />
+            <Container sx={{ justifyContent: "flex-end", display: "flex" }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                checked={question.required}
+                onChange={handleChangeRequired}
+                label="Obligatoria"
+              />
 
-            <IconButton
-              aria-label="eliminar pregunta"
-              onClick={() => removeQuestion(question.id)}
-            >
-              <Delete />
-            </IconButton>
-          </Container>
-        </Container>
-
+              <IconButton
+                aria-label="eliminar pregunta"
+                onClick={() => removeQuestion(question.id)}
+              >
+                <Delete />
+              </IconButton>
+            </Container>
+          </Container> */}
         <QuestionPreview question={question} />
       </Card>
 
@@ -173,7 +192,7 @@ const EditQuestion = ({ question }) => {
         </IconButton>
       </Card>*/
     );
-  }, [debouncedSave, form.id, question, setQuestions]);
+  }, [debouncedSave, focused, form.id, question, setQuestions, tabIndex]);
 };
 
 export default EditQuestion;

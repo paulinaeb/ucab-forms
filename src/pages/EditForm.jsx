@@ -3,6 +3,8 @@ import {
   AppBar,
   Box,
   Button,
+  Card,
+  Container,
   IconButton,
   Stack,
   Tab,
@@ -77,43 +79,45 @@ const EditForm = () => {
         }
       />
       <DrawerLayout open={openDrawer}>
-        <Stack spacing={1}>
-          <TextField
-            variant="filled"
-            multiline
-            label="Título"
-            value={form.title}
-            onChange={handleChange("title")}
-          />
-          <TextField
-            variant="filled"
-            multiline
-            label="Descripción"
-            value={form.description}
-            onChange={handleChange("description")}
-          />
-          <Box>
-            <TabContext value={currentTab}>
-              <AppBar position="static">
-                <TabList
-                  onChange={handleChangeTab}
-                  textColor="inherit"
-                  indicatorColor="secondary"
-                  variant="fullWidth"
-                  aria-label="questions/responses tabs"
-                >
-                  <Tab label="Preguntas" value={"0"} />
-                  <Tab label="Respuestas" value={"1"} />
-                </TabList>
-              </AppBar>
-              <TabPanel value={"0"}>
-                <Questions />
-              </TabPanel>
-              <TabPanel value={"1"}>
-                <Responses />
-              </TabPanel>
-            </TabContext>
-          </Box>
+        <Stack spacing={2}>
+          <Card sx={{ p: 3 }}>
+            <Stack spacing={2}>
+              <TextField
+                variant="filled"
+                multiline
+                label="Título"
+                value={form.title}
+                onChange={handleChange("title")}
+              />
+              <TextField
+                variant="filled"
+                multiline
+                label="Descripción"
+                value={form.description}
+                onChange={handleChange("description")}
+              />
+            </Stack>
+          </Card>
+          <TabContext value={currentTab}>
+            <AppBar position="static">
+              <TabList
+                onChange={handleChangeTab}
+                textColor="inherit"
+                indicatorColor="secondary"
+                variant="fullWidth"
+                aria-label="questions/responses tabs"
+              >
+                <Tab label="Preguntas" value={"0"} />
+                <Tab label="Respuestas" value={"1"} />
+              </TabList>
+            </AppBar>
+            <TabPanel sx={{ p: 0, pt: 1 }} value={"0"}>
+              <Questions />
+            </TabPanel>
+            <TabPanel sx={{ p: 0, pt: 1 }} value={"1"}>
+              <Responses />
+            </TabPanel>
+          </TabContext>
         </Stack>
         {/* <IconButton size="large">
           <Settings />

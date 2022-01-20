@@ -115,101 +115,94 @@ const QuestionPreview = ({ question }) => {
             disabled
             variant="standard"
             value="Texto de respuesta larga"
+            fullWidth
           />
         );
       case RADIO:
         return (
-          <Container
-            sx={{ justifyContent: "left-flex", display: "flex" }}
-            maxWidth="lg"
-          >
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Opciones</FormLabel>
-              <RadioGroup>
-                {question.options.map((option, i) => (
-                  <Box key={i} sx={{ width: 900 }}>
-                    <FormControlLabel
-                      key={i}
-                      disabled
-                      value={option}
-                      control={<Radio />}
-                      label={
-                        /*<TextField
+          <FormControl component="fieldset">
+            <RadioGroup>
+              {question.options.map((option, i) => (
+                <Box key={i}>
+                  <FormControlLabel
+                    key={i}
+                    disabled
+                    value={option}
+                    control={<Radio />}
+                    label={
+                      option
+                      /*<TextField
                           variant="standard"
                           value={option}
                           onChange={handleChangeOption(i)}
                           sx={{width:300}}
                         />*/
-                        <Typography sx={{ mr: 15 }} variant="body1">
-                          holaaaaa
-                        </Typography>
-                      }
-                    />
-                    <Button onClick={() => deleteOption(i)}>
-                      Eliminar opción
-                    </Button>
-                  </Box>
-                ))}
-              </RadioGroup>
-              <Button onClick={addOption} sx={{ width: 170, mt: 1, mb: 1 }}>
-                Agregar opción
-              </Button>
-            </FormControl>
-          </Container>
+                    }
+                  />
+                  {/* <Button onClick={() => deleteOption(i)}>
+                    Eliminar opción
+                  </Button> */}
+                </Box>
+              ))}
+            </RadioGroup>
+            {/* <Button onClick={addOption}>Agregar opción</Button> */}
+          </FormControl>
         );
       case CHECKBOX:
         return (
-          <Box
-            sx={{
-              p: 3,
-              top: 15,
-              right: "20%",
-            }}
-          >
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Opciones</FormLabel>
-              <FormGroup>
-                {question.options.map((option, i) => (
-                  <Box key={i}>
-                    <FormControlLabel
-                      key={i}
-                      disabled
-                      value={option}
-                      control={<Checkbox />}
-                      label={
-                        <TextField
-                          variant="standard"
-                          value={option}
-                          onChange={handleChangeOption(i)}
-                        />
-                      }
-                    />
-                    <Button onClick={() => deleteOption(i)}>
+          <FormControl component="fieldset">
+            <FormGroup>
+              {question.options.map((option, i) => (
+                <Box key={i}>
+                  <FormControlLabel
+                    key={i}
+                    disabled
+                    value={option}
+                    control={<Checkbox />}
+                    label={
+                      option
+                      // <TextField
+                      //   variant="standard"
+                      //   value={option}
+                      //   onChange={handleChangeOption(i)}
+                      // />
+                    }
+                  />
+                  {/* <Button onClick={() => deleteOption(i)}>
                       Eliminar opción
-                    </Button>
-                  </Box>
-                ))}
-              </FormGroup>
-              <Button onClick={addOption}>Agregar opción</Button>
-            </FormControl>
-          </Box>
+                    </Button> */}
+                </Box>
+              ))}
+            </FormGroup>
+            {/* <Button onClick={addOption}>Agregar opción</Button> */}
+          </FormControl>
         );
       case SELECT:
         return (
-          <Box>
+          <TextField select defaultValue="">
+            <MenuItem value="">
+              <em>Seleccione una opción</em>
+            </MenuItem>
             {question.options.map((option, i) => (
-              <Box key={i}>
-                <Typography>{i + 1}.</Typography>
-                <TextField
-                  variant="standard"
-                  value={option}
-                  onChange={handleChangeOption(i)}
-                />
-                <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
-              </Box>
+              <MenuItem key={i} value={option}>
+                {option}
+              </MenuItem>
             ))}
-            <Button onClick={addOption}>Agregar opción</Button>
-          </Box>
+          </TextField>
+          // <Box>
+          //   {question.options.map((option, i) => (
+          //     <Box key={i}>
+          //       <Typography>{i + 1}.</Typography>
+          //       <TextField
+          //         variant="standard"
+          //         value={option}
+          //         onChange={handleChangeOption(i)}
+          //       />
+          //       <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
+          //     </Box>
+          //   ))}
+          //   <Button onClick={addOption}>Agregar opción</Button>
+          // </Box>
         );
       case SLIDER:
         return (
@@ -259,7 +252,9 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       case TIME:
@@ -269,7 +264,9 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       case DATETIME:
@@ -279,7 +276,9 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       default:

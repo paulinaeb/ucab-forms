@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   CssBaseline,
+  Container,
   Divider,
   Drawer,
   IconButton,
@@ -23,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const DrawerLayout = ({ open, children }) => {
   const theme = useTheme();
@@ -40,9 +41,11 @@ const DrawerLayout = ({ open, children }) => {
             boxSizing: "border-box",
           },
         }}
-        variant={bigScreen ? "persistent" : "temporary"}
-        anchor="left"
+        variant={bigScreen ? "permanent" : "temporary"}
         open={open}
+        ModalProps={{
+          keepMounted: true,
+        }}
       >
         <Toolbar />
         <Box sx={{ overflow: "auto" }}>
@@ -69,28 +72,9 @@ const DrawerLayout = ({ open, children }) => {
           </List>
         </Box>
       </Drawer>
-      <Box
-        sx={{
-          flexGrow: 1,
-          padding: 3,
-          ...(bigScreen && {
-            marginLeft: `-${drawerWidth}px`,
-            transition: theme.transitions.create("margin", {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
-            ...(open && {
-              marginLeft: 0,
-              transition: theme.transitions.create("margin", {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
-            }),
-          }),
-        }}
-      >
+      <Container sx={{ p: 3 }} maxWidth="md">
         {children}
-      </Box>
+      </Container>
     </Box>
   );
 };
