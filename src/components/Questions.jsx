@@ -5,7 +5,7 @@ import { useForm } from "../hooks/useForm";
 import { insertQuestion } from "../api/questions";
 import EditQuestion from "./EditQuestion";
 
-const Questions = () => {
+const Questions = ({ setOpenDrawer }) => {
   const { form, questions } = useForm();
 
   return useMemo(() => {
@@ -36,13 +36,13 @@ const Questions = () => {
         {/* <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button> */}
         {questions.map((question, i) => (
           <Box key={i}>
-            <EditQuestion question={question} tabIndex={i} />
+            <EditQuestion question={question} setOpenDrawer={setOpenDrawer} />
             {/* <Button onClick={() => addQuestionAfter(i)}>Add question</Button> */}
           </Box>
         ))}
       </Stack>
     );
-  }, [questions, form.id]);
+  }, [questions, form.id, setOpenDrawer]);
 };
 
 export default Questions;

@@ -179,9 +179,9 @@ const QuestionPreview = ({ question }) => {
         );
       case SELECT:
         return (
-          <TextField select defaultValue="">
-            <MenuItem value="">
-              <em>Seleccione una opción</em>
+          <TextField select variant="standard" defaultValue="_">
+            <MenuItem disabled value="_">
+              Selecciona una opción
             </MenuItem>
             {question.options.map((option, i) => (
               <MenuItem key={i} value={option}>

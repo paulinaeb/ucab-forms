@@ -5,12 +5,13 @@ import {
   CssBaseline,
   Container,
   Divider,
-  Drawer,
+  Drawer as MuiDrawer,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  TextField,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -23,16 +24,17 @@ import {
   Notifications,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import Drawer from "./Drawer";
 
-const drawerWidth = 260;
+const drawerWidth = 350;
 
-const DrawerLayout = ({ open, children }) => {
+const DrawerLayout = ({ open, setOpen, children }) => {
   const theme = useTheme();
   const bigScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Drawer
+      <MuiDrawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -42,36 +44,17 @@ const DrawerLayout = ({ open, children }) => {
           },
         }}
         variant={bigScreen ? "permanent" : "temporary"}
-        open={open}
+        open={bigScreen ? true : open}
+        onClose={() => setOpen(false)}
         ModalProps={{
           keepMounted: true,
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <Inbox /> : <Mail />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <Inbox /> : <Mail />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
+        <Box sx={{ overflow: "auto", p: 2 }}>
+          <Drawer setOpenDrawer={setOpen} />
         </Box>
-      </Drawer>
+      </MuiDrawer>
       <Container sx={{ p: 3 }} maxWidth="md">
         {children}
       </Container>
