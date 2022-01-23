@@ -146,6 +146,42 @@ const Options = ({ question, debouncedSave }) => {
           </Button>
         </FormControl>
       );
+    case SELECT:
+      return (
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Opciones</FormLabel>
+          <FormGroup sx={{ mb: 1 }}>
+            {question.options.map((option, i) => (
+              <Box
+                key={i}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Typography mr={2} color="text.secondary">
+                    {i + 1}.
+                  </Typography>
+                  <TextField
+                    variant="standard"
+                    value={option}
+                    onChange={handleChangeOption(i)}
+                  />
+                </Box>
+                <Tooltip title="Eliminar opción" arrow>
+                  <IconButton onClick={deleteOption(i)}>
+                    <Clear />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ))}
+          </FormGroup>
+          <Button size="small" onClick={addOption}>
+            Agregar opción
+          </Button>
+        </FormControl>
+      );
     default:
       return null;
   }
