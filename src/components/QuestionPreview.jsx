@@ -11,6 +11,7 @@ import {
   MenuItem,
   Radio,
   RadioGroup,
+  Slider,
   TextField,
   Typography,
 } from "@mui/material";
@@ -29,6 +30,16 @@ import {
 } from "../constants/questions";
 import { saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
+
+const sliderMarks = (question) => {
+  const marks = [];
+
+  for (let i = question.min; i <= question.max; i++) {
+    marks.push({ value: i, label: i });
+  }
+
+  return marks;
+};
 
 const QuestionPreview = ({ question }) => {
   const { form, setQuestions } = useForm();
@@ -149,43 +160,20 @@ const QuestionPreview = ({ question }) => {
         );
       case SLIDER:
         return (
-          <Box>
-            {/* <TextField
-              select
-              label="Desde"
-              value={question.min}
-              onChange={handleChange("min")}
-            >
-              {sliderMinValues.map((n) => (
-                <MenuItem key={n} value={n}>
-                  {n}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              label="Hasta"
-              value={question.max}
-              onChange={handleChange("max")}
-            >
-              {sliderMaxValues.map((n) => (
-                <MenuItem key={n} value={n}>
-                  {n}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Typography>{question.min}</Typography>
-            <TextField
-              variant="standard"
-              value={question.minLabel ?? ""}
-              onChange={handleChange("minLabel")}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+              {question.minLabel}
+            </Typography>
+            <Slider
+              valueLabelDisplay="auto"
+              marks={sliderMarks(question)}
+              min={question.min}
+              max={question.max}
+              sx={{ mx: 2 }}
             />
-            <Typography>{question.max}</Typography>
-            <TextField
-              variant="standard"
-              value={question.maxLabel ?? ""}
-              onChange={handleChange("maxLabel")}
-            /> */}
+            <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+              {question.maxLabel}
+            </Typography>
           </Box>
         );
       case DATE:
@@ -227,7 +215,7 @@ const QuestionPreview = ({ question }) => {
       default:
         return null;
     }
-  }, [debouncedSave, question, setQuestions]);
+  }, [question]);
 };
 
 export default QuestionPreview;
