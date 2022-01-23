@@ -1,12 +1,13 @@
 import { useMemo } from "react";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Fab, Stack, Tooltip } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { defaultQuestion } from "../constants/questions";
 import { useForm } from "../hooks/useForm";
 import { insertQuestion } from "../api/questions";
 import EditQuestion from "./EditQuestion";
 
-const Questions = () => {
-  const { form, questions } = useForm();
+const Questions = ({ setOpenDrawer }) => {
+  const { form, questions, current, setCurrent } = useForm();
 
   return useMemo(() => {
     const addQuestionAfter = async (i) => {
@@ -31,18 +32,49 @@ const Questions = () => {
       alert("Pregunta agregada");
     };
 
+    const addQuestion = async () => {
+      const i = questions.findIndex((q) => q.id === current);
+      let newIndex;
+
+      if (i === questions.length - 1 || i === -1) {
+        newIndex = questions[questions.length - 1].index + 1;
+      } else {
+        newIndex = (questions[i].index + questions[i + 1].index) / 2;
+      }
+
+      const newQuestion = { index: newIndex, ...defaultQuestion };
+
+      const { question, error } = await insertQuestion(form.id, newQuestion);
+
+      if (error) {
+        return alert(error.message);
+      }
+
+      setCurrent(question.id);
+      setOpenDrawer(true);
+    };
+
     return (
-      <Stack spacing={2}>
-        {/* <Button onClick={() => addQuestionAfter(-1)}>Agregar pregunta</Button> */}
-        {questions.map((question, i) => (
-          <Box key={i}>
-            <EditQuestion question={question} tabIndex={i} />
-            {/* <Button onClick={() => addQuestionAfter(i)}>Add question</Button> */}
-          </Box>
-        ))}
-      </Stack>
+      <Box>
+        <Stack spacing={2}>
+          {questions.map((question, i) => (
+            <Box key={i}>
+              <EditQuestion question={question} setOpenDrawer={setOpenDrawer} />
+            </Box>
+          ))}
+        </Stack>
+        <Tooltip title="Agregar pregunta" arrow>
+          <Fab
+            color="primary"
+            sx={{ position: "fixed", bottom: "8%", right: "5%" }}
+            onClick={addQuestion}
+          >
+            <Add />
+          </Fab>
+        </Tooltip>
+      </Box>
     );
-  }, [questions, form.id]);
+  }, [current, form.id, questions, setCurrent, setOpenDrawer]);
 };
 
 export default Questions;

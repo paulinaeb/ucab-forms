@@ -12,26 +12,27 @@ const theme = createTheme({
         },
         html: {
           "*::-webkit-scrollbar": {
-            backgroundColor: "#2b2b2b",
+            width: "8px",
           },
           "*::-webkit-scrollbar-thumb": {
-            borderRadius: 8,
-            backgroundColor: "#6b6b6b",
-            minHeight: 24,
-            border: "3px solid #2b2b2b",
-          },
-          "*::-webkit-scrollbar-thumb:focus": {
-            backgroundColor: "#959595",
+            backgroundColor: "#ccc",
+            borderRadius: "5px",
           },
           "*::-webkit-scrollbar-thumb:active": {
-            backgroundColor: "#959595",
+            backgroundColor: "#999",
           },
           "*::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#959595",
+            backgroundColor: "#b3b3b3",
+            boxShadow: "0 0 2px 1px rgba(0, 0, 0, 0.2)",
           },
-          "*::-webkit-scrollbar-corner": {
-            backgroundColor: "#2b2b2b",
+          "*::-webkit-scrollbar-track": {
+            backgroundColor: "e1e1e1",
+            borderRadius: "5px",
           },
+          "*::-webkit-scrollbar-track:hover , *::-webkit-scrollbar-track:active":
+            {
+              backgroundColor: "d4d4d4",
+            },
         },
       },
     },

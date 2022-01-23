@@ -73,24 +73,25 @@ const EditForm = () => {
             aria-label="open drawer"
             onClick={toggleDrawer}
             edge="start"
+            sx={{ display: { sm: "none" } }}
           >
             <Menu />
           </IconButton>
         }
       />
-      <DrawerLayout open={openDrawer}>
+      <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
         <Stack spacing={2}>
-          <Card sx={{ p: 3 }}>
+          <Card variant="outlined" sx={{ p: 3 }}>
             <Stack spacing={2}>
               <TextField
-                variant="filled"
+                variant="standard"
                 multiline
                 label="Título"
                 value={form.title}
                 onChange={handleChange("title")}
               />
               <TextField
-                variant="filled"
+                variant="standard"
                 multiline
                 label="Descripción"
                 value={form.description}
@@ -112,7 +113,7 @@ const EditForm = () => {
               </TabList>
             </AppBar>
             <TabPanel sx={{ p: 0, pt: 1 }} value={"0"}>
-              <Questions />
+              <Questions setOpenDrawer={setOpenDrawer} />
             </TabPanel>
             <TabPanel sx={{ p: 0, pt: 1 }} value={"1"}>
               <Responses />
