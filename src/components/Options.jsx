@@ -12,6 +12,7 @@ import {
   MenuItem,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Tooltip,
   Typography,
@@ -30,6 +31,9 @@ import {
 } from "../constants/questions";
 import { useForm } from "../hooks/useForm";
 
+const sliderMinValues = [0, 1];
+const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
 const Options = ({ question, debouncedSave }) => {
   const { setQuestions } = useForm();
 
@@ -40,6 +44,18 @@ const Options = ({ question, debouncedSave }) => {
     options[i] = option;
 
     const newQuestion = { ...question, options };
+
+    debouncedSave(newQuestion);
+
+    setQuestions((questions) =>
+      questions.map((q) => (q.id === question.id ? newQuestion : q))
+    );
+  };
+
+  const handleChange = (field) => (e) => {
+    const value = e.target.value;
+
+    const newQuestion = { ...question, [field]: value };
 
     debouncedSave(newQuestion);
 
@@ -181,6 +197,53 @@ const Options = ({ question, debouncedSave }) => {
             Agregar opción
           </Button>
         </FormControl>
+      );
+    case SLIDER:
+      return (
+        <>
+          <Box>
+            <TextField
+              select
+              variant="standard"
+              label="Desde"
+              value={question.min}
+              onChange={handleChange("min")}
+              sx={{ width: "100px", mr: 2 }}
+            >
+              {sliderMinValues.map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              variant="standard"
+              label="Hasta"
+              value={question.max}
+              onChange={handleChange("max")}
+              sx={{ width: "100px" }}
+            >
+              {sliderMaxValues.map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+          <TextField
+            variant="standard"
+            value={question.minLabel ?? ""}
+            label={`Etiqueta para ${question.min} (opcional)`}
+            onChange={handleChange("minLabel")}
+          />
+          <TextField
+            variant="standard"
+            label={`Etiqueta para ${question.max} (opcional)`}
+            value={question.maxLabel ?? ""}
+            onChange={handleChange("maxLabel")}
+          />
+        </>
       );
     default:
       return null;

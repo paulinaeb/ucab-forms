@@ -30,9 +30,6 @@ import {
 import { saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
 
-const sliderMinValues = [0, 1];
-const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
-
 const QuestionPreview = ({ question }) => {
   const { form, setQuestions } = useForm();
 
@@ -46,18 +43,6 @@ const QuestionPreview = ({ question }) => {
   );
 
   return useMemo(() => {
-    const handleChange = (field) => (e) => {
-      const value = e.target.value;
-
-      const newQuestion = { ...question, [field]: value };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
     switch (question.type) {
       case TEXT:
         return (
@@ -165,7 +150,7 @@ const QuestionPreview = ({ question }) => {
       case SLIDER:
         return (
           <Box>
-            <TextField
+            {/* <TextField
               select
               label="Desde"
               value={question.min}
@@ -200,7 +185,7 @@ const QuestionPreview = ({ question }) => {
               variant="standard"
               value={question.maxLabel ?? ""}
               onChange={handleChange("maxLabel")}
-            />
+            /> */}
           </Box>
         );
       case DATE:
