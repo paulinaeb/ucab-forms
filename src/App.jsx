@@ -19,7 +19,6 @@ const App = () => {
         <Route
           element={
             <UnAuthPage>
-              <Typography variant="h1">UCAB Forms</Typography>
               <Outlet />
             </UnAuthPage>
           }
