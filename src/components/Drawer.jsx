@@ -7,6 +7,7 @@ import {
   MenuItem,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
@@ -143,16 +144,15 @@ const Drawer = ({ setOpenDrawer }) => {
             onChange={handleChangeRequired}
             label="Obligatoria"
           />
-          <IconButton
-            aria-label="eliminar pregunta"
-            onClick={() => removeQuestion(question.id)}
-          >
-            <Delete />
-          </IconButton>
+          <Tooltip title="Eliminar pregunta" arrow>
+            <IconButton onClick={() => removeQuestion(question.id)}>
+              <Delete />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Stack>
     );
-  }, [debouncedSave, form.id, question, setQuestions]);
+  }, [debouncedSave, form.id, question, setOpenDrawer, setQuestions]);
 };
 
 export default Drawer;

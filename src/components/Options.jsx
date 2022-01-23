@@ -13,6 +13,7 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Clear } from "@mui/icons-material";
@@ -97,9 +98,11 @@ const Options = ({ question, debouncedSave }) => {
                     />
                   }
                 />
-                <IconButton onClick={deleteOption(i)}>
-                  <Clear />
-                </IconButton>
+                <Tooltip title="Eliminar">
+                  <IconButton onClick={deleteOption(i)}>
+                    <Clear />
+                  </IconButton>
+                </Tooltip>
               </Box>
             ))}
           </RadioGroup>
@@ -130,9 +133,11 @@ const Options = ({ question, debouncedSave }) => {
                     />
                   }
                 />
-                <IconButton onClick={deleteOption(i)}>
-                  <Clear />
-                </IconButton>
+                <Tooltip title="Eliminar opción" arrow>
+                  <IconButton onClick={deleteOption(i)}>
+                    <Clear />
+                  </IconButton>
+                </Tooltip>
               </Box>
             ))}
           </FormGroup>
