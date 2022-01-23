@@ -46,52 +46,10 @@ const QuestionPreview = ({ question }) => {
   );
 
   return useMemo(() => {
-    const handleChangeOption = (i) => (e) => {
-      const option = e.target.value;
-
-      const options = [...question.options];
-      options[i] = option;
-
-      const newQuestion = { ...question, options };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
     const handleChange = (field) => (e) => {
       const value = e.target.value;
 
       const newQuestion = { ...question, [field]: value };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const addOption = () => {
-      const option = "Opción " + (question.options.length + 1);
-      const newQuestion = {
-        ...question,
-        options: [...question.options, option],
-      };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const deleteOption = (i) => {
-      const options = [...question.options];
-      options.splice(i, 1);
-
-      const newQuestion = { ...question, options };
 
       debouncedSave(newQuestion);
 

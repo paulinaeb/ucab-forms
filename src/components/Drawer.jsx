@@ -20,6 +20,7 @@ import {
 } from "../constants/questions";
 import { deleteQuestion, saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
+import Options from "./Options";
 
 const Drawer = ({ setOpenDrawer }) => {
   const { form, questions, setQuestions, current } = useForm();
@@ -134,6 +135,7 @@ const Drawer = ({ setOpenDrawer }) => {
             </MenuItem>
           ))}
         </TextField>
+        <Options question={question} debouncedSave={debouncedSave} />
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <FormControlLabel
             control={<Checkbox />}
