@@ -1,4 +1,6 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 import { signUp } from "../api/auth";
@@ -29,20 +31,22 @@ const schema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Las contraseñas no coinciden"),
 });
 
-const onSubmit = async (user, { setSubmitting }) => {
-  setSubmitting(true);
-
-  const res = await signUp(user);
-
-  if (!res.ok) {
-    setSubmitting(false);
-    return alert(res.message);
-  }
-
-  alert(res.message);
-};
-
 const Signup = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const onSubmit = async (user, { setSubmitting }) => {
+    setSubmitting(true);
+
+    const res = await signUp(user);
+
+    if (!res.ok) {
+      setSubmitting(false);
+      return enqueueSnackbar(res.error, { variant: "error" });
+    }
+
+    enqueueSnackbar("Cuenta creada exitosamente", { variant: "success" });
+  };
+
   return (
     <>
       <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
@@ -94,14 +98,14 @@ const Signup = () => {
               </Link>
             </Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
+              <LoadingButton
                 sx={{ width: 120 }}
                 type="submit"
                 variant="contained"
-                disabled={isSubmitting}
+                loading={isSubmitting}
               >
                 Registrarse
-              </Button>
+              </LoadingButton>
             </Box>
           </Form>
         )}

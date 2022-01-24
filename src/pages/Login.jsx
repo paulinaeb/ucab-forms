@@ -1,4 +1,6 @@
-import { Box, Button, Typography, Container, Grid, Stack } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 import { logIn } from "../api/auth";
@@ -19,20 +21,22 @@ const schema = yup.object().shape({
   password: yup.string().required("Ingresa tu contraseña, por favor"),
 });
 
-const onSubmit = async (user, { setSubmitting }) => {
-  setSubmitting(true);
-
-  const res = await logIn(user);
-
-  if (!res.ok) {
-    setSubmitting(false);
-    return alert(res.message);
-  }
-
-  alert(res.message);
-};
-
 const Login = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const onSubmit = async (user, { setSubmitting }) => {
+    setSubmitting(true);
+
+    const res = await logIn(user);
+
+    if (!res.ok) {
+      setSubmitting(false);
+      return enqueueSnackbar(res.error, { variant: "error" });
+    }
+
+    enqueueSnackbar("Bienvenido de vuelta", { variant: "success" });
+  };
+
   return (
     <>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -70,14 +74,14 @@ const Login = () => {
               </Link>
             </Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
+              <LoadingButton
                 sx={{ width: 120 }}
                 type="submit"
                 variant="contained"
-                disabled={isSubmitting}
+                loading={isSubmitting}
               >
                 Ingresar
-              </Button>
+              </LoadingButton>
             </Box>
           </Form>
         )}

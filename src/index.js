@@ -11,6 +11,7 @@ import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import esLocale from "date-fns/locale/es";
 import { BrowserRouter } from "react-router-dom";
+import { SnackbarProvider } from "notistack";
 import ScrollToTop from "./components/ScrollToTop";
 import theme from "./theme";
 import App from "./App";
@@ -22,10 +23,12 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={esLocale}>
-        <BrowserRouter>
-          <ScrollToTop />
-          <App />
-        </BrowserRouter>
+        <SnackbarProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <App />
+          </BrowserRouter>
+        </SnackbarProvider>
       </LocalizationProvider>
     </ThemeProvider>
   </React.StrictMode>,
