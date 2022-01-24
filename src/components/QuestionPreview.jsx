@@ -9,12 +9,15 @@ import {
   FormGroup,
   FormLabel,
   MenuItem,
+  ListItemIcon,
+  ListItemText,
   Radio,
   RadioGroup,
   Slider,
   TextField,
   Typography,
 } from "@mui/material";
+import { ContentCut } from "@mui/icons-material";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import debounce from "lodash.debounce";
 import {
@@ -30,6 +33,7 @@ import {
 } from "../constants/questions";
 import { saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
+import Select from "./Select";
 
 const sliderMarks = (question) => {
   const marks = [];
@@ -133,16 +137,13 @@ const QuestionPreview = ({ question }) => {
         );
       case SELECT:
         return (
-          <TextField select variant="standard" defaultValue="_">
-            <MenuItem disabled value="_">
-              Selecciona una opción
-            </MenuItem>
+          <Select variant="standard" displayEmpty defaultValue="">
             {question.options.map((option, i) => (
               <MenuItem key={i} value={option}>
                 {option}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
           // <Box>
           //   {question.options.map((option, i) => (
           //     <Box key={i}>

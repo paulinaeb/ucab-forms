@@ -21,6 +21,7 @@ import {
 } from "../constants/questions";
 import { deleteQuestion, saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
+import Select from "./Select";
 import Options from "./Options";
 
 const Drawer = ({ setOpenDrawer }) => {

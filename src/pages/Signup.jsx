@@ -48,9 +48,6 @@ const Signup = () => {
       <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
         Crear una Cuenta
       </Typography>
-      {/* <Typography variant="body2" sx={{ mb: 3 }}>
-        Un texto genérico aquí, consistente
-      </Typography> */}
       <Formik
         initialValues={initialValues}
         validationSchema={schema}
