@@ -4,8 +4,10 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   Container,
   IconButton,
+  LinearProgress,
   Stack,
   Tab,
   TextField,
@@ -53,15 +55,36 @@ const EditForm = () => {
   };
 
   if (loading) {
-    return <Typography variant="h2">Loading...</Typography>;
+    return (
+      <Box>
+        <Header />
+        <LinearProgress />
+      </Box>
+    );
   }
 
   if (!form) {
-    return <Typography variant="h2">No se encontró la encuesta</Typography>;
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">No se encontró la encuesta</Typography>
+        </Box>
+      </Box>
+    );
   }
 
   if (form.userId !== user.id) {
-    return <Typography variant="h2">No autorizado</Typography>;
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">
+            No tienes permisos para editar esta encuesta
+          </Typography>
+        </Box>
+      </Box>
+    );
   }
 
   return (
