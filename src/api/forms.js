@@ -25,7 +25,7 @@ export const createForm = async (userId) => {
 
     return { form: formRef };
   } catch (error) {
-    return { error: { message: "Error al crear la encuesta" } };
+    return { error: "Error al crear la encuesta" };
   }
 };
 

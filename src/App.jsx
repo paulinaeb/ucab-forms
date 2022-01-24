@@ -1,9 +1,9 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { Typography } from "@mui/material";
 import { UserProvider } from "./hooks/useUser";
 import { FormProvider } from "./hooks/useForm";
 import AuthPage from "./components/AuthPage";
 import UnAuthPage from "./components/UnAuthPage";
+import AuthLayout from "./components/AuthLayout";
 import Header from "./components/Header";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
@@ -19,8 +19,7 @@ const App = () => {
         <Route
           element={
             <UnAuthPage>
-              <Typography variant="h1">UCAB Forms</Typography>
-              <Outlet />
+              <AuthLayout />
             </UnAuthPage>
           }
         >

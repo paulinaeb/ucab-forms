@@ -13,6 +13,7 @@ const FormProvider = ({ children }) => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,6 +53,8 @@ const FormProvider = ({ children }) => {
     questions,
     setQuestions,
     loading,
+    current,
+    setCurrent,
   };
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;

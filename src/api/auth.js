@@ -19,9 +19,17 @@ export const signUp = async ({ name, email, password }) => {
       email,
     });
 
-    return { ok: true, message: "Usuario registrado exitosamente" };
-  } catch (error) {
-    return { ok: false, message: error.message };
+    return { ok: true };
+  } catch (err) {
+    let error;
+
+    if (err.code === "auth/email-already-in-use") {
+      error = "Ya existe un usuario con este email";
+    } else {
+      error = "Error desconocido";
+    }
+
+    return { ok: false, error };
   }
 };
 
@@ -29,9 +37,24 @@ export const logIn = async ({ email, password }) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
 
-    return { ok: true, message: "Bienvenido de vuelta" };
-  } catch (error) {
-    return { ok: false, message: error.message };
+    return { ok: true };
+  } catch (err) {
+    let error;
+
+    switch (err.code) {
+      case "auth/user-not-found":
+      case "auth/wrong-password":
+        error = "Email o contraseña incorrectos";
+        break;
+      case "auth/too-many-requests":
+        error = "Cuenta bloqueada temporalmente";
+        break;
+      default:
+        error = "Error desconocido";
+        break;
+    }
+
+    return { ok: false, error };
   }
 };
 
@@ -39,9 +62,8 @@ export const signOut = async () => {
   try {
     await firebaseSignOut(auth);
 
-    return { ok: true, message: "Sesión cerrada correctamente" };
+    return { ok: true };
   } catch (error) {
-    console.log(error);
-    return { ok: false, message: error.message };
+    return { ok: false };
   }
 };

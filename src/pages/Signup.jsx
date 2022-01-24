@@ -1,4 +1,6 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { useSnackbar } from "notistack";
 import { Form, Formik } from "formik";
 import * as yup from "yup";
 import { signUp } from "../api/auth";
@@ -29,23 +31,27 @@ const schema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Las contraseñas no coinciden"),
 });
 
-const onSubmit = async (user, { setSubmitting }) => {
-  setSubmitting(true);
-
-  const res = await signUp(user);
-
-  if (!res.ok) {
-    setSubmitting(false);
-    return alert(res.message);
-  }
-
-  alert(res.message);
-};
-
 const Signup = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const onSubmit = async (user, { setSubmitting }) => {
+    setSubmitting(true);
+
+    const res = await signUp(user);
+
+    if (!res.ok) {
+      setSubmitting(false);
+      return enqueueSnackbar(res.error, { variant: "error" });
+    }
+
+    enqueueSnackbar("Cuenta creada exitosamente", { variant: "success" });
+  };
+
   return (
-    <Box>
-      <Typography variant="h2">Signup</Typography>
+    <>
+      <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
+        Crear una Cuenta
+      </Typography>
       <Formik
         initialValues={initialValues}
         validationSchema={schema}
@@ -53,31 +59,58 @@ const Signup = () => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <TextField label="Nombre" name="name" required />
-            <TextField label="Email" name="email" type="email" required />
+            <TextField
+              label="Nombre y Apellido"
+              name="name"
+              variant="filled"
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              variant="filled"
+              required
+              sx={{ mb: 2 }}
+            />
             <PasswordField
               label="Contraseña"
               name="password"
+              variant="filled"
               required
               inputProps={{
                 minLength: 6,
               }}
+              sx={{ mb: 2 }}
             />
             <PasswordField
-              label="Repetir Contraseña"
+              label="Confirmar Contraseña"
               name="repeatPassword"
+              variant="filled"
               required
+              sx={{ mb: 2 }}
             />
-            <Button type="submit" variant="contained" disabled={isSubmitting}>
-              Registrarse
-            </Button>
-            <Typography>
-              ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+            <Typography sx={{ mb: 2 }}>
+              ¿Ya tienes cuenta?{" "}
+              <Link sx={{ fontWeight: 500 }} to="/login">
+                Inicia sesión
+              </Link>
             </Typography>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <LoadingButton
+                sx={{ width: 120 }}
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+              >
+                Registrarse
+              </LoadingButton>
+            </Box>
           </Form>
         )}
       </Formik>
-    </Box>
+    </>
   );
 };
 

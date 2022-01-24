@@ -1,3 +1,8 @@
+import "@fontsource/poppins/300.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/700.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import { ThemeProvider } from "@mui/material/styles";
@@ -6,6 +11,7 @@ import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import esLocale from "date-fns/locale/es";
 import { BrowserRouter } from "react-router-dom";
+import { SnackbarProvider } from "notistack";
 import ScrollToTop from "./components/ScrollToTop";
 import theme from "./theme";
 import App from "./App";
@@ -17,10 +23,12 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={esLocale}>
-        <BrowserRouter>
-          <ScrollToTop />
-          <App />
-        </BrowserRouter>
+        <SnackbarProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <App />
+          </BrowserRouter>
+        </SnackbarProvider>
       </LocalizationProvider>
     </ThemeProvider>
   </React.StrictMode>,
@@ -30,7 +38,7 @@ ReactDOM.render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.unregister();
+serviceWorkerRegistration.register();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -3,16 +3,21 @@ import {
   Box,
   Button,
   Checkbox,
+  Container,
   FormControl,
   FormControlLabel,
   FormGroup,
   FormLabel,
   MenuItem,
+  ListItemIcon,
+  ListItemText,
   Radio,
   RadioGroup,
+  Slider,
   TextField,
   Typography,
 } from "@mui/material";
+import { ContentCut } from "@mui/icons-material";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import debounce from "lodash.debounce";
 import {
@@ -28,9 +33,17 @@ import {
 } from "../constants/questions";
 import { saveQuestion } from "../api/questions";
 import { useForm } from "../hooks/useForm";
+import Select from "./Select";
 
-const sliderMinValues = [0, 1];
-const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+const sliderMarks = (question) => {
+  const marks = [];
+
+  for (let i = question.min; i <= question.max; i++) {
+    marks.push({ value: i, label: i });
+  }
+
+  return marks;
+};
 
 const QuestionPreview = ({ question }) => {
   const { form, setQuestions } = useForm();
@@ -45,60 +58,6 @@ const QuestionPreview = ({ question }) => {
   );
 
   return useMemo(() => {
-    const handleChangeOption = (i) => (e) => {
-      const option = e.target.value;
-
-      const options = [...question.options];
-      options[i] = option;
-
-      const newQuestion = { ...question, options };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const handleChange = (field) => (e) => {
-      const value = e.target.value;
-
-      const newQuestion = { ...question, [field]: value };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const addOption = () => {
-      const option = "Opción " + (question.options.length + 1);
-      const newQuestion = {
-        ...question,
-        options: [...question.options, option],
-      };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const deleteOption = (i) => {
-      const options = [...question.options];
-      options.splice(i, 1);
-
-      const newQuestion = { ...question, options };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
     switch (question.type) {
       case TEXT:
         return (
@@ -114,12 +73,12 @@ const QuestionPreview = ({ question }) => {
             disabled
             variant="standard"
             value="Texto de respuesta larga"
+            fullWidth
           />
         );
       case RADIO:
         return (
           <FormControl component="fieldset">
-            <FormLabel component="legend">Opciones</FormLabel>
             <RadioGroup>
               {question.options.map((option, i) => (
                 <Box key={i}>
@@ -129,26 +88,27 @@ const QuestionPreview = ({ question }) => {
                     value={option}
                     control={<Radio />}
                     label={
-                      <TextField
-                        variant="standard"
-                        value={option}
-                        onChange={handleChangeOption(i)}
-                      />
+                      option
+                      /*<TextField
+                          variant="standard"
+                          value={option}
+                          onChange={handleChangeOption(i)}
+                          sx={{width:300}}
+                        />*/
                     }
                   />
-                  <Button onClick={() => deleteOption(i)}>
+                  {/* <Button onClick={() => deleteOption(i)}>
                     Eliminar opción
-                  </Button>
+                  </Button> */}
                 </Box>
               ))}
             </RadioGroup>
-            <Button onClick={addOption}>Agregar opción</Button>
+            {/* <Button onClick={addOption}>Agregar opción</Button> */}
           </FormControl>
         );
       case CHECKBOX:
         return (
           <FormControl component="fieldset">
-            <FormLabel component="legend">Opciones</FormLabel>
             <FormGroup>
               {question.options.map((option, i) => (
                 <Box key={i}>
@@ -158,78 +118,63 @@ const QuestionPreview = ({ question }) => {
                     value={option}
                     control={<Checkbox />}
                     label={
-                      <TextField
-                        variant="standard"
-                        value={option}
-                        onChange={handleChangeOption(i)}
-                      />
+                      option
+                      // <TextField
+                      //   variant="standard"
+                      //   value={option}
+                      //   onChange={handleChangeOption(i)}
+                      // />
                     }
                   />
-                  <Button onClick={() => deleteOption(i)}>
-                    Eliminar opción
-                  </Button>
+                  {/* <Button onClick={() => deleteOption(i)}>
+                      Eliminar opción
+                    </Button> */}
                 </Box>
               ))}
             </FormGroup>
-            <Button onClick={addOption}>Agregar opción</Button>
+            {/* <Button onClick={addOption}>Agregar opción</Button> */}
           </FormControl>
         );
       case SELECT:
         return (
-          <Box>
+          <Select variant="standard" displayEmpty defaultValue="">
             {question.options.map((option, i) => (
-              <Box key={i}>
-                <Typography>{i + 1}.</Typography>
-                <TextField
-                  variant="standard"
-                  value={option}
-                  onChange={handleChangeOption(i)}
-                />
-                <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
-              </Box>
+              <MenuItem key={i} value={option}>
+                {option}
+              </MenuItem>
             ))}
-            <Button onClick={addOption}>Agregar opción</Button>
-          </Box>
+          </Select>
+          // <Box>
+          //   {question.options.map((option, i) => (
+          //     <Box key={i}>
+          //       <Typography>{i + 1}.</Typography>
+          //       <TextField
+          //         variant="standard"
+          //         value={option}
+          //         onChange={handleChangeOption(i)}
+          //       />
+          //       <Button onClick={() => deleteOption(i)}>Eliminar opción</Button>
+          //     </Box>
+          //   ))}
+          //   <Button onClick={addOption}>Agregar opción</Button>
+          // </Box>
         );
       case SLIDER:
         return (
-          <Box>
-            <TextField
-              select
-              label="Desde"
-              value={question.min}
-              onChange={handleChange("min")}
-            >
-              {sliderMinValues.map((n) => (
-                <MenuItem key={n} value={n}>
-                  {n}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              label="Hasta"
-              value={question.max}
-              onChange={handleChange("max")}
-            >
-              {sliderMaxValues.map((n) => (
-                <MenuItem key={n} value={n}>
-                  {n}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Typography>{question.min}</Typography>
-            <TextField
-              variant="standard"
-              value={question.minLabel ?? ""}
-              onChange={handleChange("minLabel")}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+              {question.minLabel}
+            </Typography>
+            <Slider
+              valueLabelDisplay="auto"
+              marks={sliderMarks(question)}
+              min={question.min}
+              max={question.max}
+              sx={{ mx: 2 }}
             />
-            <Typography>{question.max}</Typography>
-            <TextField
-              variant="standard"
-              value={question.maxLabel ?? ""}
-              onChange={handleChange("maxLabel")}
-            />
+            <Typography align="center" sx={{ mb: 2, maxWidth: "25%" }}>
+              {question.maxLabel}
+            </Typography>
           </Box>
         );
       case DATE:
@@ -239,7 +184,9 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       case TIME:
@@ -249,7 +196,9 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       case DATETIME:
@@ -259,13 +208,15 @@ const QuestionPreview = ({ question }) => {
             disabled
             value={null}
             onChange={() => null}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField variant="standard" {...params} />
+            )}
           />
         );
       default:
         return null;
     }
-  }, [debouncedSave, question, setQuestions]);
+  }, [question]);
 };
 
 export default QuestionPreview;

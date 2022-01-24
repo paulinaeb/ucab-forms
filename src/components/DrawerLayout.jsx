@@ -3,13 +3,15 @@ import {
   Badge,
   Box,
   CssBaseline,
+  Container,
   Divider,
-  Drawer,
+  Drawer as MuiDrawer,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  TextField,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -22,16 +24,17 @@ import {
   Notifications,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import Drawer from "./Drawer";
 
-const drawerWidth = 240;
+const drawerWidth = 350;
 
-const DrawerLayout = ({ open, children }) => {
+const DrawerLayout = ({ open, setOpen, children }) => {
   const theme = useTheme();
   const bigScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Drawer
+      <MuiDrawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -40,57 +43,21 @@ const DrawerLayout = ({ open, children }) => {
             boxSizing: "border-box",
           },
         }}
-        variant={bigScreen ? "persistent" : "temporary"}
-        anchor="left"
-        open={open}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <Inbox /> : <Mail />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <Inbox /> : <Mail />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      <Box
-        sx={{
-          flexGrow: 1,
-          padding: 3,
-          ...(bigScreen && {
-            marginLeft: `-${drawerWidth}px`,
-            transition: theme.transitions.create("margin", {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
-            ...(open && {
-              marginLeft: 0,
-              transition: theme.transitions.create("margin", {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
-            }),
-          }),
+        variant={bigScreen ? "permanent" : "temporary"}
+        open={bigScreen ? true : open}
+        onClose={() => setOpen(false)}
+        ModalProps={{
+          keepMounted: true,
         }}
       >
+        <Toolbar />
+        <Box sx={{ overflow: "auto", p: 2 }}>
+          <Drawer setOpenDrawer={setOpen} />
+        </Box>
+      </MuiDrawer>
+      <Container sx={{ p: 3 }} maxWidth="md">
         {children}
-      </Box>
+      </Container>
     </Box>
   );
 };
