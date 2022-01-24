@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { Box, Button, Fab, Stack, Tooltip } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { defaultQuestion } from "../constants/questions";
-import { useForm } from "../hooks/useForm";
-import { insertQuestion } from "../api/questions";
-import EditQuestion from "./EditQuestion";
+import { defaultQuestion } from "../../constants/questions";
+import { useForm } from "../../hooks/useForm";
+import { insertQuestion } from "../../api/questions";
+import QuestionPreview from "./QuestionPreview";
 
 const Questions = ({ setOpenDrawer }) => {
   const { form, questions, current, setCurrent } = useForm();
@@ -58,9 +58,11 @@ const Questions = ({ setOpenDrawer }) => {
       <Box>
         <Stack spacing={2}>
           {questions.map((question, i) => (
-            <Box key={i}>
-              <EditQuestion question={question} setOpenDrawer={setOpenDrawer} />
-            </Box>
+            <QuestionPreview
+              key={i}
+              question={question}
+              setOpenDrawer={setOpenDrawer}
+            />
           ))}
         </Stack>
         <Tooltip title="Agregar pregunta" arrow>

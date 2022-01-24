@@ -21,9 +21,9 @@ import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useForm } from "../hooks/useForm";
 import Header from "../components/Header";
-import DrawerLayout from "../components/DrawerLayout";
-import Questions from "../components/Questions";
-import Responses from "../components/Responses";
+import DrawerLayout from "../components/EditForm/DrawerLayout";
+import Questions from "../components/EditForm/Questions";
+import Responses from "../components/EditForm/Responses";
 
 const EditForm = () => {
   const user = useUser();

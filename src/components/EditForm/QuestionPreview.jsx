@@ -13,9 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-
-import { useForm } from "../hooks/useForm";
-import QuestionPreview from "./QuestionPreview";
+import { useForm } from "../../hooks/useForm";
+import AllQuestionsPreview from "../AllQuestionsPreview";
 
 const EditQuestion = ({ question, setOpenDrawer }) => {
   const { form, setQuestions, current, setCurrent } = useForm();
@@ -70,7 +69,7 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
               </IconButton>
             </Container>
           </Container> */}
-        <QuestionPreview question={question} />
+        <AllQuestionsPreview question={question} />
       </Card>
 
       /*<Card>
@@ -94,7 +93,7 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
             </MenuItem>
           ))}
         </TextField>
-        <QuestionPreview question={question} />
+        <AllQuestionsPreview question={question} />
         <FormControlLabel
           control={<Checkbox />}
           checked={question.required}

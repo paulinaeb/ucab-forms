@@ -21,7 +21,7 @@ import {
   TEXT,
   TEXTAREA,
   TIME,
-} from "../constants/questions";
+} from "../../constants/questions";
 
 ChartJS.register(
   ArcElement,
