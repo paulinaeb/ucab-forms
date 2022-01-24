@@ -36,7 +36,7 @@ const Login = () => {
   return (
     <>
       <Typography variant="h5" component="h2" gutterBottom>
-        Iniciar sesión
+        Iniciar Sesión
       </Typography>
       <Typography variant="body2" sx={{ mb: 3 }}>
         Accede a tu cuenta para continuar
@@ -53,20 +53,14 @@ const Login = () => {
               name="email"
               type="email"
               required
-              sx={{
-                mb: 2,
-                // backgroundColor: "rgba(255, 255, 255, 0.40)",
-              }}
+              sx={{ mb: 2 }}
               variant="filled"
             />
             <PasswordField
               label="Contraseña"
               name="password"
               required
-              sx={{
-                mb: 2,
-                // backgroundColor: "rgba(255, 255, 255, 0.40)",
-              }}
+              sx={{ mb: 2 }}
               variant="filled"
             />
             <Typography sx={{ mb: 2 }}>

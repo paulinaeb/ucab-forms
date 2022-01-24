@@ -176,7 +176,12 @@ const Options = ({ question, debouncedSave }) => {
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography mr={2} color="text.secondary">
+                  <Typography
+                    mr={2}
+                    minWidth={15}
+                    align="right"
+                    color="text.secondary"
+                  >
                     {i + 1}.
                   </Typography>
                   <TextField

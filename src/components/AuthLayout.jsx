@@ -1,22 +1,21 @@
 import { Box, Button, Typography, Container, Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Background from "../img/fondo.jpg";
-import Logo from "../img/logo.png";
+import background from "../img/fondo.jpg";
+import logo from "../img/logo.png";
 
 const AuthLayout = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${Background})`,
+        backgroundImage: `url(${background})`,
         backgroundRepeat: "no-repeat",
-        backgroundColor: "common.black",
         backgroundSize: "cover",
+        backgroundPosition: "center",
         display: "flex",
         minHeight: "100vh",
         backdropFilter: "blur(4px)",
         alignItems: "center",
         justifyContent: "center",
-        color: "common.white",
         px: 1,
         pt: 2,
         pb: 4,
@@ -31,7 +30,7 @@ const AuthLayout = () => {
             mb: 2,
           }}
         >
-          <Box component="img" src={Logo} alt="logo" sx={{ width: 110 }} />
+          <Box component="img" src={logo} alt="logo" sx={{ width: 110 }} />
           <Typography
             component="h1"
             align="center"
