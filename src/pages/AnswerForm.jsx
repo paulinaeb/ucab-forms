@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  FormControl,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { getForm } from "../api/forms";
 import { getQuestions } from "../api/questions";
 import { submitResponse } from "../api/responses";
+import Header from "../components/Header";
 import Question from "../components/Question";
 
 const AnswerForm = () => {
@@ -51,22 +60,35 @@ const AnswerForm = () => {
     return <Typography variant="h2">No se encontró la encuesta</Typography>;
   }
 
+  console.log(answers);
+
   return (
     <Box>
-      <Typography variant="h1">Answer Form</Typography>
-      <Typography variant="h2">{form.title}</Typography>
-      <Typography variant="h3">{form.description}</Typography>
-      <form onSubmit={submit}>
-        {questions.map((question) => (
-          <Question
-            key={question.id}
-            question={question}
-            answers={answers}
-            setAnswers={setAnswers}
-          />
-        ))}
-        <Button type="submit">Submit</Button>
-      </form>
+      <Header />
+      <Container sx={{ p: 3 }} maxWidth="md">
+        <Card sx={{ p: 3, mb: 2 }} variant="outlined">
+          <Typography variant="h5" gutterBottom>
+            {form.title}
+          </Typography>
+          <Typography>{form.description}</Typography>
+        </Card>
+        <form onSubmit={submit}>
+          <Stack spacing={2}>
+            {questions.map((question, i) => (
+              <Card key={i} sx={{ p: 3 }} variant="outlined">
+                <Question
+                  question={question}
+                  answers={answers}
+                  setAnswers={setAnswers}
+                />
+              </Card>
+            ))}
+            <Button type="submit" variant="contained">
+              Enviar
+            </Button>
+          </Stack>
+        </form>
+      </Container>
     </Box>
   );
 };

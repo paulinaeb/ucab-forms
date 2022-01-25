@@ -3,10 +3,11 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormGroup,
   FormLabel,
   MenuItem,
   Radio,
-  Slider,
+  RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
@@ -22,67 +23,57 @@ import {
   TEXTAREA,
   TIME,
 } from "../constants/questions";
-
-const sliderMarks = (question) => {
-  const marks = [];
-
-  for (let i = question.min; i <= question.max; i++) {
-    marks.push({ value: i });
-  }
-
-  marks[0].label = question.minLabel;
-  marks[marks.length - 1].label = question.maxLabel;
-
-  return marks;
-};
+import Select from "./Select";
+import Slider from "./Slider";
+import RequiredMark from "./RequiredMark";
 
 const Question = ({ answers, question, setAnswers }) => {
+  const handleChange = (e) => {
+    setAnswers({ ...answers, [question.id]: e.target.value });
+  };
+
+  const answer = answers[question.id] ?? "";
+
   const renderQuestion = () => {
     switch (question.type) {
       case TEXT:
         return (
           <TextField
-            label={question.title}
+            variant="standard"
+            placeholder="Respuesta"
             required={question.required}
-            value={answers[question.id] ?? ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [question.id]: e.target.value })
-            }
+            value={answer}
+            onChange={handleChange}
           />
         );
       case TEXTAREA:
         return (
           <TextField
-            label={question.title}
+            variant="standard"
+            placeholder="Respuesta"
             multiline
+            fullWidth
             required={question.required}
-            value={answers[question.id] ?? ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [question.id]: e.target.value })
-            }
+            value={answer}
+            onChange={handleChange}
           />
         );
       case RADIO:
         return (
-          <FormControl>
-            <FormLabel>{question.title}</FormLabel>
+          <RadioGroup value={answer} onChange={handleChange}>
             {question.options.map((option, i) => (
               <FormControlLabel
                 key={i}
+                value={option}
                 control={<Radio />}
                 label={option}
-                checked={answers[question.id] === option}
-                onChange={(e) =>
-                  setAnswers({ ...answers, [question.id]: option })
-                }
               />
             ))}
-          </FormControl>
+          </RadioGroup>
         );
       case CHECKBOX:
         return (
-          <FormControl>
-            <FormLabel>{question.title}</FormLabel>
+          <FormGroup>
             {question.options.map((option, i) => (
               <FormControlLabel
                 key={i}
@@ -109,78 +100,79 @@ const Question = ({ answers, question, setAnswers }) => {
                 }}
               />
             ))}
-          </FormControl>
+          </FormGroup>
         );
       case SELECT:
         return (
-          <TextField
-            select
-            label={question.title}
+          <Select
+            variant="standard"
             required={question.required}
-            value={answers[question.id] ?? ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [question.id]: e.target.value })
-            }
+            displayEmpty
+            value={answer}
+            onChange={handleChange}
           >
             {question.options.map((option, i) => (
               <MenuItem key={i} value={option}>
                 {option}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
         );
       case SLIDER:
         return (
-          <Box>
-            <Slider
-              aria-label={question.title}
-              valueLabelDisplay="auto"
-              marks={sliderMarks(question)}
-              min={question.min}
-              max={question.max}
-              value={answers[question.id] ?? question.min}
-              onChange={(e, value) =>
-                setAnswers({ ...answers, [question.id]: value })
-              }
-            />
-          </Box>
+          <Slider
+            question={question}
+            value={answers[question.id] ?? question.min}
+            onChange={(e, value) =>
+              setAnswers({ ...answers, [question.id]: value })
+            }
+          />
         );
       case DATE:
         return (
           <DatePicker
-            label={question.title}
             value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
             renderInput={(params) => (
-              <TextField {...params} required={question.required} />
+              <TextField
+                {...params}
+                variant="standard"
+                required={question.required}
+              />
             )}
           />
         );
       case TIME:
         return (
           <TimePicker
-            label={question.title}
             value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
             renderInput={(params) => (
-              <TextField {...params} required={question.required} />
+              <TextField
+                {...params}
+                variant="standard"
+                required={question.required}
+              />
             )}
           />
         );
       case DATETIME:
         return (
           <DateTimePicker
-            label={question.title}
             value={answers[question.id] ?? null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
             renderInput={(params) => (
-              <TextField {...params} required={question.required} />
+              <TextField
+                {...params}
+                variant="standard"
+                required={question.required}
+              />
             )}
           />
         );
@@ -191,7 +183,9 @@ const Question = ({ answers, question, setAnswers }) => {
 
   return (
     <Box>
-      <Typography variant="h4">{question.title}</Typography>
+      <Typography mb={2}>
+        {question.title} <RequiredMark question={question} />{" "}
+      </Typography>
       {renderQuestion()}
     </Box>
   );

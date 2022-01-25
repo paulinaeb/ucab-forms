@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Card, Typography } from "@mui/material";
 import { useForm } from "../../hooks/useForm";
 import AllQuestionsPreview from "../AllQuestionsPreview";
+import RequiredMark from "../RequiredMark";
 
 const EditQuestion = ({ question, setOpenDrawer }) => {
   const { current, setCurrent } = useForm();
@@ -12,13 +13,6 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
       setOpenDrawer(true);
     };
 
-    const requiredMark = question.required && (
-      <Typography component="span" color="error">
-        {" "}
-        *
-      </Typography>
-    );
-
     return (
       <Card
         sx={{ p: 3 }}
@@ -28,7 +22,7 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
       >
         <Typography mb={2}>
           {question.title}
-          {requiredMark}
+          <RequiredMark question={question} />
         </Typography>
         <AllQuestionsPreview question={question} />
       </Card>
