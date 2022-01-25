@@ -1,7 +1,7 @@
 import { Box, Button, Typography, Container, Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import background from "../img/fondo.jpg";
-import logo from "../img/logo.png";
+import logo from "../img/logo.svg";
 
 const AuthLayout = () => {
   return (
@@ -30,18 +30,7 @@ const AuthLayout = () => {
             mb: 2,
           }}
         >
-          <Box component="img" src={logo} alt="logo" sx={{ width: 110 }} />
-          <Typography
-            component="h1"
-            align="center"
-            sx={{
-              fontWeight: 450,
-              fontSize: 40,
-              textShadow: "3px 6px 6px rgba(0, 0, 0, 0.8)",
-            }}
-          >
-            UCAB Forms
-          </Typography>
+          <Box component="img" src={logo} alt="logo" sx={{ width: 320 }} />
         </Box>
         <Box
           sx={{
