@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Card, Typography, Stack } from "@mui/material";
 import { useForm } from "../../hooks/useForm";
-import QuestionSummary from "./QuestionSummary";
+import QuestionStat from "./QuestionStat";
 
 const Responses = () => {
   const { questions, responses } = useForm();
@@ -11,10 +11,10 @@ const Responses = () => {
       <Box>
         <Stack spacing={2}>
           {questions.map((question) => (
-            <Box key={question.id}>
-              <Typography variant="h6">{question.title}</Typography>
-              <QuestionSummary question={question} responses={responses} />
-            </Box>
+            <Card key={question.id} sx={{ p: 3 }} variant="outlined">
+              <Typography>{question.title}</Typography>
+              <QuestionStat question={question} responses={responses} />
+            </Card>
           ))}
         </Stack>
       </Box>

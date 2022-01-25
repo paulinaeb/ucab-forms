@@ -146,7 +146,7 @@ const QuestionSummary = ({ question, responses }) => {
     case TEXTAREA:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]}
@@ -157,7 +157,7 @@ const QuestionSummary = ({ question, responses }) => {
     case DATE:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]
@@ -170,7 +170,7 @@ const QuestionSummary = ({ question, responses }) => {
     case TIME:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id] ? format(r[question.id].toDate(), "hh:mm a") : ""}
@@ -181,7 +181,7 @@ const QuestionSummary = ({ question, responses }) => {
     case DATETIME:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]
@@ -195,7 +195,7 @@ const QuestionSummary = ({ question, responses }) => {
     case SELECT:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           <Container maxWidth="sm">
             <Pie data={data} />
           </Container>
@@ -204,7 +204,7 @@ const QuestionSummary = ({ question, responses }) => {
     case CHECKBOX:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
@@ -233,7 +233,7 @@ const QuestionSummary = ({ question, responses }) => {
     case SLIDER:
       return (
         <>
-          <Typography variant="body1">{numberOfResponsesText}</Typography>
+          <Typography variant="caption">{numberOfResponsesText}</Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
