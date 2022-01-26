@@ -3,12 +3,14 @@ import {
   Badge,
   Box,
   IconButton,
+  SvgIcon,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { AccountCircle, Notifications } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import { ReactComponent as Logo } from "../img/logo-header.svg";
 
 const Header = ({ leftIcon }) => {
   const theme = useTheme();
@@ -18,12 +20,12 @@ const Header = ({ leftIcon }) => {
       <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box>{leftIcon}</Box>
-          <Typography
-            variant="h6"
-            textAlign="center"
+          <Box
             component={Link}
             to="/dashboard"
             sx={{
+              display: "flex",
+              alignItems: "center",
               color: "inherit",
               textDecoration: "none",
               position: "absolute",
@@ -32,8 +34,13 @@ const Header = ({ leftIcon }) => {
               transform: "translate(-50%, -50%)",
             }}
           >
-            UCAB Forms
-          </Typography>
+            <SvgIcon sx={{ mr: 1 }}>
+              <Logo />
+            </SvgIcon>
+            <Typography variant="h6" component="h1" textAlign="center">
+              UCAB Forms
+            </Typography>
+          </Box>
           <Box>
             <IconButton size="large" color="inherit">
               <Badge badgeContent={17} color="secondary">
