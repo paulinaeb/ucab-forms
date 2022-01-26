@@ -1,15 +1,13 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { keyframes } from "@mui/system";
+import logo from "../img/logo.svg";
 
 const blink = keyframes`
-  0% {
+  from {
     opacity: 1;
   }
-  50% {
+  to {
     opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 `;
 
@@ -21,12 +19,16 @@ const Loading = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        animation: `${blink} 2s infinite ease`,
+        animation: `${blink} 1s infinite alternate`,
+        p: 2,
       }}
     >
-      <Typography variant="h1" textAlign="center">
-        UCAB Forms
-      </Typography>
+      <Box
+        component="img"
+        src={logo}
+        alt="logo"
+        sx={{ width: "100%", maxWidth: "md" }}
+      />
     </Box>
   );
 };
