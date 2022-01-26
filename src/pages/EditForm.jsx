@@ -127,7 +127,7 @@ const EditForm = () => {
               <TabList
                 onChange={handleChangeTab}
                 textColor="inherit"
-                indicatorColor="secondary"
+                indicatorColor="primary"
                 variant="fullWidth"
                 aria-label="questions/responses tabs"
               >

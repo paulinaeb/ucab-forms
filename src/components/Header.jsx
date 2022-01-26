@@ -43,7 +43,7 @@ const Header = ({ leftIcon }) => {
           </Box>
           <Box>
             <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="secondary">
+              <Badge badgeContent={17} color="primary">
                 <Notifications />
               </Badge>
             </IconButton>
