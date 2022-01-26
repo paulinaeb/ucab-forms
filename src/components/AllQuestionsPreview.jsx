@@ -82,14 +82,14 @@ const QuestionPreview = ({ question }) => {
       return (
         <Select variant="standard" displayEmpty defaultValue="">
           {question.options.map((option, i) => (
-            <MenuItem key={i} value={option}>
+            <MenuItem disabled key={i} value={option}>
               {option}
             </MenuItem>
           ))}
         </Select>
       );
     case SLIDER:
-      return <Slider question={question} />;
+      return <Slider disabled question={question} />;
     case DATE:
       return (
         <DatePicker
