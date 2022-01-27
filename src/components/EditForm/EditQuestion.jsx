@@ -34,7 +34,6 @@ const EditQuestion = ({ setOpenDrawer }) => {
     () =>
       debounce(async (newQuestion) => {
         await saveQuestion(form.id, newQuestion);
-        alert("Pregunta guardada");
       }, 3000),
     [form.id]
   );
@@ -106,7 +105,6 @@ const EditQuestion = ({ setOpenDrawer }) => {
       }
 
       setOpenDrawer(false);
-      alert("Pregunta eliminada");
     };
 
     if (!question) {

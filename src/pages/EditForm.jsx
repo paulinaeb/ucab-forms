@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  CircularProgress,
   Container,
   IconButton,
   LinearProgress,
@@ -15,7 +14,6 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Menu, Settings } from "@mui/icons-material";
-import { Link, Outlet, useLocation } from "react-router-dom";
 import debounce from "lodash.debounce";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
@@ -31,7 +29,7 @@ const EditForm = () => {
   const [currentTab, setCurrentTab] = useState("0");
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const handleChangeTab = (event, value) => {
+  const handleChangeTab = (e, value) => {
     setCurrentTab(value);
   };
 
@@ -42,7 +40,6 @@ const EditForm = () => {
   const debouncedSave = useMemo(() => {
     return debounce(async (form) => {
       await saveForm(form);
-      alert("Encuesta guardada");
     }, 3000);
   }, []);
 

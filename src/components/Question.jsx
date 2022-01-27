@@ -142,6 +142,9 @@ const Question = ({ answers, question, setAnswers }) => {
                 required={question.required}
               />
             )}
+            okText="Aceptar"
+            cancelText="Cancelar"
+            toolbarTitle="Seleccionar fecha"
           />
         );
       case TIME:
@@ -158,6 +161,9 @@ const Question = ({ answers, question, setAnswers }) => {
                 required={question.required}
               />
             )}
+            okText="Aceptar"
+            cancelText="Cancelar"
+            toolbarTitle="Seleccionar hora"
           />
         );
       case DATETIME:
@@ -174,6 +180,9 @@ const Question = ({ answers, question, setAnswers }) => {
                 required={question.required}
               />
             )}
+            okText="Aceptar"
+            cancelText="Cancelar"
+            toolbarTitle="Seleccionar fecha y hora"
           />
         );
       default:

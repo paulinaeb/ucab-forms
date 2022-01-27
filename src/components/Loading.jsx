@@ -3,10 +3,13 @@ import { keyframes } from "@mui/system";
 import logo from "../img/logo.svg";
 
 const blink = keyframes`
-  from {
+  0% {
+    opacity: 0;
+  }
+  50%, {
     opacity: 1;
   }
-  to {
+  100% {
     opacity: 0;
   }
 `;
@@ -19,7 +22,7 @@ const Loading = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        animation: `${blink} 1s infinite alternate`,
+        animation: `${blink} 2s infinite ease`,
         p: 2,
       }}
     >
