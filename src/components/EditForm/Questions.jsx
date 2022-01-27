@@ -36,7 +36,9 @@ const Questions = ({ setOpenDrawer }) => {
       const i = questions.findIndex((q) => q.id === current);
       let newIndex;
 
-      if (i === questions.length - 1 || i === -1) {
+      if (questions.length === 0) {
+        newIndex = 0;
+      } else if (i === questions.length - 1 || i === -1) {
         newIndex = questions[questions.length - 1].index + 1;
       } else {
         newIndex = (questions[i].index + questions[i + 1].index) / 2;
