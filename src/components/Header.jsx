@@ -2,18 +2,34 @@ import {
   AppBar,
   Badge,
   Box,
+  Divider,
   IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
   SvgIcon,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { AccountCircle, Notifications } from "@mui/icons-material";
+import { AccountCircle, Notifications, Logout } from "@mui/icons-material";
+import {
+  usePopupState,
+  bindTrigger,
+  bindMenu,
+} from "material-ui-popup-state/hooks";
 import { useTheme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
+import { useUser } from "../hooks/useUser";
+import { signOut } from "../api/auth";
 import { ReactComponent as Logo } from "../img/logo-header.svg";
 
 const Header = ({ leftIcon }) => {
+  const user = useUser();
   const theme = useTheme();
+  const popupState = usePopupState({
+    variant: "popover",
+    popupId: "user-menu",
+  });
 
   return (
     <>
@@ -47,9 +63,29 @@ const Header = ({ leftIcon }) => {
                 <Notifications />
               </Badge>
             </IconButton>
-            <IconButton size="large" edge="end" color="inherit">
+            <IconButton
+              size="large"
+              edge="end"
+              color="inherit"
+              {...bindTrigger(popupState)}
+            >
               <AccountCircle />
             </IconButton>
+            <Menu {...bindMenu(popupState)}>
+              <MenuItem onClick={popupState.close}>
+                <ListItemIcon>
+                  <AccountCircle fontSize="small" />
+                </ListItemIcon>
+                {user.name}
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={signOut}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Cerrar sesión
+              </MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
