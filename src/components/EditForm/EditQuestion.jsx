@@ -18,13 +18,12 @@ import {
   RADIO,
   SELECT,
   SLIDER,
-} from "../constants/questions";
-import { deleteQuestion, saveQuestion } from "../api/questions";
-import { useForm } from "../hooks/useForm";
-import Select from "./Select";
-import Options from "./Options";
+} from "../../constants/questions";
+import { deleteQuestion, saveQuestion } from "../../api/questions";
+import { useForm } from "../../hooks/useForm";
+import EditOptions from "./EditOptions";
 
-const Drawer = ({ setOpenDrawer }) => {
+const EditQuestion = ({ setOpenDrawer }) => {
   const { form, questions, setQuestions, current } = useForm();
 
   const question = useMemo(() => {
@@ -35,7 +34,6 @@ const Drawer = ({ setOpenDrawer }) => {
     () =>
       debounce(async (newQuestion) => {
         await saveQuestion(form.id, newQuestion);
-        alert("Pregunta guardada");
       }, 3000),
     [form.id]
   );
@@ -107,7 +105,6 @@ const Drawer = ({ setOpenDrawer }) => {
       }
 
       setOpenDrawer(false);
-      alert("Pregunta eliminada");
     };
 
     if (!question) {
@@ -137,7 +134,7 @@ const Drawer = ({ setOpenDrawer }) => {
             </MenuItem>
           ))}
         </TextField>
-        <Options question={question} debouncedSave={debouncedSave} />
+        <EditOptions question={question} debouncedSave={debouncedSave} />
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <FormControlLabel
             control={<Checkbox />}
@@ -156,4 +153,4 @@ const Drawer = ({ setOpenDrawer }) => {
   }, [debouncedSave, form.id, question, setOpenDrawer, setQuestions]);
 };
 
-export default Drawer;
+export default EditQuestion;

@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  increment,
   onSnapshot,
   orderBy,
   query,
@@ -46,8 +47,12 @@ export const getQuestionsChanges = (formId, callback) => {
 export const insertQuestion = async (formId, question) => {
   try {
     const questionsRef = collection(db, "forms", formId, "questions");
-
     const questionRef = await addDoc(questionsRef, question);
+
+    const formRef = doc(db, "forms", formId);
+    updateDoc(formRef, {
+      questions: increment(1),
+    });
 
     return { question: questionRef };
   } catch (error) {
@@ -70,7 +75,12 @@ export const saveQuestion = async (formId, question) => {
 export const deleteQuestion = async (formId, questionId) => {
   try {
     const questionRef = doc(db, "forms", formId, "questions", questionId);
-    await deleteDoc(questionRef);
+    deleteDoc(questionRef);
+
+    const formRef = doc(db, "forms", formId);
+    updateDoc(formRef, {
+      questions: increment(-1),
+    });
 
     return { question: questionRef };
   } catch (error) {

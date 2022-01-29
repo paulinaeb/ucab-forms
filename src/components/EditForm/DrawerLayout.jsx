@@ -1,40 +1,16 @@
-import {
-  AppBar,
-  Badge,
-  Box,
-  CssBaseline,
-  Container,
-  Divider,
-  Drawer as MuiDrawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  TextField,
-  Toolbar,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
-import {
-  AccountCircle,
-  Inbox,
-  Mail,
-  Menu,
-  Notifications,
-} from "@mui/icons-material";
+import { Box, Container, Drawer, Toolbar, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Drawer from "./Drawer";
+import EditQuestion from "./EditQuestion";
 
 const drawerWidth = 350;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
   const theme = useTheme();
-  const bigScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const upMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <Box sx={{ display: "flex" }}>
-      <MuiDrawer
+      <Drawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -43,8 +19,8 @@ const DrawerLayout = ({ open, setOpen, children }) => {
             boxSizing: "border-box",
           },
         }}
-        variant={bigScreen ? "permanent" : "temporary"}
-        open={bigScreen ? true : open}
+        variant={upMd ? "permanent" : "temporary"}
+        open={upMd ? true : open}
         onClose={() => setOpen(false)}
         ModalProps={{
           keepMounted: true,
@@ -52,9 +28,9 @@ const DrawerLayout = ({ open, setOpen, children }) => {
       >
         <Toolbar />
         <Box sx={{ overflow: "auto", p: 2 }}>
-          <Drawer setOpenDrawer={setOpen} />
+          <EditQuestion setOpenDrawer={setOpen} />
         </Box>
-      </MuiDrawer>
+      </Drawer>
       <Container sx={{ p: 3 }} maxWidth="md">
         {children}
       </Container>

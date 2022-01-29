@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getForm } from "../api/forms";
 import { getQuestionsChanges } from "../api/questions";
+import { getResponses } from "../api/responses";
 
 const FormContext = createContext();
 
@@ -13,6 +14,7 @@ const FormProvider = ({ children }) => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [responses, setResponses] = useState([]);
   const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,9 +43,14 @@ const FormProvider = ({ children }) => {
       });
     });
 
+    const unsubscribeResponses = getResponses(formId, (responses) => {
+      setResponses(responses);
+    });
+
     return () => {
       unsubscribeForm();
       unsubscribeQuestions();
+      unsubscribeResponses();
     };
   }, [formId]);
 
@@ -52,6 +59,7 @@ const FormProvider = ({ children }) => {
     setForm,
     questions,
     setQuestions,
+    responses,
     loading,
     current,
     setCurrent,

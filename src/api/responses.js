@@ -1,10 +1,22 @@
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  increment,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export const submitResponse = async (formId, response) => {
   try {
     const responsesRef = collection(db, "forms", formId, "responses");
     const responseRef = await addDoc(responsesRef, response);
+
+    const formRef = doc(db, "forms", formId);
+    updateDoc(formRef, {
+      responses: increment(1),
+    });
 
     return { response: responseRef };
   } catch (error) {
