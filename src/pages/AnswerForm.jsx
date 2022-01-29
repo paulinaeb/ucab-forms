@@ -66,14 +66,17 @@ const AnswerForm = () => {
     <Box>
       <Header />
       <Container sx={{ p: 3 }} maxWidth="md">
-        <Card sx={{ p: 3, mb: 2 }} variant="outlined">
-          <Typography variant="h5" gutterBottom>
-            {form.title}
-          </Typography>
-          <Typography>{form.description}</Typography>
-        </Card>
         <form onSubmit={submit}>
           <Stack spacing={2}>
+            <Card sx={{ p: 3 }} variant="outlined">
+              <Typography variant="h5" mb={2}>
+                {form.title}
+              </Typography>
+              <Typography mb={2}>{form.description}</Typography>
+              <Typography color="error" variant="caption">
+                * Obligatorio
+              </Typography>
+            </Card>
             {questions.map((question, i) => (
               <Card key={i} sx={{ p: 3 }} variant="outlined">
                 <Question
@@ -83,10 +86,39 @@ const AnswerForm = () => {
                 />
               </Card>
             ))}
-            <Button type="submit" variant="contained">
-              Enviar
-            </Button>
           </Stack>
+          <Box
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexDirection: { xs: "column-reverse", sm: "row" },
+              justifyContent: { sm: "space-between" },
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="caption"
+              color="text.disabled"
+              sx={{ ml: { sm: 1 }, mr: { sm: 2 } }}
+            >
+              Nunca envíes contraseñas a través de UCAB Forms
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexShrink: 0,
+                alignItems: "center",
+                mb: { xs: 2, sm: 0 },
+              }}
+            >
+              <Button sx={{ px: 1, mr: 2 }} onClick={() => setAnswers({})}>
+                Borrar respuestas
+              </Button>
+              <Button type="submit" variant="contained" sx={{ px: 5 }}>
+                Enviar
+              </Button>
+            </Box>
+          </Box>
         </form>
       </Container>
     </Box>

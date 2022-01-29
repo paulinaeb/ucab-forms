@@ -6,7 +6,7 @@ const drawerWidth = 350;
 
 const DrawerLayout = ({ open, setOpen, children }) => {
   const theme = useTheme();
-  const bigScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const upMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -19,8 +19,8 @@ const DrawerLayout = ({ open, setOpen, children }) => {
             boxSizing: "border-box",
           },
         }}
-        variant={bigScreen ? "permanent" : "temporary"}
-        open={bigScreen ? true : open}
+        variant={upMd ? "permanent" : "temporary"}
+        open={upMd ? true : open}
         onClose={() => setOpen(false)}
         ModalProps={{
           keepMounted: true,

@@ -6,14 +6,31 @@ import {
   Card,
   Container,
   IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
   LinearProgress,
   Stack,
   Tab,
   TextField,
+  Tooltip,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
+import {
+  usePopupState,
+  bindTrigger,
+  bindMenu,
+} from "material-ui-popup-state/hooks";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Menu, Settings } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Menu as MenuIcon,
+  MoreVert,
+  Send,
+  Settings,
+} from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 import debounce from "lodash.debounce";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
@@ -22,12 +39,33 @@ import Header from "../components/Header";
 import DrawerLayout from "../components/EditForm/DrawerLayout";
 import Questions from "../components/EditForm/Questions";
 import Responses from "../components/EditForm/Responses";
+import SettingsDialog from "../components/EditForm/SettingsDialog";
+import SendDialog from "../components/EditForm/SendDialog";
 
 const EditForm = () => {
   const user = useUser();
+  const theme = useTheme();
+  const upMd = useMediaQuery(theme.breakpoints.up("md"));
   const { form, setForm, loading } = useForm();
   const [currentTab, setCurrentTab] = useState("0");
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [openSend, setOpenSend] = useState(false);
+
+  const popupStateMore = usePopupState({
+    variant: "popover",
+    popupId: "more-menu-aaaa",
+  });
+
+  const handleClickOpenSettings = () => {
+    popupStateMore.close();
+    setOpenSettings(true);
+  };
+
+  const handleClickOpenSend = () => {
+    popupStateMore.close();
+    setOpenSend(true);
+  };
 
   const handleChangeTab = (e, value) => {
     setCurrentTab(value);
@@ -87,18 +125,72 @@ const EditForm = () => {
   return (
     <Box>
       <Header
-        leftIcon={
+        leftIcons={
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={toggleDrawer}
             edge="start"
-            sx={{ display: { sm: "none" } }}
+            sx={{ display: { md: "none" } }}
           >
-            <Menu />
+            <MenuIcon />
           </IconButton>
         }
+        rightIcons={
+          upMd && (
+            <>
+              <Tooltip title="Configuraciones" arrow>
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  onClick={handleClickOpenSettings}
+                >
+                  <Settings />
+                </IconButton>
+              </Tooltip>
+              <Button
+                variant="contained"
+                sx={{ px: 3, ml: 1, mr: 2 }}
+                onClick={handleClickOpenSend}
+              >
+                Enviar
+              </Button>
+            </>
+          )
+        }
+        moreMenu={
+          !upMd && (
+            <>
+              <Tooltip title="Más" arrow>
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  edge="end"
+                  {...bindTrigger(popupStateMore)}
+                >
+                  <MoreVert />
+                </IconButton>
+              </Tooltip>
+              <Menu {...bindMenu(popupStateMore)} disableEnforceFocus>
+                <MenuItem onClick={handleClickOpenSend}>
+                  <ListItemIcon>
+                    <Send fontSize="small" />
+                  </ListItemIcon>
+                  Enviar
+                </MenuItem>
+                <MenuItem onClick={handleClickOpenSettings}>
+                  <ListItemIcon>
+                    <Settings fontSize="small" />
+                  </ListItemIcon>
+                  Configuraciones
+                </MenuItem>
+              </Menu>
+            </>
+          )
+        }
       />
+      <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
+      <SendDialog open={openSend} setOpen={setOpenSend} />
       <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
         <Stack spacing={2}>
           <Card variant="outlined" sx={{ p: 3 }}>
@@ -140,16 +232,6 @@ const EditForm = () => {
             </TabPanel>
           </TabContext>
         </Stack>
-        {/* <IconButton size="large">
-          <Settings />
-        </IconButton>
-        <Button
-          component={Link}
-          variant="contained"
-          to={`/forms/answer/${form.id}`}
-        >
-          Enviar
-        </Button> */}
       </DrawerLayout>
     </Box>
   );
