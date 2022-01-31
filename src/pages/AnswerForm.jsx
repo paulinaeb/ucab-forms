@@ -21,6 +21,7 @@ const AnswerForm = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loadingForm, setLoadingForm] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,15 +42,16 @@ const AnswerForm = () => {
 
   const submit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
     const { error } = await submitResponse(formId, answers);
 
     if (error) {
       alert(error.message);
+      return setSubmitting(false);
     }
 
-    alert("Encuesta enviada");
-    navigate("/");
+    navigate("/"); // TODO
   };
 
   if (loadingForm) {
@@ -58,6 +60,19 @@ const AnswerForm = () => {
 
   if (!form) {
     return <Typography variant="h2">No se encontró la encuesta</Typography>;
+  }
+
+  if (!form.settings.allowAnswers) {
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">
+            Esta encuesta no admite respuestas
+          </Typography>
+        </Box>
+      </Box>
+    );
   }
 
   console.log(answers);
@@ -98,7 +113,7 @@ const AnswerForm = () => {
           >
             <Typography
               variant="caption"
-              color="text.disabled"
+              color="text.secondary"
               sx={{ ml: { sm: 1 }, mr: { sm: 2 } }}
             >
               Nunca envíes contraseñas a través de UCAB Forms
@@ -114,7 +129,12 @@ const AnswerForm = () => {
               <Button sx={{ px: 1, mr: 2 }} onClick={() => setAnswers({})}>
                 Borrar respuestas
               </Button>
-              <Button type="submit" variant="contained" sx={{ px: 5 }}>
+              <Button
+                type="submit"
+                disabled={submitting}
+                variant="contained"
+                sx={{ px: 5 }}
+              >
                 Enviar
               </Button>
             </Box>

@@ -13,7 +13,7 @@ import { useSnackbar } from "notistack";
 import { useForm } from "../../hooks/useForm";
 import { APP_URL } from "../../constants/urls";
 
-const SettingsDialog = ({ open, setOpen }) => {
+const SendDialog = ({ open, setOpen }) => {
   const { form } = useForm();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -54,4 +54,4 @@ const SettingsDialog = ({ open, setOpen }) => {
   }, [enqueueSnackbar, form.id, open, setOpen]);
 };
 
-export default SettingsDialog;
+export default SendDialog;

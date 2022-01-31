@@ -3,7 +3,7 @@ import Table from "../components/Table";
 
 const Dashboard = () => {
   return (
-    <Container maxWidth="md" sx={{ py: 3 }}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
       <Table />
     </Container>
   );

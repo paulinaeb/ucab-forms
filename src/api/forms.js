@@ -23,6 +23,9 @@ export const createForm = async (userId) => {
       createdAt: new Date(),
       questions: 0,
       responses: 0,
+      settings: {
+        allowAnswers: true,
+      },
     });
 
     insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });

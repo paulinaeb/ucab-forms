@@ -10,16 +10,8 @@ import {
   ListItemIcon,
   Toolbar,
   Tooltip,
-  Typography,
-  useMediaQuery,
 } from "@mui/material";
-import {
-  AccountCircle,
-  MoreVert,
-  Notifications,
-  Logout,
-  Settings,
-} from "@mui/icons-material";
+import { AccountCircle, Notifications, Logout } from "@mui/icons-material";
 import {
   usePopupState,
   bindTrigger,

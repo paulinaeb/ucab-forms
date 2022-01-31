@@ -22,6 +22,7 @@ import {
   TEXTAREA,
   TIME,
 } from "../../constants/questions";
+import { getResponseCountText } from "../../utils/stats";
 
 ChartJS.register(
   ArcElement,
@@ -34,11 +35,10 @@ ChartJS.register(
 );
 
 const QuestionSummary = ({ question, responses }) => {
-  const numberOfResponses = responses.filter((r) => r[question.id]).length;
+  // TODO: Memoize
+  const responseCount = responses.filter((r) => r[question.id]).length;
 
-  const numberOfResponsesText =
-    numberOfResponses +
-    (numberOfResponses === 1 ? " respuesta" : " respuestas");
+  const responseCountText = getResponseCountText(responseCount);
 
   let data = {};
 
@@ -146,7 +146,9 @@ const QuestionSummary = ({ question, responses }) => {
     case TEXTAREA:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]}
@@ -157,7 +159,9 @@ const QuestionSummary = ({ question, responses }) => {
     case DATE:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]
@@ -170,7 +174,9 @@ const QuestionSummary = ({ question, responses }) => {
     case TIME:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id] ? format(r[question.id].toDate(), "hh:mm a") : ""}
@@ -181,7 +187,9 @@ const QuestionSummary = ({ question, responses }) => {
     case DATETIME:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           {responses.map((r) => (
             <Typography key={r.id} variant="body2">
               {r[question.id]
@@ -195,7 +203,9 @@ const QuestionSummary = ({ question, responses }) => {
     case SELECT:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
             <Pie data={data} />
           </Container>
@@ -204,7 +214,9 @@ const QuestionSummary = ({ question, responses }) => {
     case CHECKBOX:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
@@ -233,7 +245,9 @@ const QuestionSummary = ({ question, responses }) => {
     case SLIDER:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography color="text.secondary" variant="caption">
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
