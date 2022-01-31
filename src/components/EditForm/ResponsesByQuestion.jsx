@@ -11,7 +11,7 @@ import {
 import { useForm } from "../../hooks/useForm";
 import { getResponseCountText } from "../../utils/stats";
 
-const ResponseResponse = () => {
+const ResponsesByQuestion = () => {
   const { responses, questions } = useForm();
   const [page, setPage] = useState(1);
 
@@ -79,7 +79,11 @@ const ResponseResponse = () => {
           </Card>
           {responsesWithStats.map((response, i) => (
             <Card key={i} sx={{ p: 3 }} variant="outlined">
-              <Typography>{response.value}</Typography>
+              {response.value === "" ? (
+                <Typography fontStyle="italic">Respuesta vacía</Typography>
+              ) : (
+                <Typography>{JSON.stringify(response.value)}</Typography>
+              )}
               <Typography color="text.secondary" variant="caption">
                 {getResponseCountText(response.count)}
               </Typography>
@@ -91,4 +95,4 @@ const ResponseResponse = () => {
   }, [page, question.title, questions, responsesWithStats]);
 };
 
-export default ResponseResponse;
+export default ResponsesByQuestion;

@@ -80,6 +80,26 @@ const Options = ({ question, debouncedSave }) => {
       );
     };
 
+    const addOther = () => {
+      const newQuestion = { ...question, other: true };
+
+      debouncedSave(newQuestion);
+
+      setQuestions((questions) =>
+        questions.map((q) => (q.id === question.id ? newQuestion : q))
+      );
+    };
+
+    const deleteOther = () => {
+      const newQuestion = { ...question, other: false };
+
+      debouncedSave(newQuestion);
+
+      setQuestions((questions) =>
+        questions.map((q) => (q.id === question.id ? newQuestion : q))
+      );
+    };
+
     switch (question.type) {
       case RADIO:
         return (
@@ -110,10 +130,30 @@ const Options = ({ question, debouncedSave }) => {
                   </Tooltip>
                 </Box>
               ))}
+              {question.other && (
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FormControlLabel
+                    disabled
+                    control={<Radio />}
+                    value="otros"
+                    label="Otros"
+                  />
+                  <Tooltip title="Eliminar">
+                    <IconButton onClick={deleteOther}>
+                      <Clear />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              )}
             </RadioGroup>
             <Button size="small" onClick={addOption}>
               Agregar opción
             </Button>
+            {!question.other && (
+              <Button size="small" onClick={addOther}>
+                Agregar "Otros"
+              </Button>
+            )}
           </FormControl>
         );
       case CHECKBOX:
@@ -145,10 +185,30 @@ const Options = ({ question, debouncedSave }) => {
                   </Tooltip>
                 </Box>
               ))}
+              {question.other && (
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <FormControlLabel
+                    disabled
+                    control={<Checkbox />}
+                    value="otros"
+                    label="Otros"
+                  />
+                  <Tooltip title="Eliminar">
+                    <IconButton onClick={deleteOther}>
+                      <Clear />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              )}
             </FormGroup>
             <Button size="small" onClick={addOption}>
               Agregar opción
             </Button>
+            {!question.other && (
+              <Button size="small" onClick={addOther}>
+                Agregar "Otros"
+              </Button>
+            )}
           </FormControl>
         );
       case SELECT:

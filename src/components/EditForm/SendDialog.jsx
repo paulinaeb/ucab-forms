@@ -22,9 +22,11 @@ const SendDialog = ({ open, setOpen }) => {
       setOpen(false);
     };
 
+    const formUrl = `${APP_URL}/forms/answer/${form.id}`;
+
     const handleCopy = async () => {
       try {
-        await navigator.clipboard.writeText(APP_URL);
+        await navigator.clipboard.writeText(formUrl);
         enqueueSnackbar("URL copiada al portapapeles", { variant: "success" });
       } catch (error) {
         enqueueSnackbar("No se pudo copiar la URL", { variant: "error" });
@@ -38,7 +40,7 @@ const SendDialog = ({ open, setOpen }) => {
           <TextField
             variant="standard"
             fullWidth
-            defaultValue={`${APP_URL}/forms/answer/${form.id}`}
+            defaultValue={formUrl}
             onFocus={(e) => e.target.select()}
             InputProps={{
               readOnly: true,

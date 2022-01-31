@@ -1,6 +1,9 @@
+import { useState } from "react";
 import {
   Box,
+  Button,
   Checkbox,
+  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -28,6 +31,8 @@ import Slider from "./Slider";
 import RequiredMark from "./RequiredMark";
 
 const Question = ({ answers, question, setAnswers }) => {
+  const [other, setOther] = useState("");
+
   const handleChange = (e) => {
     setAnswers({ ...answers, [question.id]: e.target.value });
   };
@@ -60,16 +65,51 @@ const Question = ({ answers, question, setAnswers }) => {
         );
       case RADIO:
         return (
-          <RadioGroup value={answer} onChange={handleChange}>
-            {question.options.map((option, i) => (
-              <FormControlLabel
-                key={i}
-                value={option}
-                control={<Radio />}
-                label={option}
-              />
-            ))}
-          </RadioGroup>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <RadioGroup value={answer} onChange={handleChange}>
+              {question.options.map((option, i) => (
+                <FormControlLabel
+                  key={i}
+                  value={option}
+                  control={<Radio />}
+                  label={option}
+                />
+              ))}
+              {question.other && (
+                <FormControlLabel
+                  value={other}
+                  control={<Radio />}
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography>Otros: </Typography>
+                      <TextField
+                        variant="standard"
+                        value={other}
+                        onChange={(e) => {
+                          if (answer === other) {
+                            setAnswers({
+                              ...answers,
+                              [question.id]: e.target.value,
+                            });
+                          }
+
+                          setOther(e.target.value);
+                        }}
+                      />
+                    </Box>
+                  }
+                />
+              )}
+            </RadioGroup>
+            {!question.required && (
+              <Button
+                sx={{ alignSelf: "flex-end" }}
+                onClick={() => setAnswers({ ...answers, [question.id]: "" })}
+              >
+                Borrar selección
+              </Button>
+            )}
+          </Box>
         );
       case CHECKBOX:
         return (
@@ -100,6 +140,54 @@ const Question = ({ answers, question, setAnswers }) => {
                 }}
               />
             ))}
+            {question.other && (
+              <FormControlLabel
+                value={other}
+                control={<Checkbox />}
+                checked={
+                  !!answers[question.id] && answers[question.id].includes(other)
+                }
+                onChange={(e) => {
+                  const newAnswers = { ...answers };
+                  newAnswers[question.id] = newAnswers[question.id] || [];
+                  if (e.target.checked) {
+                    newAnswers[question.id] = [
+                      ...newAnswers[question.id],
+                      other,
+                    ];
+                  } else {
+                    newAnswers[question.id] = newAnswers[question.id].filter(
+                      (o) => o !== other
+                    );
+                  }
+                  setAnswers(newAnswers);
+                }}
+                label={
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography>Otros: </Typography>
+                    <TextField
+                      variant="standard"
+                      value={other}
+                      onChange={(e) => {
+                        if (answers[question.id].includes(other)) {
+                          setAnswers({
+                            ...answers,
+                            [question.id]: [
+                              ...answers[question.id].filter(
+                                (o) => o !== other
+                              ),
+                              e.target.value,
+                            ],
+                          });
+                        }
+
+                        setOther(e.target.value);
+                      }}
+                    />
+                  </Box>
+                }
+              />
+            )}
           </FormGroup>
         );
       case SELECT:
@@ -111,6 +199,10 @@ const Question = ({ answers, question, setAnswers }) => {
             value={answer}
             onChange={handleChange}
           >
+            <MenuItem sx={{ color: "text.secondary" }} value="">
+              Seleccione una opción
+            </MenuItem>
+            <Divider />
             {question.options.map((option, i) => (
               <MenuItem key={i} value={option}>
                 {option}
@@ -120,13 +212,34 @@ const Question = ({ answers, question, setAnswers }) => {
         );
       case SLIDER:
         return (
-          <Slider
-            question={question}
-            value={answers[question.id] ?? question.min}
-            onChange={(e, value) =>
-              setAnswers({ ...answers, [question.id]: value })
-            }
-          />
+          <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
+            <Slider
+              disabled={answers[question.id] === ""}
+              question={question}
+              value={answers[question.id] || question.min}
+              onChange={(e, value) =>
+                setAnswers({ ...answers, [question.id]: value })
+              }
+            />
+            {!question.required &&
+              (answers[question.id] === "" ? (
+                <Button
+                  sx={{ alignSelf: "flex-end" }}
+                  onClick={() =>
+                    setAnswers({ ...answers, [question.id]: question.min })
+                  }
+                >
+                  Activar selección
+                </Button>
+              ) : (
+                <Button
+                  sx={{ alignSelf: "flex-end" }}
+                  onClick={() => setAnswers({ ...answers, [question.id]: "" })}
+                >
+                  Borrar selección
+                </Button>
+              ))}
+          </Box>
         );
       case DATE:
         return (
@@ -193,7 +306,8 @@ const Question = ({ answers, question, setAnswers }) => {
   return (
     <Box>
       <Typography mb={2}>
-        {question.title} <RequiredMark question={question} />{" "}
+        {question.title}
+        <RequiredMark question={question} />
       </Typography>
       {renderQuestion()}
     </Box>

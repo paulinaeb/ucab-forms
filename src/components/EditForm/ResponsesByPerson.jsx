@@ -8,6 +8,7 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
+import { format } from "date-fns";
 import { useForm } from "../../hooks/useForm";
 
 const Response = () => {
@@ -23,7 +24,10 @@ const Response = () => {
       let title = "";
 
       if (item.type === "page") {
-        title = responses[item.page - 1].id;
+        title = format(
+          responses[item.page - 1].submittedAt,
+          "dd/MM/yyyy hh:mm a"
+        );
       } else if (item.type === "previous") {
         title = "Anterior";
       } else if (item.type === "next") {

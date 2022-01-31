@@ -58,6 +58,14 @@ const QuestionPreview = ({ question }) => {
               label={option}
             />
           ))}
+          {question.other && (
+            <FormControlLabel
+              disabled
+              value="otros"
+              control={<Radio />}
+              label="Otros"
+            />
+          )}
         </RadioGroup>
       );
     case CHECKBOX:
@@ -72,6 +80,14 @@ const QuestionPreview = ({ question }) => {
               label={option}
             />
           ))}
+          {question.other && (
+            <FormControlLabel
+              disabled
+              value="otros"
+              control={<Checkbox />}
+              label="Otros"
+            />
+          )}
         </FormGroup>
       );
     case SELECT:

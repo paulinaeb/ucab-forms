@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Box, Button, Fab, Stack, Tooltip } from "@mui/material";
+import { Box, Button, Fab, Stack, Tooltip, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { defaultQuestion } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
@@ -58,6 +58,7 @@ const Questions = ({ setOpenDrawer }) => {
 
     return (
       <Box>
+        {!questions.length && <Typography>No hay preguntas</Typography>}
         <Stack spacing={2}>
           {questions.map((question, i) => (
             <QuestionPreview

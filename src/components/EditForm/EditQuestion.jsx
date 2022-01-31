@@ -66,16 +66,24 @@ const EditQuestion = ({ setOpenDrawer }) => {
         newQuestion.options = ["Opción 1"];
       }
 
-      if (type !== SLIDER) {
-        newQuestion.min = null;
-        newQuestion.max = null;
-        newQuestion.minLabel = null;
-        newQuestion.maxLabel = null;
+      const needsOther = [RADIO, CHECKBOX].includes(type);
+
+      if (!needsOther) {
+        newQuestion.other = null;
+      }
+
+      if (newQuestion.other === null && needsOther) {
+        newQuestion.other = false;
       }
 
       if (type === SLIDER) {
         newQuestion.min = 1;
         newQuestion.max = 5;
+      } else {
+        newQuestion.min = null;
+        newQuestion.max = null;
+        newQuestion.minLabel = null;
+        newQuestion.maxLabel = null;
       }
 
       debouncedSave(newQuestion);
