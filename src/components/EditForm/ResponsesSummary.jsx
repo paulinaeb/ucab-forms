@@ -5,6 +5,7 @@ import QuestionStat from "./QuestionStat";
 
 const ResponsesSummary = () => {
   const { questions, responses } = useForm();
+  const answers = useMemo(() => responses.map((r) => r.answers), [responses]);
 
   return useMemo(() => {
     return (
@@ -13,13 +14,13 @@ const ResponsesSummary = () => {
           {questions.map((question) => (
             <Card key={question.id} sx={{ p: 3 }} variant="outlined">
               <Typography>{question.title}</Typography>
-              <QuestionStat question={question} responses={responses} />
+              <QuestionStat question={question} responses={answers} />
             </Card>
           ))}
         </Stack>
       </Box>
     );
-  }, [questions, responses]);
+  }, [answers, questions]);
 };
 
 export default ResponsesSummary;

@@ -10,7 +10,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 import debounce from "lodash.debounce";
 import {
   questionTypes,
@@ -34,11 +38,15 @@ const EditQuestion = ({ setOpenDrawer }) => {
     () =>
       debounce(async (newQuestion) => {
         await saveQuestion(form.id, newQuestion);
-      }, 3000),
+      }, 2000),
     [form.id]
   );
 
   return useMemo(() => {
+    const needsOptions = (type) => {
+      return [RADIO, CHECKBOX, SELECT].includes(type);
+    };
+
     const handleChangeTitle = (e) => {
       const title = e.target.value;
 
@@ -56,14 +64,14 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
       const newQuestion = { ...question, type };
 
-      const needsOptions = [RADIO, CHECKBOX, SELECT].includes(type);
-
-      if (!needsOptions) {
+      if (!needsOptions(type)) {
         newQuestion.options = null;
+        newQuestion.randomOrder = null;
       }
 
-      if (!newQuestion.options && needsOptions) {
+      if (!newQuestion.options && needsOptions(type)) {
         newQuestion.options = ["Opción 1"];
+        newQuestion.randomOrder = false;
       }
 
       const needsOther = [RADIO, CHECKBOX].includes(type);
@@ -93,10 +101,10 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
-    const handleChangeRequired = (e) => {
-      const required = e.target.checked;
+    const handleChangeChecked = (field) => (e) => {
+      const checked = e.target.checked;
 
-      const newQuestion = { ...question, required };
+      const newQuestion = { ...question, [field]: checked };
 
       debouncedSave(newQuestion);
 
@@ -119,9 +127,61 @@ const EditQuestion = ({ setOpenDrawer }) => {
       return <Box>No hay pregunta seleccionada</Box>;
     }
 
+    const swapQuestion = (direction) => {
+      const i = questions.indexOf(question);
+      const j = direction === "up" ? i - 1 : i + 1;
+      const k = direction === "up" ? i - 2 : i + 2;
+
+      let newIndex;
+
+      if (!questions[k]) {
+        newIndex = questions[j].index + (direction === "up" ? -1 : 1);
+      } else {
+        newIndex = (questions[j].index + questions[k].index) / 2;
+      }
+
+      const newQuestion = { ...question, index: newIndex };
+
+      debouncedSave(newQuestion);
+
+      setQuestions((questions) =>
+        questions.map((q) => (q.id === question.id ? newQuestion : q))
+      );
+    };
+
     return (
       <Stack spacing={3}>
-        <Typography variant="h6">Editar pregunta</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6">Editar pregunta</Typography>
+          <Box>
+            <Tooltip title="Mover arriba" arrow>
+              <span>
+                <IconButton
+                  disabled={question === questions[0]}
+                  onClick={() => swapQuestion("up")}
+                >
+                  <ArrowUpward />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title="Mover abajo" arrow>
+              <span>
+                <IconButton
+                  disabled={question === questions[questions.length - 1]}
+                  onClick={() => swapQuestion("down")}
+                >
+                  <ArrowDownward />
+                </IconButton>
+              </span>
+            </Tooltip>
+          </Box>
+        </Box>
         <TextField
           variant="standard"
           multiline
@@ -143,22 +203,39 @@ const EditQuestion = ({ setOpenDrawer }) => {
           ))}
         </TextField>
         <EditOptions question={question} debouncedSave={debouncedSave} />
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <FormControlLabel
-            control={<Checkbox />}
-            checked={question.required}
-            onChange={handleChangeRequired}
-            label="Obligatoria"
-          />
-          <Tooltip title="Eliminar pregunta" arrow>
-            <IconButton onClick={() => removeQuestion(question.id)}>
-              <Delete />
-            </IconButton>
-          </Tooltip>
+        <Box>
+          {needsOptions(question.type) && (
+            <FormControlLabel
+              control={<Checkbox />}
+              checked={question.randomOrder}
+              onChange={handleChangeChecked("randomOrder")}
+              label="Orden aleatorio"
+            />
+          )}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <FormControlLabel
+              control={<Checkbox />}
+              checked={question.required}
+              onChange={handleChangeChecked("required")}
+              label="Obligatoria"
+            />
+            <Tooltip title="Eliminar pregunta" arrow>
+              <IconButton onClick={() => removeQuestion(question.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       </Stack>
     );
-  }, [debouncedSave, form.id, question, setOpenDrawer, setQuestions]);
+  }, [
+    debouncedSave,
+    form.id,
+    question,
+    questions,
+    setOpenDrawer,
+    setQuestions,
+  ]);
 };
 
 export default EditQuestion;

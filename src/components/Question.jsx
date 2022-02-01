@@ -20,6 +20,7 @@ import {
   DATE,
   DATETIME,
   RADIO,
+  RATING,
   SELECT,
   SLIDER,
   TEXT,
@@ -28,6 +29,7 @@ import {
 } from "../constants/questions";
 import Select from "./Select";
 import Slider from "./Slider";
+import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
 
 const Question = ({ answers, question, setAnswers }) => {
@@ -241,10 +243,19 @@ const Question = ({ answers, question, setAnswers }) => {
               ))}
           </Box>
         );
+      case RATING:
+        return (
+          <Rating
+            value={answers[question.id]}
+            onChange={(e, value) =>
+              setAnswers({ ...answers, [question.id]: value || 0 })
+            }
+          />
+        );
       case DATE:
         return (
           <DatePicker
-            value={answers[question.id] ?? null}
+            value={answers[question.id] || null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
@@ -263,7 +274,7 @@ const Question = ({ answers, question, setAnswers }) => {
       case TIME:
         return (
           <TimePicker
-            value={answers[question.id] ?? null}
+            value={answers[question.id] || null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }
@@ -282,7 +293,7 @@ const Question = ({ answers, question, setAnswers }) => {
       case DATETIME:
         return (
           <DateTimePicker
-            value={answers[question.id] ?? null}
+            value={answers[question.id] || null}
             onChange={(value) =>
               setAnswers({ ...answers, [question.id]: value })
             }

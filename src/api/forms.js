@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   onSnapshot,
   query,
   updateDoc,
@@ -10,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
-import { insertQuestion } from "./questions";
+import { getQuestionsOnce, insertQuestion } from "./questions";
 
 const formsRef = collection(db, "forms");
 
@@ -49,6 +50,25 @@ export const getUserForms = (userId, callback) => {
 
     callback(forms);
   });
+};
+
+export const getFormOnce = async (formId) => {
+  const formRef = doc(db, "forms", formId);
+
+  const form = await getDoc(formRef);
+
+  if (!form.exists()) {
+    return null;
+  }
+
+  const formData = form.data();
+  formData.id = form.id;
+
+  const questions = await getQuestionsOnce(formId);
+
+  formData.questions = questions;
+
+  return formData;
 };
 
 export const getForm = (id, callback) => {

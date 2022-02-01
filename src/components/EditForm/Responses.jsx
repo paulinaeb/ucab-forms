@@ -64,6 +64,11 @@ const Responses = () => {
             {view === "summary" && <ResponsesSummary />}
             {view === "question" && <ResponsesByQuestion />}
             {view === "person" && <ResponsesByPerson />}
+            {!view && (
+              <Typography>
+                Selecciona una opción para visualizar las respuestas
+              </Typography>
+            )}
           </>
         )}
       </Box>

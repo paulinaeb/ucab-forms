@@ -13,10 +13,7 @@ import { db } from "./firebaseConfig";
 export const submitResponse = async (formId, response) => {
   try {
     const responsesRef = collection(db, "forms", formId, "responses");
-    const responseRef = await addDoc(responsesRef, {
-      ...response,
-      submittedAt: new Date(),
-    });
+    const responseRef = await addDoc(responsesRef, response);
 
     const formRef = doc(db, "forms", formId);
     updateDoc(formRef, {

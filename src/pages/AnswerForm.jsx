@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Box, Button, Card, Container, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { getForm } from "../api/forms";
-import { getQuestions } from "../api/questions";
+import { getFormOnce } from "../api/forms";
 import { submitResponse } from "../api/responses";
-import { CHECKBOX, RADIO, SLIDER } from "../constants/questions";
+import { CHECKBOX, RADIO, RATING, SLIDER } from "../constants/questions";
 import Header from "../components/Header";
 import Question from "../components/Question";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
-  const [questions, setQuestions] = useState([]);
+  const [response, setResponse] = useState({});
   const [answers, setAnswers] = useState();
-  const [loadingForm, setLoadingForm] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -27,6 +26,8 @@ const AnswerForm = () => {
         answers[question.id] = question.options[0];
       } else if (question.type === SLIDER) {
         answers[question.id] = question.min;
+      } else if (question.type === RATING) {
+        answers[question.id] = 0;
       } else {
         answers[question.id] = "";
       }
@@ -36,29 +37,31 @@ const AnswerForm = () => {
   }, []);
 
   useEffect(() => {
-    const unsubscribeForm = getForm(formId, (form) => {
-      setForm(form);
-      setLoadingForm(false);
-    });
-
-    const unsubscribeQuestions = getQuestions(formId, (questions) => {
-      if (!answers) {
-        initializeAnswers(questions);
-      }
-
-      setQuestions(questions);
-    });
-
-    return () => {
-      unsubscribeForm();
-      unsubscribeQuestions();
+    const randomizeOptionsOrder = (questions) => {
+      questions.forEach((question) => {
+        if (question.randomOrder) {
+          question.options.sort(() => Math.random() - 0.5);
+        }
+      });
     };
-  }, [answers, formId, initializeAnswers]);
+
+    const getForm = async () => {
+      const form = await getFormOnce(formId);
+      if (form) {
+        randomizeOptionsOrder(form.questions);
+        setForm(form);
+        initializeAnswers(form.questions);
+      }
+      setLoading(false);
+    };
+
+    getForm();
+  }, [formId, initializeAnswers]);
 
   const submit = async (e) => {
     e.preventDefault();
 
-    questions.forEach((question) => {
+    form.questions.forEach((question) => {
       if (
         question.type === CHECKBOX &&
         question.required &&
@@ -73,7 +76,13 @@ const AnswerForm = () => {
 
     setSubmitting(true);
 
-    const { error } = await submitResponse(formId, answers);
+    const responseData = {
+      ...response,
+      answers,
+      submittedAt: new Date(),
+    };
+
+    const { error } = await submitResponse(formId, responseData);
 
     if (error) {
       alert(error.message);
@@ -83,7 +92,7 @@ const AnswerForm = () => {
     navigate("/"); // TODO
   };
 
-  if (loadingForm) {
+  if (loading) {
     return <Typography variant="h2">Loading...</Typography>;
   }
 
@@ -121,7 +130,7 @@ const AnswerForm = () => {
                 * Obligatorio
               </Typography>
             </Card>
-            {questions.map((question, i) => (
+            {form.questions.map((question, i) => (
               <Card key={i} sx={{ p: 3 }} variant="outlined">
                 <Question
                   question={question}
@@ -157,7 +166,7 @@ const AnswerForm = () => {
             >
               <Button
                 sx={{ px: 1, mr: 2 }}
-                onClick={() => initializeAnswers(questions)}
+                onClick={() => initializeAnswers(form.questions)}
               >
                 Borrar respuestas
               </Button>

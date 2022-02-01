@@ -24,7 +24,7 @@ const EditForm = () => {
   const debouncedSave = useMemo(() => {
     return debounce(async (form) => {
       await saveForm(form);
-    }, 3000);
+    }, 2000);
   }, []);
 
   const handleChange = (field) => (e) => {

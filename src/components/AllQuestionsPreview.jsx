@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
   Radio,
+  Rating,
   RadioGroup,
   TextField,
 } from "@mui/material";
@@ -18,6 +19,7 @@ import {
   DATE,
   DATETIME,
   RADIO,
+  RATING,
   SELECT,
   SLIDER,
   TEXT,
@@ -102,6 +104,8 @@ const QuestionPreview = ({ question }) => {
       );
     case SLIDER:
       return <Slider disabled question={question} />;
+    case RATING:
+      return <Rating disabled />;
     case DATE:
       return (
         <DatePicker
