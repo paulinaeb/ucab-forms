@@ -15,9 +15,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Clear } from "@mui/icons-material";
+import { Clear as ClearIcon } from "@mui/icons-material";
 import {
   CHECKBOX,
+  FILE,
   RADIO,
   SELECT,
   SORTABLE,
@@ -96,6 +97,18 @@ const Options = ({ question, debouncedSave }) => {
       const value = e.target.value;
 
       const newQuestion = { ...question, [field]: value };
+
+      debouncedSave(newQuestion);
+
+      setQuestions((questions) =>
+        questions.map((q) => (q.id === question.id ? newQuestion : q))
+      );
+    };
+
+    const handleChangeChecked = (field) => (e) => {
+      const checked = e.target.checked;
+
+      const newQuestion = { ...question, [field]: checked };
 
       debouncedSave(newQuestion);
 
@@ -194,7 +207,7 @@ const Options = ({ question, debouncedSave }) => {
                   />
                   <Tooltip title="Eliminar">
                     <IconButton onClick={deleteOption(i)}>
-                      <Clear />
+                      <ClearIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -209,7 +222,7 @@ const Options = ({ question, debouncedSave }) => {
                   />
                   <Tooltip title="Eliminar">
                     <IconButton onClick={deleteOther}>
-                      <Clear />
+                      <ClearIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -249,7 +262,7 @@ const Options = ({ question, debouncedSave }) => {
                   />
                   <Tooltip title="Eliminar opción" arrow>
                     <IconButton onClick={deleteOption(i)}>
-                      <Clear />
+                      <ClearIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -262,9 +275,9 @@ const Options = ({ question, debouncedSave }) => {
                     value="otros"
                     label="Otros"
                   />
-                  <Tooltip title="Eliminar">
+                  <Tooltip title="Eliminar" arrow>
                     <IconButton onClick={deleteOther}>
-                      <Clear />
+                      <ClearIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -311,7 +324,7 @@ const Options = ({ question, debouncedSave }) => {
                   </Box>
                   <Tooltip title="Eliminar opción" arrow>
                     <IconButton onClick={deleteOption(i)}>
-                      <Clear />
+                      <ClearIcon />
                     </IconButton>
                   </Tooltip>
                 </Box>

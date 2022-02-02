@@ -19,6 +19,7 @@ import debounce from "lodash.debounce";
 import {
   questionTypes,
   CHECKBOX,
+  FILE,
   RADIO,
   SELECT,
   SORTABLE,
@@ -50,10 +51,10 @@ const EditQuestion = ({ setOpenDrawer }) => {
       return [RADIO, CHECKBOX, SELECT, SORTABLE].includes(type);
     };
 
-    const handleChangeTitle = (e) => {
-      const title = e.target.value;
+    const handleChange = (field) => (e) => {
+      const value = e.target.value;
 
-      const newQuestion = { ...question, title };
+      const newQuestion = { ...question, [field]: value };
 
       debouncedSave(newQuestion);
 
@@ -101,6 +102,16 @@ const EditQuestion = ({ setOpenDrawer }) => {
         newQuestion.max = null;
         newQuestion.minLabel = null;
         newQuestion.maxLabel = null;
+      }
+
+      if (type === SORTABLE) {
+        newQuestion.required = true;
+      }
+
+      if (type === FILE) {
+        newQuestion.multipleFiles = false;
+      } else {
+        newQuestion.multipleFiles = null;
       }
 
       debouncedSave(newQuestion);
@@ -196,7 +207,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
           multiline
           label="Título de la pregunta"
           value={question.title}
-          onChange={handleChangeTitle}
+          onChange={handleChange("title")}
         />
         <TextField
           variant="standard"
@@ -213,6 +224,14 @@ const EditQuestion = ({ setOpenDrawer }) => {
         </TextField>
         <EditOptions question={question} debouncedSave={debouncedSave} />
         <Box>
+          {question.type === FILE && (
+            <FormControlLabel
+              control={<Checkbox />}
+              checked={question.multipleFiles}
+              onChange={handleChangeChecked("multipleFiles")}
+              label="Múltiples archivos"
+            />
+          )}
           {needsOptions(question.type) && (
             <FormControlLabel
               control={<Checkbox />}
@@ -224,6 +243,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <FormControlLabel
               control={<Checkbox />}
+              disabled={question.type === SORTABLE}
               checked={question.required}
               onChange={handleChangeChecked("required")}
               label="Obligatoria"

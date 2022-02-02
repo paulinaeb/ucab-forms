@@ -5,6 +5,7 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Link,
   Pagination,
   PaginationItem,
   Tooltip,
@@ -15,6 +16,7 @@ import { format } from "date-fns";
 import { useForm } from "../../hooks/useForm";
 import {
   CHECKBOX,
+  FILE,
   DATE,
   DATETIME,
   SLIDER,
@@ -124,6 +126,32 @@ const ResponsesByQuestion = () => {
 
       if (question.type === RATING) {
         return <Rating readOnly value={value} />;
+      }
+
+      if (question.type === FILE) {
+        return (
+          <Stack sx={{ alignItems: "flex-start" }} spacing={2}>
+            {value.map((file, i) => {
+              if (file.type.includes("image")) {
+                return (
+                  <Box
+                    component="img"
+                    key={i}
+                    src={file.url}
+                    alt="response"
+                    sx={{ maxWidth: "100%" }}
+                  />
+                );
+              }
+
+              return (
+                <Link download href={file.url}>
+                  {file.name}
+                </Link>
+              );
+            })}
+          </Stack>
+        );
       }
 
       return <Typography>{value}</Typography>;

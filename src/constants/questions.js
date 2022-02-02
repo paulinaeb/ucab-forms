@@ -9,6 +9,7 @@ export const RATING = "rating";
 export const DATE = "date";
 export const TIME = "time";
 export const DATETIME = "datetime";
+export const FILE = "file";
 
 export const ratingLabels = [
   "Sin calificar",
@@ -63,6 +64,10 @@ export const questionTypes = [
   {
     value: DATETIME,
     label: "Fecha y hora",
+  },
+  {
+    value: FILE,
+    label: "Carga de archivo",
   },
 ];
 

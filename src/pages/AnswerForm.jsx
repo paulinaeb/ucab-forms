@@ -5,6 +5,7 @@ import { getFormOnce } from "../api/forms";
 import { submitResponse } from "../api/responses";
 import {
   CHECKBOX,
+  FILE,
   RADIO,
   RATING,
   SLIDER,
@@ -26,7 +27,7 @@ const AnswerForm = () => {
     const answers = {};
 
     questions.forEach((question) => {
-      if (question.type === CHECKBOX) {
+      if (question.type === CHECKBOX || question.type === FILE) {
         answers[question.id] = [];
       } else if (question.type === RADIO && question.required) {
         answers[question.id] = question.options[0];
@@ -71,7 +72,7 @@ const AnswerForm = () => {
 
     form.questions.forEach((question) => {
       if (
-        question.type === CHECKBOX &&
+        (question.type === CHECKBOX || question.type === FILE) &&
         question.required &&
         !answers[question.id].length
       ) {
@@ -94,11 +95,10 @@ const AnswerForm = () => {
 
     const responseData = {
       ...response,
-      answers,
-      submittedAt: new Date(),
+      answers: { ...answers },
     };
 
-    const { error } = await submitResponse(formId, responseData);
+    const { error } = await submitResponse(form, responseData);
 
     if (error) {
       alert(error.message);

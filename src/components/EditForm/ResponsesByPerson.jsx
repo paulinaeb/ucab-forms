@@ -5,6 +5,7 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Link,
   Pagination,
   PaginationItem,
   Tooltip,
@@ -14,6 +15,7 @@ import {
 import { format } from "date-fns";
 import {
   CHECKBOX,
+  FILE,
   DATE,
   DATETIME,
   SLIDER,
@@ -88,6 +90,32 @@ const Response = () => {
 
       if (question.type === RATING) {
         return <Rating readOnly value={value} />;
+      }
+
+      if (question.type === FILE) {
+        return (
+          <Stack sx={{ alignItems: "flex-start" }} spacing={2}>
+            {value.map((file, i) => {
+              if (file.type.includes("image")) {
+                return (
+                  <Box
+                    component="img"
+                    key={i}
+                    src={file.url}
+                    alt="response"
+                    sx={{ maxWidth: "100%" }}
+                  />
+                );
+              }
+
+              return (
+                <Link download href={file.url}>
+                  {file.name}
+                </Link>
+              );
+            })}
+          </Stack>
+        );
       }
 
       let text = value;

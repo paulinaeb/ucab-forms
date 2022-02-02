@@ -9,19 +9,35 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+import { uploadFiles } from "./storage";
+import { FILE } from "../constants/questions";
 
-export const submitResponse = async (formId, response) => {
+export const submitResponse = async (form, response) => {
   try {
-    const responsesRef = collection(db, "forms", formId, "responses");
+    response.submittedAt = new Date();
+
+    await Promise.all(
+      form.questions.map(async (question) => {
+        if (question.type === FILE) {
+          response.answers[question.id] = await uploadFiles(
+            response.answers[question.id],
+            `forms/${form.id}/questions/${question.id}`
+          );
+        }
+      })
+    );
+
+    const responsesRef = collection(db, "forms", form.id, "responses");
     const responseRef = await addDoc(responsesRef, response);
 
-    const formRef = doc(db, "forms", formId);
+    const formRef = doc(db, "forms", form.id);
     updateDoc(formRef, {
       responses: increment(1),
     });
 
     return { response: responseRef };
   } catch (error) {
+    console.log(error);
     return { error: { message: "Error al guardar las respuestas" } };
   }
 };

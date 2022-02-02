@@ -8,17 +8,21 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
+  IconButton,
   MenuItem,
   Radio,
   RadioGroup,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import { Clear as ClearIcon } from "@mui/icons-material";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import {
   CHECKBOX,
   DATE,
   DATETIME,
+  FILE,
   RADIO,
   RATING,
   SELECT,
@@ -31,8 +35,10 @@ import {
 import Select from "./Select";
 import Slider from "./Slider";
 import SortableList from "./SortableList";
+import UploadButton from "./UploadButton";
 import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
+import { Upload } from "@mui/icons-material";
 
 const Question = ({ answers, question, setAnswers }) => {
   const [other, setOther] = useState("");
@@ -323,6 +329,52 @@ const Question = ({ answers, question, setAnswers }) => {
             cancelText="Cancelar"
             toolbarTitle="Seleccionar fecha y hora"
           />
+        );
+      case FILE:
+        return (
+          <Box>
+            <Box sx={{ mb: 2 }}>
+              {answer.map((file, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography noWrap>{file.name}</Typography>
+                  <Tooltip title="Eliminar" arrow>
+                    <IconButton
+                      onClick={() => {
+                        const newAnswers = { ...answers };
+                        newAnswers[question.id] = newAnswers[
+                          question.id
+                        ].filter((f, j) => j !== i);
+                        setAnswers(newAnswers);
+                      }}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              ))}
+            </Box>
+            <UploadButton
+              inputId={question.id}
+              multiple={question.multipleFiles}
+              onChange={(files) => {
+                if (question.multipleFiles) {
+                  return setAnswers({
+                    ...answers,
+                    [question.id]: [...answer, ...files],
+                  });
+                }
+
+                setAnswers({ ...answers, [question.id]: [...files] });
+              }}
+            />
+          </Box>
         );
       default:
         return <Typography>No se puede mostrar la pregunta</Typography>;

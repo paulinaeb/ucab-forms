@@ -23,6 +23,7 @@ import {
   CHECKBOX,
   DATE,
   DATETIME,
+  FILE,
   RADIO,
   RATING,
   SELECT,
@@ -34,6 +35,7 @@ import {
 } from "../constants/questions";
 import Select from "./Select";
 import Slider from "./Slider";
+import UploadButton from "./UploadButton";
 
 const QuestionPreview = ({ question }) => {
   switch (question.type) {
@@ -163,6 +165,8 @@ const QuestionPreview = ({ question }) => {
           renderInput={(params) => <TextField variant="standard" {...params} />}
         />
       );
+    case FILE:
+      return <UploadButton disabled />;
     default:
       return null;
   }
