@@ -16,11 +16,62 @@ import {
   Typography,
 } from "@mui/material";
 import { Clear } from "@mui/icons-material";
-import { CHECKBOX, RADIO, SELECT, SLIDER } from "../../constants/questions";
+import {
+  CHECKBOX,
+  RADIO,
+  SELECT,
+  SORTABLE,
+  SLIDER,
+  TEXT,
+  TEXTAREA,
+} from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
 
 const sliderMinValues = [0, 1];
 const sliderMaxValues = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const specialTypes = [
+  {
+    value: "name",
+    label: "Nombre completo",
+  },
+  {
+    value: "given-name",
+    label: "Nombre",
+  },
+  {
+    value: "family-name",
+    label: "Apellido",
+  },
+  {
+    value: "email",
+    label: "Email",
+  },
+  {
+    value: "tel",
+    label: "Teléfono",
+  },
+  {
+    value: "country-name",
+    label: "País",
+  },
+  {
+    value: "street-address",
+    label: "Dirección",
+  },
+  {
+    value: "postal-code",
+    label: "Código postal",
+  },
+  {
+    value: "organization",
+    label: "Organización",
+  },
+  {
+    value: "organization-title",
+    label: "Profesión",
+  },
+];
 
 const Options = ({ question, debouncedSave }) => {
   const { setQuestions } = useForm();
@@ -101,6 +152,24 @@ const Options = ({ question, debouncedSave }) => {
     };
 
     switch (question.type) {
+      case TEXT:
+      case TEXTAREA:
+        return (
+          <TextField
+            select
+            variant="standard"
+            label="Autocompletado especial"
+            value={question.specialType}
+            onChange={handleChange("specialType")}
+          >
+            <MenuItem value="">Ninguno</MenuItem>
+            {specialTypes.map((type) => (
+              <MenuItem key={type.value} value={type.value}>
+                {type.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        );
       case RADIO:
         return (
           <FormControl component="fieldset">
@@ -212,6 +281,7 @@ const Options = ({ question, debouncedSave }) => {
           </FormControl>
         );
       case SELECT:
+      case SORTABLE:
         return (
           <FormControl component="fieldset">
             <FormLabel component="legend">Opciones</FormLabel>

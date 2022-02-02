@@ -17,6 +17,7 @@ import {
   DATE,
   DATETIME,
   SLIDER,
+  SORTABLE,
   RATING,
   TIME,
 } from "../../constants/questions";
@@ -66,6 +67,18 @@ const Response = () => {
               />
             ))}
           </FormGroup>
+        );
+      }
+
+      if (question.type === SORTABLE) {
+        return (
+          <Stack spacing={1}>
+            {value.map((option, i) => (
+              <Card key={i} sx={{ p: 2 }}>
+                <Typography>{option}</Typography>
+              </Card>
+            ))}
+          </Stack>
         );
       }
 

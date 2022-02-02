@@ -3,7 +3,13 @@ import { Box, Button, Card, Container, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { getFormOnce } from "../api/forms";
 import { submitResponse } from "../api/responses";
-import { CHECKBOX, RADIO, RATING, SLIDER } from "../constants/questions";
+import {
+  CHECKBOX,
+  RADIO,
+  RATING,
+  SLIDER,
+  SORTABLE,
+} from "../constants/questions";
 import Header from "../components/Header";
 import Question from "../components/Question";
 
@@ -26,6 +32,8 @@ const AnswerForm = () => {
         answers[question.id] = question.options[0];
       } else if (question.type === SLIDER) {
         answers[question.id] = question.min;
+      } else if (question.type === SORTABLE) {
+        answers[question.id] = [...question.options];
       } else if (question.type === RATING) {
         answers[question.id] = 0;
       } else {
@@ -71,6 +79,14 @@ const AnswerForm = () => {
         return alert(
           "La pregunta tal es requerida, selecciona al menos una opción"
         );
+      }
+      if (
+        question.type === RATING &&
+        question.required &&
+        !answers[question.id]
+      ) {
+        // TODO
+        return alert("La pregunta tal es requerida");
       }
     });
 

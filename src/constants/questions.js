@@ -3,6 +3,7 @@ export const TEXTAREA = "textarea";
 export const RADIO = "radio";
 export const CHECKBOX = "checkbox";
 export const SELECT = "select";
+export const SORTABLE = "sortable";
 export const SLIDER = "slider";
 export const RATING = "rating";
 export const DATE = "date";
@@ -40,6 +41,10 @@ export const questionTypes = [
     label: "Lista desplegable",
   },
   {
+    value: SORTABLE,
+    label: "Lista ordenada",
+  },
+  {
     value: SLIDER,
     label: "Escala lineal",
   },
@@ -65,4 +70,5 @@ export const defaultQuestion = {
   title: "Pregunta sin título",
   type: TEXT,
   required: false,
+  specialType: "",
 };

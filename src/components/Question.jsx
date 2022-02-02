@@ -23,12 +23,14 @@ import {
   RATING,
   SELECT,
   SLIDER,
+  SORTABLE,
   TEXT,
   TEXTAREA,
   TIME,
 } from "../constants/questions";
 import Select from "./Select";
 import Slider from "./Slider";
+import SortableList from "./SortableList";
 import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
 
@@ -51,6 +53,10 @@ const Question = ({ answers, question, setAnswers }) => {
             required={question.required}
             value={answer}
             onChange={handleChange}
+            type={question.specialType === "email" ? "email" : "text"}
+            inputProps={{
+              autoComplete: question.specialType,
+            }}
           />
         );
       case TEXTAREA:
@@ -211,6 +217,15 @@ const Question = ({ answers, question, setAnswers }) => {
               </MenuItem>
             ))}
           </Select>
+        );
+      case SORTABLE:
+        return (
+          <SortableList
+            items={answer}
+            onChange={(newItems) =>
+              setAnswers({ ...answers, [question.id]: newItems })
+            }
+          />
         );
       case SLIDER:
         return (

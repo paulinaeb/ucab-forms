@@ -1,5 +1,7 @@
 import { memo } from "react";
 import {
+  Box,
+  Card,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -11,8 +13,11 @@ import {
   Radio,
   Rating,
   RadioGroup,
+  Stack,
   TextField,
+  Typography,
 } from "@mui/material";
+import { DragHandle as DragHandleIcon } from "@mui/icons-material";
 import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import {
   CHECKBOX,
@@ -22,6 +27,7 @@ import {
   RATING,
   SELECT,
   SLIDER,
+  SORTABLE,
   TEXT,
   TEXTAREA,
   TIME,
@@ -101,6 +107,27 @@ const QuestionPreview = ({ question }) => {
             </MenuItem>
           ))}
         </Select>
+      );
+    case SORTABLE:
+      return (
+        <Stack spacing={1}>
+          {question.options.map((option, i) => (
+            <Card
+              key={i}
+              sx={{
+                p: 2,
+                color: "text.disabled",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <Typography>{option}</Typography>
+              <DragHandleIcon />
+            </Card>
+          ))}
+        </Stack>
       );
     case SLIDER:
       return <Slider disabled question={question} />;

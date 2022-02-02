@@ -21,7 +21,10 @@ import {
   CHECKBOX,
   RADIO,
   SELECT,
+  SORTABLE,
   SLIDER,
+  TEXT,
+  TEXTAREA,
 } from "../../constants/questions";
 import { deleteQuestion, saveQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
@@ -44,7 +47,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
   return useMemo(() => {
     const needsOptions = (type) => {
-      return [RADIO, CHECKBOX, SELECT].includes(type);
+      return [RADIO, CHECKBOX, SELECT, SORTABLE].includes(type);
     };
 
     const handleChangeTitle = (e) => {
@@ -82,6 +85,12 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
       if (newQuestion.other === null && needsOther) {
         newQuestion.other = false;
+      }
+
+      if (type === TEXT || type === TEXTAREA) {
+        newQuestion.specialType = "";
+      } else {
+        newQuestion.specialType = null;
       }
 
       if (type === SLIDER) {
