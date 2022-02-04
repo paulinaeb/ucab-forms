@@ -9,6 +9,7 @@ import {
   BarElement,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { format } from "date-fns";
 import {
   CHECKBOX,
@@ -42,6 +43,25 @@ const QuestionStat = ({ question, responses }) => {
   const responseCountText = getResponseCountText(responseCount);
 
   let data = {};
+  let options = {
+    plugins: {
+      datalabels: {
+        formatter: (value, ctx) => {
+          let sum = 0;
+          let dataArr = ctx.chart.data.datasets[0].data;
+          dataArr.map((data) => {
+            sum += data;
+          });
+          let percentage = " ";
+          if (value > 0) {
+            percentage = ((value * 100) / sum).toFixed(2) + "%";
+          }
+          return percentage;
+        },
+        color: "#fff",
+      },
+    },
+  };
 
   if ([RADIO, SELECT].includes(question.type)) {
     data = {
@@ -54,20 +74,34 @@ const QuestionStat = ({ question, responses }) => {
               responses.filter((r) => r[question.id] === option).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
+            "rgba(124, 77, 255, 0.2)",
+            "rgba(204, 255, 144, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
+            "rgba(124, 77, 255, 1)",
+            "rgba(204, 255, 144, 1)",
           ],
           borderWidth: 1,
         },
@@ -86,20 +120,34 @@ const QuestionStat = ({ question, responses }) => {
               responses.filter((r) => r[question.id]?.includes(option)).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
+            "rgba(124, 77, 255, 0.2)",
+            "rgba(204, 255, 144, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
+            "rgba(124, 77, 255, 1)",
+            "rgba(204, 255, 144, 1)",
           ],
         },
       ],
@@ -122,20 +170,30 @@ const QuestionStat = ({ question, responses }) => {
             (n) => responses.filter((r) => r[question.id] === n).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
           ],
         },
       ],
@@ -154,20 +212,18 @@ const QuestionStat = ({ question, responses }) => {
             (v) => responses.filter((r) => r[question.id] === v).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
           ],
         },
       ],
@@ -240,7 +296,7 @@ const QuestionStat = ({ question, responses }) => {
             {responseCountText}
           </Typography>
           <Container maxWidth="sm">
-            <Pie data={data} />
+            <Pie data={data} plugins={[ChartDataLabels]} options={options} />
           </Container>
         </>
       );
@@ -253,6 +309,7 @@ const QuestionStat = ({ question, responses }) => {
           <Container maxWidth="sm">
             <Bar
               data={data}
+              plugins={[ChartDataLabels]}
               options={{
                 indexAxis: "y",
                 elements: {
@@ -264,6 +321,23 @@ const QuestionStat = ({ question, responses }) => {
                 plugins: {
                   legend: {
                     display: false,
+                  },
+                  datalabels: {
+                    align: "start",
+                    anchor: "end",
+                    formatter: (value, ctx) => {
+                      let sum = 0;
+                      let dataArr = ctx.chart.data.datasets[0].data;
+                      dataArr.map((data) => {
+                        sum += data;
+                      });
+                      let percentage = " ";
+                      if (value > 0) {
+                        percentage = ((value * 100) / sum).toFixed(2) + "%";
+                      }
+                      return percentage;
+                    },
+                    color: "#fff",
                   },
                 },
               }}
@@ -281,6 +355,7 @@ const QuestionStat = ({ question, responses }) => {
           <Container maxWidth="sm">
             <Bar
               data={data}
+              plugins={[ChartDataLabels]}
               options={{
                 elements: {
                   bar: {
@@ -288,9 +363,35 @@ const QuestionStat = ({ question, responses }) => {
                   },
                 },
                 responsive: true,
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
                 plugins: {
                   legend: {
                     display: false,
+                  },
+                  datalabels: {
+                    align: "start",
+                    anchor: "end",
+                    formatter: (value, ctx) => {
+                      let sum = 0;
+                      let dataArr = ctx.chart.data.datasets[0].data;
+                      dataArr.map((data) => {
+                        sum += data;
+                      });
+                      let percentage = " ";
+                      if (value > 0) {
+                        percentage = ((value * 100) / sum).toFixed(2) + "%";
+                      }
+                      return percentage;
+                    },
+                    color: "#fff",
                   },
                 },
               }}
