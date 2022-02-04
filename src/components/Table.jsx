@@ -23,11 +23,13 @@ const columns = [
     title: "Preguntas",
     field: "questions",
     type: "numeric",
+    align: "center",
   },
   {
     title: "Respuestas",
     field: "responses",
     type: "numeric",
+    align: "center",
   },
 ];
 
@@ -90,8 +92,24 @@ const Table = () => {
         },
       ]}
       localization={{
+        toolbar: {
+          searchTooltip: "Buscar",
+          searchPlaceholder: "Buscar",
+        },
         header: {
           actions: "Acciones",
+        },
+        body: {
+          emptyDataSourceMessage: "No hay encuestas que mostrar",
+        },
+        pagination: {
+          labelRowsSelect: "Filas",
+          firstTooltip: "Ir al principio",
+          nextTooltip: "Siguiente página",
+          previousTooltip: "Página anterior",
+          lastTooltip: "Ir al final",
+          labelDisplayedRows: "{from}-{to} de {count}",
+          labelRowsPerPage: "",
         },
       }}
     />

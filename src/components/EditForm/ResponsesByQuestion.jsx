@@ -144,6 +144,26 @@ const ResponsesByQuestion = () => {
                 );
               }
 
+              if (file.type.includes("audio")) {
+                return (
+                  <Box key={i}>
+                    <audio controls>
+                      <source src={file.url} type={file.type} />
+                    </audio>
+                  </Box>
+                );
+              }
+
+              if (file.type.includes("video")) {
+                return (
+                  <Box key={i}>
+                    <video width="100%" controls>
+                      <source src={file.url} type={file.type} />
+                    </video>
+                  </Box>
+                );
+              }
+
               return (
                 <Link download href={file.url}>
                   {file.name}

@@ -4,6 +4,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  orderBy,
   onSnapshot,
   query,
   updateDoc,
@@ -38,7 +39,11 @@ export const createForm = async (userId) => {
 };
 
 export const getUserForms = (userId, callback) => {
-  const q = query(formsRef, where("userId", "==", userId));
+  const q = query(
+    formsRef,
+    where("userId", "==", userId),
+    orderBy("createdAt", "desc")
+  );
 
   return onSnapshot(q, (snapshot) => {
     const forms = snapshot.docs.map((doc) => {

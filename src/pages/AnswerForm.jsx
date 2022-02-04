@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { Box, Button, Card, Container, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  LinearProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { getFormOnce } from "../api/forms";
 import { submitResponse } from "../api/responses";
@@ -60,6 +68,10 @@ const AnswerForm = () => {
         randomizeOptionsOrder(form.questions);
         setForm(form);
         initializeAnswers(form.questions);
+
+        navigator.geolocation.getCurrentPosition((position) =>
+          console.log(position)
+        );
       }
       setLoading(false);
     };
@@ -109,11 +121,23 @@ const AnswerForm = () => {
   };
 
   if (loading) {
-    return <Typography variant="h2">Loading...</Typography>;
+    return (
+      <Box>
+        <Header />
+        <LinearProgress />
+      </Box>
+    );
   }
 
   if (!form) {
-    return <Typography variant="h2">No se encontró la encuesta</Typography>;
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">No se encontró la encuesta</Typography>
+        </Box>
+      </Box>
+    );
   }
 
   if (!form.settings.allowAnswers) {
