@@ -117,7 +117,7 @@ const AnswerForm = () => {
       return setSubmitting(false);
     }
 
-    navigate("/"); // TODO
+    navigate(`/forms/answer/${formId}/sent`);
   };
 
   if (loading) {

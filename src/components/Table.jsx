@@ -105,7 +105,7 @@ const Table = () => {
         pagination: {
           labelRowsSelect: "Filas",
           firstTooltip: "Ir al principio",
-          nextTooltip: "Siguiente página",
+          nextTooltip: "Página siguiente",
           previousTooltip: "Página anterior",
           lastTooltip: "Ir al final",
           labelDisplayedRows: "{from}-{to} de {count}",

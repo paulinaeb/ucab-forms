@@ -27,6 +27,7 @@ export const submitResponse = async (form, response) => {
       })
     );
 
+    console.log("Trying");
     const responsesRef = collection(db, "forms", form.id, "responses");
     const responseRef = await addDoc(responsesRef, response);
 
