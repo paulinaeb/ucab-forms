@@ -1,30 +1,46 @@
 import { useMemo, useState } from "react";
 import {
   Button,
+  Chip,
   Dialog,
   DialogContent,
   DialogActions,
   DialogTitle,
+  IconButton,
   List,
   ListItem,
   ListItemText,
   ListSubheader,
   Switch,
   TextField,
+  Tooltip,
   useMediaQuery,
 } from "@mui/material";
-import { Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Close as CloseIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
-import { deleteForm, saveForm } from "../../api/forms";
+import {
+  addCollaborator,
+  deleteCollaborator,
+  deleteForm,
+  saveForm,
+} from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
+import { useUser } from "../../hooks/useUser";
 
 const SettingsDialogBody = ({ closeDialog }) => {
   const { form, setForm } = useForm();
   const [settings, setSettings] = useState(form.settings);
+  const [collaborator, setCollaborator] = useState("");
+  const [adding, setAdding] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const user = useUser();
 
   return useMemo(() => {
     const handleChangeValue = (field) => (e) => {
@@ -41,6 +57,52 @@ const SettingsDialogBody = ({ closeDialog }) => {
       setSettings(newSettings);
     };
 
+    const handleChangeCollaborator = (e) => {
+      setCollaborator(e.target.value);
+    };
+
+    const handleAddCollaborator = async (e) => {
+      e.preventDefault();
+
+      if (
+        user.email === collaborator ||
+        form.collaborators.find((c) => c.email === collaborator)
+      ) {
+        return enqueueSnackbar("Este usuario ya es colaborador", {
+          variant: "error",
+        });
+      }
+
+      setAdding(true);
+
+      const { error } = await addCollaborator(form, collaborator);
+
+      setAdding(false);
+
+      if (error) {
+        return enqueueSnackbar("No hay usuarios con este email", {
+          variant: "error",
+        });
+      }
+
+      enqueueSnackbar("Colaborador agregado", { variant: "success" });
+      setCollaborator("");
+    };
+
+    const handleDeleteCollaborator = async (collaborator) => {
+      const { error } = await deleteCollaborator(form, collaborator);
+
+      if (error) {
+        return enqueueSnackbar("No se pudo eliminar el colaborador", {
+          variant: "error",
+        });
+      }
+
+      enqueueSnackbar("Colaborador eliminado", {
+        variant: "success",
+      });
+    };
+
     const handleDeleteForm = async () => {
       navigate("/");
       await deleteForm(form.id);
@@ -54,10 +116,62 @@ const SettingsDialogBody = ({ closeDialog }) => {
 
     return (
       <>
-        <DialogTitle>Configuración</DialogTitle>
-        <DialogContent>
-          <List>
-            <ListSubheader sx={{ background: "transparent" }}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          Configuración
+          <Tooltip title="Cerrar" arrow>
+            <IconButton onClick={closeDialog}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogTitle>
+        <DialogContent sx={{ background: "inherit" }}>
+          <List sx={{ background: "inherit" }}>
+            <ListSubheader sx={{ background: "inherit" }}>
+              Colaboradores
+            </ListSubheader>
+            <ListItem
+              component="form"
+              onSubmit={handleAddCollaborator}
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <TextField
+                variant="standard"
+                fullWidth
+                type="email"
+                placeholder="Email"
+                value={collaborator}
+                onChange={handleChangeCollaborator}
+              />
+              <Button disabled={!collaborator || adding} type="submit">
+                Agregar
+              </Button>
+            </ListItem>
+            <ListItem
+              sx={{ justifyContent: "center", flexWrap: "wrap", gap: 1 }}
+            >
+              <Tooltip title={form.author.email} arrow>
+                <Chip icon={<AccountCircle />} label={form.author.name} />
+              </Tooltip>
+              {form.collaborators.map((collaborator, i) => (
+                <Tooltip key={i} title={collaborator.email} arrow>
+                  <Chip
+                    label={collaborator.name}
+                    onDelete={() => handleDeleteCollaborator(collaborator)}
+                  />
+                </Tooltip>
+              ))}
+            </ListItem>
+            <ListSubheader sx={{ background: "inherit" }}>
               Encuesta
             </ListSubheader>
             <ListItem>
@@ -126,12 +240,21 @@ const SettingsDialogBody = ({ closeDialog }) => {
         </DialogActions>
       </>
     );
-  }, [closeDialog, enqueueSnackbar, form.id, navigate, settings]);
+  }, [
+    adding,
+    closeDialog,
+    collaborator,
+    enqueueSnackbar,
+    form,
+    navigate,
+    settings,
+    user.email,
+  ]);
 };
 
 const SettingsDialog = ({ open, setOpen }) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const closeDialog = () => {
     setOpen(false);
@@ -143,7 +266,7 @@ const SettingsDialog = ({ open, setOpen }) => {
       onClose={closeDialog}
       fullScreen={fullScreen}
       fullWidth
-      maxWidth="sm" // SEEEEE
+      maxWidth="sm"
       keepMounted={false}
     >
       <SettingsDialogBody closeDialog={closeDialog} />

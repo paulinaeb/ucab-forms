@@ -49,7 +49,7 @@ const Table = () => {
   }, [user.id]);
 
   const createNewForm = async () => {
-    const { form, error } = await createForm(user.id);
+    const { form, error } = await createForm(user);
 
     if (error) {
       return enqueueSnackbar(error, { variant: "error" });

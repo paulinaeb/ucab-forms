@@ -55,7 +55,10 @@ const EditForm = () => {
     );
   }
 
-  if (form.userId !== user.id) {
+  if (
+    form.author.id !== user.id &&
+    !form.collaborators.find((c) => c.email === user.email)
+  ) {
     return (
       <Box>
         <Header />
