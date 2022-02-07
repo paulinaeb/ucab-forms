@@ -1,5 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { UserProvider } from "./hooks/useUser";
+import { AlertProvider } from "./hooks/useAlert";
 import { FormProvider } from "./hooks/useForm";
 import AuthPage from "./components/AuthPage";
 import UnAuthPage from "./components/UnAuthPage";
@@ -17,68 +18,70 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const App = () => {
   return (
     <UserProvider>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route
-          element={
-            <UnAuthPage>
-              <AuthLayout />
-            </UnAuthPage>
-          }
-        >
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Route>
-        <Route
-          element={
-            <AuthPage>
-              <Outlet />
-            </AuthPage>
-          }
-        >
+      <AlertProvider>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route
-            path="/dashboard"
             element={
-              <>
-                <Header />
-                <Dashboard />
-              </>
+              <UnAuthPage>
+                <AuthLayout />
+              </UnAuthPage>
             }
-          />
+          >
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
           <Route
-            path="/forms/edit/:id"
             element={
-              <FormProvider>
-                <EditForm />
-              </FormProvider>
+              <AuthPage>
+                <Outlet />
+              </AuthPage>
             }
-          />
-        </Route>
-        <Route
-          path="/forms/answer/:id"
-          element={
-            <ThemeProvider
-              theme={(theme) =>
-                createTheme({
-                  ...theme,
-                  // typography: {
-                  //   fontFamily: "Helvetica",
-                  // },
-                  // palette: {
-                  //   ...theme.palette,
-                  //   primary: {
-                  //     main: "#f1e458",
-                  //   },
-                  // },
-                })
+          >
+            <Route
+              path="/dashboard"
+              element={
+                <>
+                  <Header />
+                  <Dashboard />
+                </>
               }
-            >
-              <AnswerForm />
-            </ThemeProvider>
-          }
-        />
-        <Route path="/forms/answer/:id/sent" element={<Sent />} />
-      </Routes>
+            />
+            <Route
+              path="/forms/edit/:id"
+              element={
+                <FormProvider>
+                  <EditForm />
+                </FormProvider>
+              }
+            />
+          </Route>
+          <Route
+            path="/forms/answer/:id"
+            element={
+              <ThemeProvider
+                theme={(theme) =>
+                  createTheme({
+                    ...theme,
+                    // typography: {
+                    //   fontFamily: "Helvetica",
+                    // },
+                    // palette: {
+                    //   ...theme.palette,
+                    //   primary: {
+                    //     main: "#f1e458",
+                    //   },
+                    // },
+                  })
+                }
+              >
+                <AnswerForm />
+              </ThemeProvider>
+            }
+          />
+          <Route path="/forms/answer/:id/sent" element={<Sent />} />
+        </Routes>
+      </AlertProvider>
     </UserProvider>
   );
 };

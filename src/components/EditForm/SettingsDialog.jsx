@@ -32,6 +32,7 @@ import {
 } from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
 import { useUser } from "../../hooks/useUser";
+import { useAlert } from "../../hooks/useAlert";
 
 const SettingsDialogBody = ({ closeDialog }) => {
   const { form, setForm } = useForm();
@@ -41,6 +42,7 @@ const SettingsDialogBody = ({ closeDialog }) => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const user = useUser();
+  const openAlert = useAlert();
 
   return useMemo(() => {
     const handleChangeValue = (field) => (e) => {
@@ -89,17 +91,24 @@ const SettingsDialogBody = ({ closeDialog }) => {
       setCollaborator("");
     };
 
-    const handleDeleteCollaborator = async (collaborator) => {
-      const { error } = await deleteCollaborator(form, collaborator);
+    const handleDeleteCollaborator = (collaborator) => {
+      openAlert({
+        title: "Eliminar colaborador",
+        message: "¿Estás seguro de eliminar este colaborador?",
+        fullWidth: false,
+        action: async () => {
+          const { error } = await deleteCollaborator(form, collaborator);
 
-      if (error) {
-        return enqueueSnackbar("No se pudo eliminar el colaborador", {
-          variant: "error",
-        });
-      }
+          if (error) {
+            return enqueueSnackbar("No se pudo eliminar el colaborador", {
+              variant: "error",
+            });
+          }
 
-      enqueueSnackbar("Colaborador eliminado", {
-        variant: "success",
+          enqueueSnackbar("Colaborador eliminado", {
+            variant: "success",
+          });
+        },
       });
     };
 
@@ -247,6 +256,7 @@ const SettingsDialogBody = ({ closeDialog }) => {
     enqueueSnackbar,
     form,
     navigate,
+    openAlert,
     settings,
     user.email,
   ]);
@@ -255,9 +265,15 @@ const SettingsDialogBody = ({ closeDialog }) => {
 const SettingsDialog = ({ open, setOpen }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const openAlert = useAlert();
 
   const closeDialog = () => {
-    setOpen(false);
+    openAlert({
+      title: "¿Deseas descartar los cambios?",
+      message: "Si descartas los cambios, se perderán",
+      fullWidth: false,
+      action: () => setOpen(false),
+    });
   };
 
   return (

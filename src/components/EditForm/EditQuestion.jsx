@@ -29,10 +29,12 @@ import {
 } from "../../constants/questions";
 import { deleteQuestion, saveQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
+import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const { form, questions, setQuestions, current } = useForm();
+  const openAlert = useAlert();
 
   const question = useMemo(() => {
     return questions.find((q) => q.id === current);
@@ -133,14 +135,20 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
-    const removeQuestion = async (questionId) => {
-      const { error } = await deleteQuestion(form.id, questionId);
+    const removeQuestion = (questionId) => {
+      openAlert({
+        title: "Eliminar pregunta",
+        message: "¿Estás seguro de eliminar esta pregunta?",
+        action: async () => {
+          const { error } = await deleteQuestion(form.id, questionId);
 
-      if (error) {
-        return alert(error.message);
-      }
+          if (error) {
+            return alert(error.message);
+          }
 
-      setOpenDrawer(false);
+          setOpenDrawer(false);
+        },
+      });
     };
 
     if (!question) {

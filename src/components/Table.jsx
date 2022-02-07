@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { createForm, deleteForm, getUserForms } from "../api/forms";
 import { useUser } from "../hooks/useUser";
+import { useAlert } from "../hooks/useAlert";
 
 const columns = [
   {
@@ -35,6 +36,7 @@ const columns = [
 
 const Table = () => {
   const user = useUser();
+  const openAlert = useAlert();
   const navigate = useNavigate();
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +58,26 @@ const Table = () => {
     }
 
     navigate("/forms/edit/" + form.id);
+  };
+
+  const handleDelete = (event, rowData) => {
+    openAlert({
+      title: "Eliminar encuesta",
+      message: "¿Estás seguro de eliminar esta encuesta?",
+      action: async () => {
+        const { error } = await deleteForm(rowData.id);
+
+        if (error) {
+          return enqueueSnackbar("Error al eliminar la encuesta ", {
+            variant: "error",
+          });
+        }
+
+        enqueueSnackbar("Encuesta eliminada", {
+          variant: "success",
+        });
+      },
+    });
   };
 
   return (
@@ -85,10 +107,7 @@ const Table = () => {
         {
           icon: () => <Delete />,
           tooltip: "Eliminar",
-          onClick: (event, rowData) => {
-            // TODO: Dialog
-            deleteForm(rowData.id);
-          },
+          onClick: handleDelete,
         },
       ]}
       localization={{
