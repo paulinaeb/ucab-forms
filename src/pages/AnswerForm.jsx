@@ -69,9 +69,13 @@ const AnswerForm = () => {
         setForm(form);
         initializeAnswers(form.questions);
 
-        navigator.geolocation.getCurrentPosition((position) =>
-          console.log(position)
-        );
+        navigator.geolocation.getCurrentPosition((position) => {
+          const { latitude, longitude } = position.coords;
+          setResponse((response) => ({
+            ...response,
+            location: { latitude, longitude },
+          }));
+        });
       }
       setLoading(false);
     };

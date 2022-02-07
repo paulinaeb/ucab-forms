@@ -110,6 +110,8 @@ const Response = () => {
       return <Typography>{text}</Typography>;
     };
 
+    const response = responses[page - 1];
+
     return (
       <Box>
         <Stack spacing={2}>
@@ -122,14 +124,43 @@ const Response = () => {
             renderItem={renderItem}
           />
           <Typography align="right" variant="caption" color="text.secondary">
-            Respondido el{" "}
-            {format(responses[page - 1].submittedAt, "dd/MM/yyyy, hh:mm a")}
+            Respondido el {format(response.submittedAt, "dd/MM/yyyy, hh:mm a")}
           </Typography>
+          {response.location && (
+            <Card sx={{ p: 3 }} variant="outlined">
+              <Typography mb={2}>Ubicación</Typography>
+              <Box
+                sx={{
+                  position: "relative",
+                  overflow: "hidden",
+                  width: "100%",
+                  pt: "75%",
+                }}
+              >
+                <Box
+                  component="iframe"
+                  title="user-location"
+                  src={`https://maps.google.com/maps?q=${response.location.latitude},${response.location.longitude}&hl=es;z=15&output=embed`}
+                  allowFullScreen
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: 0,
+                  }}
+                />
+              </Box>
+            </Card>
+          )}
           {questions.map((question) => (
             <Card key={question.id} sx={{ p: 3 }} variant="outlined">
               <Typography gutterBottom>{question.title}</Typography>
-              {responses[page - 1].answers[question.id].value === "" ||
-              responses[page - 1].answers[question.id].length === 0 ? (
+              {response.answers[question.id].value === "" ||
+              response.answers[question.id].length === 0 ? (
                 <Typography fontStyle="italic">Respuesta vacía</Typography>
               ) : (
                 <Box>
@@ -137,10 +168,7 @@ const Response = () => {
                     Respuesta
                   </Typography>
                   <Box mt={1}>
-                    {renderValue(
-                      responses[page - 1].answers[question.id],
-                      question
-                    )}
+                    {renderValue(response.answers[question.id], question)}
                   </Box>
                 </Box>
               )}
