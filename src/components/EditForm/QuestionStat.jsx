@@ -1,4 +1,4 @@
-import { Box, Typography, Container } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -15,16 +15,19 @@ import {
   CHECKBOX,
   DATE,
   DATETIME,
+  FILE,
   RADIO,
   RATING,
   SELECT,
   SLIDER,
+  SORTABLE,
   TEXT,
   TEXTAREA,
   TIME,
   ratingLabels,
 } from "../../constants/questions";
 import { getResponseCountText } from "../../utils/stats";
+import FilesResponse from "./FilesResponse";
 
 ChartJS.register(
   ArcElement,
@@ -35,9 +38,7 @@ ChartJS.register(
   Legend
 );
 
-// TODO: Change responses to answers or viceversa
 const QuestionStat = ({ question, responses }) => {
-  // TODO: Memoize
   const responseCount = responses.filter((r) => r[question.id]).length;
 
   const responseCountText = getResponseCountText(responseCount);
@@ -235,7 +236,12 @@ const QuestionStat = ({ question, responses }) => {
     case TEXTAREA:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           {responses.map((r, i) => (
@@ -248,7 +254,12 @@ const QuestionStat = ({ question, responses }) => {
     case DATE:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           {responses.map((r, i) => (
@@ -263,7 +274,12 @@ const QuestionStat = ({ question, responses }) => {
     case TIME:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           {responses.map((r, i) => (
@@ -276,7 +292,12 @@ const QuestionStat = ({ question, responses }) => {
     case DATETIME:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           {responses.map((r, i) => (
@@ -292,7 +313,12 @@ const QuestionStat = ({ question, responses }) => {
     case SELECT:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           <Container maxWidth="sm">
@@ -303,7 +329,12 @@ const QuestionStat = ({ question, responses }) => {
     case CHECKBOX:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           <Container maxWidth="sm">
@@ -349,7 +380,12 @@ const QuestionStat = ({ question, responses }) => {
     case RATING:
       return (
         <>
-          <Typography color="text.secondary" variant="caption">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
             {responseCountText}
           </Typography>
           <Container maxWidth="sm">
@@ -397,6 +433,24 @@ const QuestionStat = ({ question, responses }) => {
               }}
             />
           </Container>
+        </>
+      );
+    case FILE:
+      return (
+        <>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          <Stack spacing={2}>
+            {responses.map((r, i) => (
+              <FilesResponse key={i} files={r[question.id]} />
+            ))}
+          </Stack>
         </>
       );
     default:
