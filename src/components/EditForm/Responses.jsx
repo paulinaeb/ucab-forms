@@ -15,6 +15,7 @@ import { getResponseCountText } from "../../utils/stats";
 import ResponsesSummary from "./ResponsesSummary";
 import ResponsesByPerson from "./ResponsesByPerson";
 import ResponsesByQuestion from "./ResponsesByQuestion";
+import ResponsesTable from "./ResponsesTable";
 
 const Responses = () => {
   const { responses, questions } = useForm();
@@ -44,13 +45,16 @@ const Responses = () => {
             onChange={(event, value) => setView(value)}
           >
             <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="summary">
-              <Typography>Resumen</Typography>
+              Resumen
+            </ToggleButton>
+            <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="table">
+              Tabla
             </ToggleButton>
             <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="question">
-              <Typography>Pregunta</Typography>
+              Pregunta
             </ToggleButton>
             <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="person">
-              <Typography>Persona</Typography>
+              Persona
             </ToggleButton>
           </ToggleButtonGroup>
           <Typography fontSize="h6.fontSize">
@@ -64,6 +68,7 @@ const Responses = () => {
             {view === "summary" && <ResponsesSummary />}
             {view === "question" && <ResponsesByQuestion />}
             {view === "person" && <ResponsesByPerson />}
+            {view === "table" && <ResponsesTable />}
             {!view && (
               <Typography>
                 Selecciona una opción para visualizar las respuestas

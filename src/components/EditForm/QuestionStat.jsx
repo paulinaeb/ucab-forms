@@ -399,15 +399,6 @@ const QuestionStat = ({ question, responses }) => {
                   },
                 },
                 responsive: true,
-                scales: {
-                  yAxes: [
-                    {
-                      ticks: {
-                        beginAtZero: true,
-                      },
-                    },
-                  ],
-                },
                 plugins: {
                   legend: {
                     display: false,
