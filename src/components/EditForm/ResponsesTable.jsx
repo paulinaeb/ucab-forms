@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import Table from "../Table";
 import { useForm } from "../../hooks/useForm";
 import { stringifyAnswers } from "../../utils/stats";
+import { FILE } from "../../constants/questions";
 
 const ResponsesTable = () => {
   const { responses, questions } = useForm();
@@ -15,6 +16,15 @@ const ResponsesTable = () => {
         title: question.title,
         field: question.id,
         emptyValue: "-",
+        // ...(question.type === FILE && {
+        //   render: (rowData) => (
+        //     <>
+        //       {rowData[question.id].map((f, i) => (
+        //         <a key={i} href={f.url}>{f.name}</a>
+        //       ))}
+        //     </>
+        //   ),
+        // }),
       })),
     ];
   }, [questions]);

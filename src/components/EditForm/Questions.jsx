@@ -10,28 +10,6 @@ const Questions = ({ setOpenDrawer }) => {
   const { form, questions, current, setCurrent } = useForm();
 
   return useMemo(() => {
-    // const addQuestionAfter = async (i) => {
-    //   let newIndex;
-
-    //   if (i === -1) {
-    //     newIndex = questions[0] ? questions[0].index - 1 : 0;
-    //   } else if (i === questions.length - 1) {
-    //     newIndex = questions[i].index + 1;
-    //   } else {
-    //     newIndex = (questions[i].index + questions[i + 1].index) / 2;
-    //   }
-
-    //   const question = { index: newIndex, ...defaultQuestion };
-
-    //   const { error } = await insertQuestion(form.id, question);
-
-    //   if (error) {
-    //     return alert(error.message);
-    //   }
-
-    //   alert("Pregunta agregada");
-    // };
-
     const addQuestion = async () => {
       const i = questions.findIndex((q) => q.id === current);
       let newIndex;

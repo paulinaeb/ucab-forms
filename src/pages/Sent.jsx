@@ -8,8 +8,10 @@ import {
   LinearProgress,
   Typography,
 } from "@mui/material";
+import Lottie from "lottie-react";
 import { getFormOnce } from "../api/forms";
 import Header from "../components/Header";
+import doneAnimation from "../img/done.json";
 
 const Sent = () => {
   const { id: formId } = useParams();
@@ -51,13 +53,23 @@ const Sent = () => {
     <Box>
       <Header />
       <Container sx={{ p: 3 }} maxWidth="md">
-        <Card sx={{ p: 3 }} variant="outlined">
-          <Typography variant="h5" mb={2}>
-            {form.title}
+        <Card
+          sx={{
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+          variant="outlined"
+        >
+          <Typography align="center" variant="h5">
+            Enviada
           </Typography>
-          <Typography mb={2}>
-            Tu respuesta ha sido enviada exitosamente. Gracias por responder la
-            encuesta.
+          <Box sx={{ width: "50vmin" }}>
+            <Lottie animationData={doneAnimation} />
+          </Box>
+          <Typography align="center" mb={2}>
+            ¡Gracias por tu colaboración! Hemos recibido tu respuesta con éxito.
           </Typography>
           <Button
             variant="contained"

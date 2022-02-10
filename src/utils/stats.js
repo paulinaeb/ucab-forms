@@ -45,6 +45,7 @@ const stringifyAnswers = (answers, questions) => {
         break;
       case FILE:
         newAnswers[questionId] = answer.map((f) => f.url).join(", ");
+        // newAnswers[questionId] = answer;
         break;
       case CHECKBOX:
       case SORTABLE:

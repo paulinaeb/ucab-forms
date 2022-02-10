@@ -15,6 +15,7 @@ import {
   ArrowUpward,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
+import Lottie from "lottie-react";
 import debounce from "lodash.debounce";
 import {
   questionTypes,
@@ -31,6 +32,7 @@ import { deleteQuestion, saveQuestion } from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
+import selectAnimation from "../../img/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
   const { form, questions, setQuestions, current } = useForm();
@@ -44,7 +46,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
     () =>
       debounce(async (newQuestion) => {
         await saveQuestion(form.id, newQuestion);
-      }, 2000),
+      }, 1500),
     [form.id]
   );
 
@@ -152,7 +154,17 @@ const EditQuestion = ({ setOpenDrawer }) => {
     };
 
     if (!question) {
-      return <Box>No hay pregunta seleccionada</Box>;
+      return (
+        <Box>
+          <Box sx={{ width: "65%", mx: "auto" }}>
+            <Lottie animationData={selectAnimation} loop />
+          </Box>
+          <Typography align="center">
+            No hay pregunta seleccionada. ¡Haz click en una para comenzar a
+            editar!
+          </Typography>
+        </Box>
+      );
     }
 
     const swapQuestion = (direction) => {
@@ -268,6 +280,7 @@ const EditQuestion = ({ setOpenDrawer }) => {
   }, [
     debouncedSave,
     form.id,
+    openAlert,
     question,
     questions,
     setOpenDrawer,

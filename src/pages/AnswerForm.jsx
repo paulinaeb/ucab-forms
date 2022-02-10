@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -9,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
 import { getFormOnce } from "../api/forms";
 import { submitResponse } from "../api/responses";
 import {
@@ -26,10 +28,12 @@ const AnswerForm = () => {
   const { id: formId } = useParams();
   const [form, setForm] = useState(null);
   const [response, setResponse] = useState({});
+  const [errors, setErrors] = useState({});
   const [answers, setAnswers] = useState();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const initializeAnswers = useCallback((questions) => {
     const answers = {};
@@ -86,26 +90,31 @@ const AnswerForm = () => {
   const submit = async (e) => {
     e.preventDefault();
 
+    let shouldReturn = false;
+    const newErrors = { ...errors };
+
     form.questions.forEach((question) => {
-      if (
-        (question.type === CHECKBOX || question.type === FILE) &&
-        question.required &&
-        !answers[question.id].length
-      ) {
-        // TODO
-        return alert(
-          "La pregunta tal es requerida, selecciona al menos una opción"
-        );
-      }
-      if (
-        question.type === RATING &&
-        question.required &&
-        !answers[question.id]
-      ) {
-        // TODO
-        return alert("La pregunta tal es requerida");
+      if (question.required) {
+        if (
+          ((question.type === CHECKBOX || question.type === FILE) &&
+            !answers[question.id].length) ||
+          (question.type === RATING && !answers[question.id])
+        ) {
+          newErrors[question.id] = true;
+          shouldReturn = true;
+        } else {
+          newErrors[question.id] = false;
+        }
       }
     });
+
+    setErrors(newErrors);
+
+    if (shouldReturn) {
+      return enqueueSnackbar("Aún tienes preguntas por responder", {
+        variant: "error",
+      });
+    }
 
     setSubmitting(true);
 
@@ -117,7 +126,7 @@ const AnswerForm = () => {
     const { error } = await submitResponse(form, responseData);
 
     if (error) {
-      alert(error.message);
+      enqueueSnackbar(error.message, { variant: "error" });
       return setSubmitting(false);
     }
 
@@ -181,6 +190,15 @@ const AnswerForm = () => {
                   answers={answers}
                   setAnswers={setAnswers}
                 />
+                {errors[question.id] && (
+                  <Alert
+                    variant="outlined"
+                    severity="error"
+                    sx={{ mt: 3, border: "none", p: 0 }}
+                  >
+                    Esta pregunta es requerida
+                  </Alert>
+                )}
               </Card>
             ))}
           </Stack>
