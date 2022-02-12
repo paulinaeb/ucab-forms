@@ -121,6 +121,7 @@ const AnswerForm = () => {
     const responseData = {
       ...response,
       answers: { ...answers },
+      comments: {},
     };
 
     const { error } = await submitResponse(form, responseData);
@@ -153,7 +154,7 @@ const AnswerForm = () => {
     );
   }
 
-  if (!form.settings.allowAnswers) {
+  if (!form.settings.allowResponses) {
     return (
       <Box>
         <Header />

@@ -34,7 +34,11 @@ export const createForm = async (user) => {
       responses: 0,
       collaborators: [],
       settings: {
-        allowAnswers: true,
+        allowResponses: true,
+        maxResponses: "",
+        onlyOneResponse: false,
+        startDate: null,
+        endDate: null,
       },
     });
 

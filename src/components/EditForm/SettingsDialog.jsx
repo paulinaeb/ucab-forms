@@ -21,6 +21,7 @@ import {
   Close as CloseIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
+import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -34,9 +35,10 @@ import { useForm } from "../../hooks/useForm";
 import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
 
-const SettingsDialogBody = ({ closeDialog }) => {
+const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
   const { form, setForm } = useForm();
   const [settings, setSettings] = useState(form.settings);
+  // const [limitAnswers, setLimitAnswers] = useState(!!form.settings.maxAnswers);
   const [collaborator, setCollaborator] = useState("");
   const [adding, setAdding] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -55,6 +57,12 @@ const SettingsDialogBody = ({ closeDialog }) => {
     const handleChangeChecked = (field) => (e) => {
       const checked = e.target.checked;
       const newSettings = { ...settings, [field]: checked };
+
+      setSettings(newSettings);
+    };
+
+    const handleChange = (field) => (value) => {
+      const newSettings = { ...settings, [field]: value };
 
       setSettings(newSettings);
     };
@@ -113,13 +121,24 @@ const SettingsDialogBody = ({ closeDialog }) => {
     };
 
     const handleDeleteForm = async () => {
-      navigate("/");
+      navigate("/dashboard");
       await deleteForm(form.id);
 
       enqueueSnackbar("Encuesta eliminada", { variant: "success" });
     };
 
     const handleSaveForm = async () => {
+      const { error } = await saveForm({
+        ...form,
+        settings,
+      });
+
+      if (error) {
+        return enqueueSnackbar("No se pudo guardar la encuesta", {
+          variant: "error",
+        });
+      }
+
       closeDialog();
     };
 
@@ -134,7 +153,7 @@ const SettingsDialogBody = ({ closeDialog }) => {
         >
           Configuración
           <Tooltip title="Cerrar" arrow>
-            <IconButton onClick={closeDialog}>
+            <IconButton onClick={discardDialog}>
               <CloseIcon />
             </IconButton>
           </Tooltip>
@@ -187,28 +206,30 @@ const SettingsDialogBody = ({ closeDialog }) => {
               <ListItemText primary="Admite respuestas" />
               <Switch
                 edge="end"
-                checked={settings.allowAnswers}
-                onChange={handleChangeChecked("allowAnswers")}
+                checked={settings.allowResponses}
+                onChange={handleChangeChecked("allowResponses")}
               />
             </ListItem>
-            <ListItem>
+            {/* <ListItem>
               <ListItemText primary="Restringir máximo de respuestas" />
               <Switch
                 edge="end"
-                checked={settings.maxAnswers}
-                onChange={handleChangeChecked("maxAnswers")}
+                checked={limitAnswers}
+                onChange={(e) => setLimitAnswers(e.target.checked)}
               />
-            </ListItem>
+            </ListItem> */}
+            {/* {limitAnswers && (
+              <ListItem sx={{ justifyContent: "flex-end" }}>
+                
+              </ListItem>
+            )} */}
             <ListItem>
-              <ListItemText
-                primary="Máximo número de respuestas"
-                secondary="Limitar el número de respuestas totales a una cantidad"
-              />
+              <ListItemText primary="Máximo de aplicaciones" />
               <TextField
                 variant="standard"
                 type="number"
-                // placeholder="Vacío: sin límite"
-                value={settings.maxResponses ?? ""}
+                placeholder="Vacío: sin límite"
+                value={settings.maxResponses}
                 onChange={handleChangeValue("maxResponses")}
               />
             </ListItem>
@@ -219,8 +240,42 @@ const SettingsDialogBody = ({ closeDialog }) => {
               />
               <Switch
                 edge="end"
-                checked={settings.maxAnswers}
-                onChange={handleChangeChecked("maxAnswers")}
+                checked={settings.onlyOneResponse}
+                onChange={handleChangeChecked("onlyOneResponse")}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Aplicar encuesta a partir de" />
+              <DateTimePicker
+                value={settings.startDate || null}
+                onChange={handleChange("startDate")}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder="Vacío: sin fecha de inicio"
+                  />
+                )}
+                okText="Aceptar"
+                cancelText="Cancelar"
+                toolbarTitle="Seleccionar fecha y hora"
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Aplicar hasta el" />
+              <DateTimePicker
+                value={settings.startEnd || null}
+                onChange={handleChange("endDate")}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder="Vacío: sin fecha de cierre"
+                  />
+                )}
+                okText="Aceptar"
+                cancelText="Cancelar"
+                toolbarTitle="Seleccionar fecha y hora"
               />
             </ListItem>
             <ListSubheader sx={{ background: "transparent" }}>
@@ -244,7 +299,7 @@ const SettingsDialogBody = ({ closeDialog }) => {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog}>Descartar</Button>
+          <Button onClick={discardDialog}>Descartar</Button>
           <Button onClick={handleSaveForm}>Guardar</Button>
         </DialogActions>
       </>
@@ -253,6 +308,7 @@ const SettingsDialogBody = ({ closeDialog }) => {
     adding,
     closeDialog,
     collaborator,
+    discardDialog,
     enqueueSnackbar,
     form,
     navigate,
@@ -268,24 +324,31 @@ const SettingsDialog = ({ open, setOpen }) => {
   const openAlert = useAlert();
 
   const closeDialog = () => {
+    setOpen(false);
+  };
+
+  const discardDialog = () => {
     openAlert({
       title: "¿Deseas descartar los cambios?",
       message: "Si descartas los cambios, se perderán",
       fullWidth: false,
-      action: () => setOpen(false),
+      action: closeDialog,
     });
   };
 
   return (
     <Dialog
       open={open}
-      onClose={closeDialog}
+      onClose={discardDialog}
       fullScreen={fullScreen}
       fullWidth
       maxWidth="sm"
       keepMounted={false}
     >
-      <SettingsDialogBody closeDialog={closeDialog} />
+      <SettingsDialogBody
+        discardDialog={discardDialog}
+        closeDialog={closeDialog}
+      />
     </Dialog>
   );
 };

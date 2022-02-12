@@ -1,13 +1,21 @@
 import { useMemo, useState } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Avatar,
   Box,
+  Button,
+  ButtonGroup,
   Card,
   Checkbox,
+  Divider,
   FormControlLabel,
   FormGroup,
   Link,
   Pagination,
   PaginationItem,
+  TextField,
   Tooltip,
   Typography,
   Stack,
@@ -24,6 +32,7 @@ import {
   TIME,
 } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
+import Comments from "./Comments";
 import Slider from "../Slider";
 import Rating from "../Rating";
 import FilesResponse from "./FilesResponse";
@@ -157,22 +166,23 @@ const Response = () => {
             </Card>
           )}
           {questions.map((question) => (
-            <Card key={question.id} sx={{ p: 3 }} variant="outlined">
-              <Typography gutterBottom>{question.title}</Typography>
-              {response.answers[question.id].value === "" ||
-              response.answers[question.id].length === 0 ? (
-                <Typography fontStyle="italic">Respuesta vacía</Typography>
-              ) : (
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Respuesta
-                  </Typography>
-                  <Box mt={1}>
+            <Box>
+              <Card key={question.id} sx={{ p: 3, mb: 1 }} variant="outlined">
+                <Typography gutterBottom>{question.title}</Typography>
+                {response.answers[question.id].value === "" ||
+                response.answers[question.id].length === 0 ? (
+                  <Typography fontStyle="italic">Respuesta vacía</Typography>
+                ) : (
+                  <Stack spacing={1}>
+                    <Typography variant="caption" color="text.secondary">
+                      Respuesta
+                    </Typography>
                     {renderValue(response.answers[question.id], question)}
-                  </Box>
-                </Box>
-              )}
-            </Card>
+                  </Stack>
+                )}
+              </Card>
+              <Comments response={response} question={question} />
+            </Box>
           ))}
         </Stack>
       </Box>

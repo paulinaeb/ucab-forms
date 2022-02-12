@@ -11,7 +11,7 @@ const ResponsesTable = () => {
 
   const columns = useMemo(() => {
     return [
-      { title: "Fecha y hora", field: "submittedAt" },
+      { title: "Fecha de respuesta", field: "submittedAt" },
       ...questions.map((question) => ({
         title: question.title,
         field: question.id,

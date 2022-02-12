@@ -27,7 +27,6 @@ export const submitResponse = async (form, response) => {
       })
     );
 
-    console.log("Trying");
     const responsesRef = collection(db, "forms", form.id, "responses");
     const responseRef = await addDoc(responsesRef, response);
 
@@ -58,4 +57,16 @@ export const getResponses = (formId, callback) => {
 
     callback(responses);
   });
+};
+
+export const addComment = async (formId, responseId, comments) => {
+  try {
+    const responseRef = doc(db, "forms", formId, "responses", responseId);
+
+    await updateDoc(responseRef, { comments });
+
+    return { response: responseRef };
+  } catch (error) {
+    return { error: { message: "Error al guardar el comentario" } };
+  }
 };

@@ -60,9 +60,7 @@ const Question = ({ answers, question, setAnswers }) => {
             value={answer}
             onChange={handleChange}
             type={question.specialType === "email" ? "email" : "text"}
-            inputProps={{
-              autoComplete: question.specialType,
-            }}
+            autoComplete={question.specialType}
           />
         );
       case TEXTAREA:
