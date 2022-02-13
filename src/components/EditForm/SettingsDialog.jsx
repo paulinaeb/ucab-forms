@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogActions,
   DialogTitle,
+  Fade,
   IconButton,
   List,
   ListItem,
@@ -36,11 +37,16 @@ import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
 
 const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
-  const { form, setForm } = useForm();
+  const { form } = useForm();
   const [settings, setSettings] = useState(form.settings);
-  // const [limitAnswers, setLimitAnswers] = useState(!!form.settings.maxAnswers);
+  const [limitResponses, setLimitResponses] = useState(
+    !!form.settings.maxResponses
+  );
+  const [startDate, setStartDate] = useState(!!form.settings.startDate);
+  const [endDate, setEndDate] = useState(!!form.settings.endDate);
   const [collaborator, setCollaborator] = useState("");
   const [adding, setAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const user = useUser();
@@ -128,12 +134,25 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     };
 
     const handleSaveForm = async () => {
-      const { error } = await saveForm({
-        ...form,
-        settings,
-      });
+      const formData = { ...form, settings };
+
+      if (!limitResponses) {
+        formData.settings.maxResponses = null;
+      }
+
+      if (!startDate) {
+        formData.settings.startDate = null;
+      }
+
+      if (!endDate) {
+        formData.settings.endDate = null;
+      }
+
+      setSaving(true);
+      const { error } = await saveForm(formData);
 
       if (error) {
+        setSaving(false);
         return enqueueSnackbar("No se pudo guardar la encuesta", {
           variant: "error",
         });
@@ -210,29 +229,26 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
                 onChange={handleChangeChecked("allowResponses")}
               />
             </ListItem>
-            {/* <ListItem>
-              <ListItemText primary="Restringir máximo de respuestas" />
+            <ListItem>
+              <ListItemText primary="Restringir máximo de aplicaciones" />
               <Switch
                 edge="end"
-                checked={limitAnswers}
-                onChange={(e) => setLimitAnswers(e.target.checked)}
-              />
-            </ListItem> */}
-            {/* {limitAnswers && (
-              <ListItem sx={{ justifyContent: "flex-end" }}>
-                
-              </ListItem>
-            )} */}
-            <ListItem>
-              <ListItemText primary="Máximo de aplicaciones" />
-              <TextField
-                variant="standard"
-                type="number"
-                placeholder="Vacío: sin límite"
-                value={settings.maxResponses}
-                onChange={handleChangeValue("maxResponses")}
+                checked={limitResponses}
+                onChange={(e) => setLimitResponses(e.target.checked)}
               />
             </ListItem>
+            {limitResponses && (
+              <ListItem>
+                <ListItemText primary="Máximo de aplicaciones" />
+                <TextField
+                  variant="standard"
+                  type="number"
+                  value={settings.maxResponses}
+                  onChange={handleChangeValue("maxResponses")}
+                  inputProps={{ style: { textAlign: "right" } }}
+                />
+              </ListItem>
+            )}
             <ListItem>
               <ListItemText
                 primary="Restringir a una respuesta por persona"
@@ -245,62 +261,94 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
               />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Aplicar encuesta a partir de" />
-              <DateTimePicker
-                value={settings.startDate || null}
-                onChange={handleChange("startDate")}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    placeholder="Vacío: sin fecha de inicio"
-                  />
-                )}
-                okText="Aceptar"
-                cancelText="Cancelar"
-                toolbarTitle="Seleccionar fecha y hora"
+              <ListItemText primary="Aplicar encuesta desde una fecha" />
+              <Switch
+                edge="end"
+                checked={startDate}
+                onChange={(e) => setStartDate(e.target.checked)}
               />
             </ListItem>
+            {startDate && (
+              <ListItem>
+                <ListItemText primary="Aplicar desde el" />
+                <DateTimePicker
+                  value={settings.startDate || null}
+                  onChange={handleChange("startDate")}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="standard" />
+                  )}
+                  okText="Aceptar"
+                  cancelText="Cancelar"
+                  toolbarTitle="Seleccionar fecha y hora"
+                />
+              </ListItem>
+            )}
             <ListItem>
-              <ListItemText primary="Aplicar hasta el" />
-              <DateTimePicker
-                value={settings.startEnd || null}
-                onChange={handleChange("endDate")}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    placeholder="Vacío: sin fecha de cierre"
-                  />
-                )}
-                okText="Aceptar"
-                cancelText="Cancelar"
-                toolbarTitle="Seleccionar fecha y hora"
+              <ListItemText primary="Aplicar encuesta hasta una fecha" />
+              <Switch
+                edge="end"
+                checked={endDate}
+                onChange={(e) => setEndDate(e.target.checked)}
               />
             </ListItem>
-            <ListSubheader sx={{ background: "transparent" }}>
+            {endDate && (
+              <ListItem>
+                <ListItemText primary="Aplicar hasta el" />
+                <DateTimePicker
+                  value={settings.endDate || null}
+                  onChange={handleChange("endDate")}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="standard" />
+                  )}
+                  okText="Aceptar"
+                  cancelText="Cancelar"
+                  toolbarTitle="Seleccionar fecha y hora"
+                />
+              </ListItem>
+            )}
+            <ListItem>
+              <ListItemText primary="Mostrar preguntas en orden aleatorio" />
+              <Switch
+                edge="end"
+                checked={settings.randomOrder}
+                onChange={handleChangeChecked("randomOrder")}
+              />
+            </ListItem>
+
+            <ListSubheader sx={{ background: "inherit" }}>
               Zona de peligro
             </ListSubheader>
             <ListItem>
               {/* <ListItemText primary="Eliminar respuestas" /> */}
               <Button
+                variant="outlined"
                 color="error"
                 onClick={handleDeleteForm} // TODO
+                sx={{ width: "100%" }}
               >
                 Eliminar respuestas
               </Button>
             </ListItem>
             <ListItem>
               {/* <ListItemText primary="Eliminar encuesta" /> */}
-              <Button color="error" onClick={handleDeleteForm}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleDeleteForm}
+                sx={{ width: "100%" }}
+              >
                 Eliminar encuesta
               </Button>
             </ListItem>
           </List>
         </DialogContent>
         <DialogActions>
-          <Button onClick={discardDialog}>Descartar</Button>
-          <Button onClick={handleSaveForm}>Guardar</Button>
+          <Button disabled={saving} onClick={discardDialog}>
+            Descartar
+          </Button>
+          <Button disabled={saving} onClick={handleSaveForm}>
+            Guardar
+          </Button>
         </DialogActions>
       </>
     );
@@ -309,11 +357,15 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     closeDialog,
     collaborator,
     discardDialog,
+    endDate,
     enqueueSnackbar,
     form,
+    limitResponses,
     navigate,
     openAlert,
+    saving,
     settings,
+    startDate,
     user.email,
   ]);
 };

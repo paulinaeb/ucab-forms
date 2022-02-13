@@ -12,7 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { getFormOnce } from "../api/forms";
-import { submitResponse } from "../api/responses";
+import { submitResponse, checkUserHasResponses } from "../api/responses";
 import {
   CHECKBOX,
   FILE,
@@ -21,6 +21,7 @@ import {
   SLIDER,
   SORTABLE,
 } from "../constants/questions";
+import { useUser } from "../hooks/useUser";
 import Header from "../components/Header";
 import Question from "../components/Question";
 
@@ -32,8 +33,10 @@ const AnswerForm = () => {
   const [answers, setAnswers] = useState();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [userHasResponses, setUserHasResponses] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const user = useUser();
 
   const initializeAnswers = useCallback((questions) => {
     const answers = {};
@@ -69,7 +72,23 @@ const AnswerForm = () => {
     const getForm = async () => {
       const form = await getFormOnce(formId);
       if (form) {
+        if (form.settings.onlyOneResponse && !user) {
+          setForm(form);
+          return setLoading(false);
+        }
+
         randomizeOptionsOrder(form.questions);
+
+        if (form.settings.randomOrder) {
+          form.questions.sort(() => Math.random() - 0.5);
+        }
+
+        if (form.settings.onlyOneResponse) {
+          const hasResponses = await checkUserHasResponses(form.id, user.id);
+
+          setUserHasResponses(hasResponses);
+        }
+
         setForm(form);
         initializeAnswers(form.questions);
 
@@ -85,7 +104,7 @@ const AnswerForm = () => {
     };
 
     getForm();
-  }, [formId, initializeAnswers]);
+  }, [formId, initializeAnswers, user]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -123,6 +142,10 @@ const AnswerForm = () => {
       answers: { ...answers },
       comments: {},
     };
+
+    if (form.settings.onlyOneResponse) {
+      responseData.user = { ...user };
+    }
 
     const { error } = await submitResponse(form, responseData);
 
@@ -165,6 +188,76 @@ const AnswerForm = () => {
         </Box>
       </Box>
     );
+  }
+
+  if (
+    form.settings.maxResponses &&
+    form.responses >= form.settings.maxResponses
+  ) {
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">
+            Esta encuesta ya no admite más respuestas
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (form.settings.startDate && form.settings.startDate > new Date()) {
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">
+            Esta encuesta aún no está disponible
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (form.settings.endDate && form.settings.endDate < new Date()) {
+    return (
+      <Box>
+        <Header />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4">
+            Esta encuesta ya no está disponible
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (form.settings.onlyOneResponse) {
+    if (!user) {
+      return (
+        <Box>
+          <Header />
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">
+              Debes estar registrado para responder esta encuesta
+            </Typography>
+          </Box>
+        </Box>
+      );
+    }
+
+    if (userHasResponses) {
+      return (
+        <Box>
+          <Header />
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h4">
+              Ya has respondido esta encuesta
+            </Typography>
+          </Box>
+        </Box>
+      );
+    }
   }
 
   console.log(answers);

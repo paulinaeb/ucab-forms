@@ -71,13 +71,15 @@ const Sent = () => {
           <Typography align="center" mb={2}>
             ¡Gracias por tu colaboración! Hemos recibido tu respuesta con éxito.
           </Typography>
-          <Button
-            variant="contained"
-            component={Link}
-            to={`/forms/answer/${formId}`}
-          >
-            Enviar otra respuesta
-          </Button>
+          {!form.settings.onlyOneResponse && (
+            <Button
+              variant="contained"
+              component={Link}
+              to={`/forms/answer/${formId}`}
+            >
+              Enviar otra respuesta
+            </Button>
+          )}
         </Card>
       </Container>
     </Box>

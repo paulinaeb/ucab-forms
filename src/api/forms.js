@@ -39,6 +39,7 @@ export const createForm = async (user) => {
         onlyOneResponse: false,
         startDate: null,
         endDate: null,
+        randomOrder: false,
       },
     });
 
@@ -62,6 +63,8 @@ export const getUserForms = (userId, callback) => {
       const form = doc.data();
       form.id = doc.id;
       form.createdAt = form.createdAt.toDate();
+      form.settings.startDate = form.settings.startDate?.toDate();
+      form.settings.endDate = form.settings.endDate?.toDate();
       return form;
     });
 
@@ -81,6 +84,9 @@ export const getFormOnce = async (formId) => {
 
     const formData = form.data();
     formData.id = form.id;
+    formData.createdAt = formData.createdAt.toDate();
+    formData.settings.startDate = formData.settings.startDate?.toDate();
+    formData.settings.endDate = formData.settings.endDate?.toDate();
 
     const questions = await getQuestionsOnce(formId);
 
@@ -102,6 +108,9 @@ export const getForm = (id, callback) => {
 
     const form = doc.data();
     form.id = doc.id;
+    form.createdAt = form.createdAt.toDate();
+    form.settings.startDate = form.settings.startDate?.toDate();
+    form.settings.endDate = form.settings.endDate?.toDate();
     callback(form);
   });
 };

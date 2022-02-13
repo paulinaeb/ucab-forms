@@ -2,11 +2,13 @@ import {
   addDoc,
   collection,
   doc,
+  getDocs,
   increment,
   onSnapshot,
   orderBy,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
@@ -57,6 +59,19 @@ export const getResponses = (formId, callback) => {
 
     callback(responses);
   });
+};
+
+export const checkUserHasResponses = async (formId, userId) => {
+  try {
+    const responsesRef = collection(db, "forms", formId, "responses");
+    const q = query(responsesRef, where("user.id", "==", userId));
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.length > 0;
+  } catch (error) {
+    return true;
+  }
 };
 
 export const addComment = async (formId, responseId, comments) => {
