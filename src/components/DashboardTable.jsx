@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { createForm, deleteForm, getUserForms } from "../api/forms";
+import {
+  createForm,
+  deleteForm,
+  getUserForms,
+  getCollaborationForms,
+} from "../api/forms";
 import { useUser } from "../hooks/useUser";
 import { useAlert } from "../hooks/useAlert";
 import Table from "./Table";
@@ -38,22 +43,47 @@ const DashboardTable = () => {
   const user = useUser();
   const openAlert = useAlert();
   const navigate = useNavigate();
-  const [forms, setForms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [userForms, setUserForms] = useState([]);
+  const [collaborationForms, setCollaborationForms] = useState([]);
+  const [creating, setCreating] = useState(false);
+  const [loadingUserForms, setLoadingUserForms] = useState(true);
+  const [loadingCollaborationForms, setLoadingCollaborationForms] =
+    useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   useEffect(() => {
-    return getUserForms(user.id, (forms) => {
-      setForms(forms);
-      setLoading(false);
+    const unsubscribeUserForms = getUserForms(user.id, (forms) => {
+      setUserForms(forms);
+      setLoadingUserForms(false);
     });
-  }, [user.id]);
+
+    const unsubscribeCollaborationForms = getCollaborationForms(
+      user,
+      (forms) => {
+        setCollaborationForms(forms);
+        setLoadingCollaborationForms(false);
+      }
+    );
+
+    return () => {
+      unsubscribeUserForms();
+      unsubscribeCollaborationForms();
+    };
+  }, [user]);
+
+  const forms = useMemo(() => {
+    return [...userForms, ...collaborationForms].sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
+  }, [userForms, collaborationForms]);
 
   const createNewForm = async () => {
+    setCreating(true);
     const { form, error } = await createForm(user);
 
     if (error) {
+      setCreating(false);
       return enqueueSnackbar(error, { variant: "error" });
     }
 
@@ -85,7 +115,7 @@ const DashboardTable = () => {
       columns={columns}
       data={forms}
       title="Mis encuestas"
-      isLoading={loading}
+      isLoading={loadingUserForms || loadingCollaborationForms || creating}
       actions={[
         {
           icon: () => <Add />,

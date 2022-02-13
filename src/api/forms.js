@@ -7,7 +7,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  orderBy,
   onSnapshot,
   query,
   updateDoc,
@@ -52,10 +51,27 @@ export const createForm = async (user) => {
 };
 
 export const getUserForms = (userId, callback) => {
+  const q = query(formsRef, where("author.id", "==", userId));
+
+  return onSnapshot(q, (snapshot) => {
+    const forms = snapshot.docs.map((doc) => {
+      const form = doc.data();
+      form.id = doc.id;
+      form.createdAt = form.createdAt.toDate();
+      form.settings.startDate = form.settings.startDate?.toDate();
+      form.settings.endDate = form.settings.endDate?.toDate();
+      return form;
+    });
+
+    callback(forms);
+  });
+};
+
+export const getCollaborationForms = (user, callback) => {
+  const collaborator = { email: user.email, name: user.name };
   const q = query(
     formsRef,
-    where("author.id", "==", userId),
-    orderBy("createdAt", "desc")
+    where("collaborators", "array-contains", collaborator)
   );
 
   return onSnapshot(q, (snapshot) => {
@@ -109,8 +125,12 @@ export const getForm = (id, callback) => {
     const form = doc.data();
     form.id = doc.id;
     form.createdAt = form.createdAt.toDate();
-    form.settings.startDate = form.settings.startDate?.toDate();
-    form.settings.endDate = form.settings.endDate?.toDate();
+    if (form.settings.startDate) {
+      form.settings.startDate = form.settings.startDate.toDate();
+    }
+    if (form.settings.endDate) {
+      form.settings.endDate = form.settings.endDate.toDate();
+    }
     callback(form);
   });
 };
@@ -121,8 +141,11 @@ export const saveForm = async (form) => {
     const formRef = doc(db, "forms", formId);
     await updateDoc(formRef, formData);
 
+    console.log(formData);
+
     return { form: formRef };
   } catch (error) {
+    console.log(error);
     return { error: { message: "Error al guardar la encuesta" } };
   }
 };
