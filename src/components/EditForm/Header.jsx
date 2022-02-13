@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import {
+  Backdrop,
   Button,
+  CircularProgress,
   IconButton,
   Menu,
   MenuItem,
@@ -45,6 +47,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
   const [openSettings, setOpenSettings] = useState(false);
   const [openSend, setOpenSend] = useState(false);
   const [openCollaborators, setOpenCollaborators] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   const popupStateMore = usePopupState({
     variant: "popover",
@@ -79,9 +82,12 @@ const EditFormHeader = ({ setOpenDrawer }) => {
     };
 
     const handleDuplicateForm = async () => {
+      popupStateMore.close();
+      setDuplicating(true);
       const { error, newForm } = await duplicateForm(form, user);
 
       if (error) {
+        setDuplicating(false);
         return enqueueSnackbar("Error al duplicar la encuesta", {
           variant: "error",
         });
@@ -192,9 +198,16 @@ const EditFormHeader = ({ setOpenDrawer }) => {
           open={openCollaborators}
           setOpen={setOpenCollaborators}
         />
+        <Backdrop
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}
+          open={duplicating}
+        >
+          <CircularProgress />
+        </Backdrop>
       </>
     );
   }, [
+    duplicating,
     enqueueSnackbar,
     form,
     navigate,
