@@ -13,10 +13,12 @@ import {
 import {
   ArrowDownward,
   ArrowUpward,
+  ContentCopy,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import Lottie from "lottie-react";
 import debounce from "lodash.debounce";
+import { useSnackbar } from "notistack";
 import {
   questionTypes,
   CHECKBOX,
@@ -28,14 +30,20 @@ import {
   TEXT,
   TEXTAREA,
 } from "../../constants/questions";
-import { deleteQuestion, saveQuestion } from "../../api/questions";
+import {
+  deleteQuestion,
+  insertQuestion,
+  saveQuestion,
+} from "../../api/questions";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
 import EditOptions from "./EditOptions";
+import { calculateNewIndex } from "../../utils/questions";
 import selectAnimation from "../../img/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
-  const { form, questions, setQuestions, current } = useForm();
+  const { form, questions, setQuestions, current, setCurrent } = useForm();
+  const { enqueueSnackbar } = useSnackbar();
   const openAlert = useAlert();
 
   const question = useMemo(() => {
@@ -189,6 +197,25 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
+    const duplicateQuestion = async (question) => {
+      const newIndex = calculateNewIndex(questions, question.id);
+      const { id, ...questionData } = question;
+
+      questionData.index = newIndex;
+
+      const { question: newQuestion, error } = await insertQuestion(
+        form.id,
+        questionData
+      );
+
+      if (error) {
+        return enqueueSnackbar(error.message, { variant: "error" });
+      }
+
+      setCurrent(newQuestion.id);
+      setOpenDrawer(true);
+    };
+
     return (
       <Stack spacing={3}>
         <Box
@@ -274,15 +301,25 @@ const EditQuestion = ({ setOpenDrawer }) => {
               </IconButton>
             </Tooltip>
           </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography>Duplicar pregunta</Typography>
+            <Tooltip title="Duplicar pregunta" arrow>
+              <IconButton onClick={() => duplicateQuestion(question)}>
+                <ContentCopy />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       </Stack>
     );
   }, [
     debouncedSave,
+    enqueueSnackbar,
     form.id,
     openAlert,
     question,
     questions,
+    setCurrent,
     setOpenDrawer,
     setQuestions,
   ]);

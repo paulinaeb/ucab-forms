@@ -14,7 +14,11 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
-import { getQuestionsOnce, insertQuestion } from "./questions";
+import {
+  getQuestionsOnce,
+  insertQuestion,
+  insertQuestionWithoutIncrement,
+} from "./questions";
 
 const formsRef = collection(db, "forms");
 
@@ -47,6 +51,38 @@ export const createForm = async (user) => {
     return { form: formRef };
   } catch (error) {
     return { error: "Error al crear la encuesta" };
+  }
+};
+
+export const duplicateForm = async (form, user) => {
+  try {
+    const newForm = {
+      ...form,
+      author: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+      title: `${form.title} - Copia`,
+      createdAt: new Date(),
+      responses: 0,
+      collaborators: [],
+    };
+
+    const newFormRef = await addDoc(formsRef, newForm);
+
+    const questions = await getQuestionsOnce(form.id);
+
+    await Promise.all(
+      questions.map((question) => {
+        const { id, ...questionData } = question;
+        return insertQuestionWithoutIncrement(newFormRef.id, questionData);
+      })
+    );
+
+    return { newForm: newFormRef };
+  } catch (error) {
+    return { error: "Error al duplicar la encuesta" };
   }
 };
 

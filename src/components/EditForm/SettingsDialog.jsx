@@ -22,7 +22,12 @@ import {
   Close as CloseIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import { DatePicker, DateTimePicker, TimePicker } from "@mui/lab";
+import {
+  DatePicker,
+  DateTimePicker,
+  LoadingButton,
+  TimePicker,
+} from "@mui/lab";
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +35,7 @@ import {
   addCollaborator,
   deleteCollaborator,
   deleteForm,
+  duplicateForm,
   saveForm,
 } from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
@@ -47,6 +53,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
   const [collaborator, setCollaborator] = useState("");
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const user = useUser();
@@ -159,6 +166,22 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
       }
 
       closeDialog();
+    };
+
+    const handleDuplicateForm = async () => {
+      setDuplicating(true);
+      const { error, newForm } = await duplicateForm(form, user);
+
+      if (error) {
+        setDuplicating(false);
+        return enqueueSnackbar("Error al duplicar la encuesta", {
+          variant: "error",
+        });
+      }
+
+      enqueueSnackbar("Encuesta duplicada", { variant: "success" });
+      navigate(`/dashboard`);
+      navigate(`/forms/edit/${newForm.id}`);
     };
 
     return (
@@ -314,7 +337,16 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
                 onChange={handleChangeChecked("randomOrder")}
               />
             </ListItem>
-
+            <ListItem>
+              <ListItemText primary="Hacer una copia" />
+              <LoadingButton
+                loading={duplicating}
+                variant="outlined"
+                onClick={handleDuplicateForm}
+              >
+                Duplicar
+              </LoadingButton>
+            </ListItem>
             <ListSubheader sx={{ background: "inherit" }}>
               Zona de peligro
             </ListSubheader>
@@ -357,6 +389,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     closeDialog,
     collaborator,
     discardDialog,
+    duplicating,
     endDate,
     enqueueSnackbar,
     form,
@@ -366,7 +399,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     saving,
     settings,
     startDate,
-    user.email,
+    user,
   ]);
 };
 

@@ -22,7 +22,7 @@ const stringifyAnswers = (answers, questions) => {
   for (const questionId in answers) {
     const answer = answers[questionId];
 
-    if (!answer || !answer.length) {
+    if (answer !== 0 && (!answer || answer.length === 0)) {
       newAnswers[questionId] = null;
       continue;
     }
@@ -55,6 +55,8 @@ const stringifyAnswers = (answers, questions) => {
         newAnswers[questionId] = answer;
     }
   }
+
+  console.log(newAnswers);
 
   return newAnswers;
 };

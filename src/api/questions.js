@@ -78,6 +78,17 @@ export const insertQuestion = async (formId, question) => {
   }
 };
 
+export const insertQuestionWithoutIncrement = async (formId, question) => {
+  try {
+    const questionsRef = collection(db, "forms", formId, "questions");
+    const questionRef = await addDoc(questionsRef, question);
+
+    return { question: questionRef };
+  } catch (error) {
+    return { error: { message: "Error al insertar la pregunta" } };
+  }
+};
+
 export const saveQuestion = async (formId, question) => {
   try {
     const { id: questionId, ...questionData } = question;
