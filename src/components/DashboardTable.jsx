@@ -26,6 +26,10 @@ const columns = [
     render: (rowData) => format(rowData.createdAt, "dd/MM/yyyy hh:mm a"),
   },
   {
+    title: "Autor",
+    field: "author.name",
+  },
+  {
     title: "Preguntas",
     field: "questions",
     type: "numeric",
