@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogActions,
   DialogTitle,
-  Fade,
   IconButton,
   List,
   ListItem,
@@ -17,32 +16,15 @@ import {
   Tooltip,
   useMediaQuery,
 } from "@mui/material";
-import {
-  AccountCircle,
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-} from "@mui/icons-material";
-import {
-  DatePicker,
-  DateTimePicker,
-  LoadingButton,
-  TimePicker,
-} from "@mui/lab";
+import { Close as CloseIcon } from "@mui/icons-material";
+import { DateTimePicker } from "@mui/lab";
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
-import {
-  addCollaborator,
-  deleteCollaborator,
-  deleteForm,
-  duplicateForm,
-  saveForm,
-} from "../../api/forms";
+import { saveForm } from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
-import { useUser } from "../../hooks/useUser";
 import { useAlert } from "../../hooks/useAlert";
 
-const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
+const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
   const { form } = useForm();
   const [settings, setSettings] = useState(form.settings);
   const [limitResponses, setLimitResponses] = useState(
@@ -50,17 +32,12 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
   );
   const [startDate, setStartDate] = useState(!!form.settings.startDate);
   const [endDate, setEndDate] = useState(!!form.settings.endDate);
-  const [collaborator, setCollaborator] = useState("");
-  const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [duplicating, setDuplicating] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const user = useUser();
-  const openAlert = useAlert();
 
   return useMemo(() => {
     const handleChangeValue = (field) => (e) => {
+      setChanges(true);
       const value = e.target.value;
       const newSettings = { ...settings, [field]: value };
 
@@ -68,6 +45,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     };
 
     const handleChangeChecked = (field) => (e) => {
+      setChanges(true);
       const checked = e.target.checked;
       const newSettings = { ...settings, [field]: checked };
 
@@ -75,69 +53,10 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
     };
 
     const handleChange = (field) => (value) => {
+      setChanges(true);
       const newSettings = { ...settings, [field]: value };
 
       setSettings(newSettings);
-    };
-
-    const handleChangeCollaborator = (e) => {
-      setCollaborator(e.target.value);
-    };
-
-    const handleAddCollaborator = async (e) => {
-      e.preventDefault();
-
-      if (
-        user.email === collaborator ||
-        form.collaborators.find((c) => c.email === collaborator)
-      ) {
-        return enqueueSnackbar("Este usuario ya es colaborador", {
-          variant: "error",
-        });
-      }
-
-      setAdding(true);
-
-      const { error } = await addCollaborator(form, collaborator);
-
-      setAdding(false);
-
-      if (error) {
-        return enqueueSnackbar("No hay usuarios con este email", {
-          variant: "error",
-        });
-      }
-
-      enqueueSnackbar("Colaborador agregado", { variant: "success" });
-      setCollaborator("");
-    };
-
-    const handleDeleteCollaborator = (collaborator) => {
-      openAlert({
-        title: "Eliminar colaborador",
-        message: "¿Estás seguro de eliminar este colaborador?",
-        fullWidth: false,
-        action: async () => {
-          const { error } = await deleteCollaborator(form, collaborator);
-
-          if (error) {
-            return enqueueSnackbar("No se pudo eliminar el colaborador", {
-              variant: "error",
-            });
-          }
-
-          enqueueSnackbar("Colaborador eliminado", {
-            variant: "success",
-          });
-        },
-      });
-    };
-
-    const handleDeleteForm = async () => {
-      navigate("/dashboard");
-      await deleteForm(form.id);
-
-      enqueueSnackbar("Encuesta eliminada", { variant: "success" });
     };
 
     const handleSaveForm = async () => {
@@ -168,22 +87,6 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
       closeDialog();
     };
 
-    const handleDuplicateForm = async () => {
-      setDuplicating(true);
-      const { error, newForm } = await duplicateForm(form, user);
-
-      if (error) {
-        setDuplicating(false);
-        return enqueueSnackbar("Error al duplicar la encuesta", {
-          variant: "error",
-        });
-      }
-
-      enqueueSnackbar("Encuesta duplicada", { variant: "success" });
-      navigate(`/dashboard`);
-      navigate(`/forms/edit/${newForm.id}`);
-    };
-
     return (
       <>
         <DialogTitle
@@ -203,49 +106,10 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
         <DialogContent sx={{ background: "inherit" }}>
           <List sx={{ background: "inherit" }}>
             <ListSubheader sx={{ background: "inherit" }}>
-              Colaboradores
-            </ListSubheader>
-            <ListItem
-              component="form"
-              onSubmit={handleAddCollaborator}
-              sx={{
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
-              <TextField
-                variant="standard"
-                fullWidth
-                type="email"
-                placeholder="Email"
-                value={collaborator}
-                onChange={handleChangeCollaborator}
-              />
-              <Button disabled={!collaborator || adding} type="submit">
-                Agregar
-              </Button>
-            </ListItem>
-            <ListItem
-              sx={{ justifyContent: "center", flexWrap: "wrap", gap: 1 }}
-            >
-              <Tooltip title={form.author.email} arrow>
-                <Chip icon={<AccountCircle />} label={form.author.name} />
-              </Tooltip>
-              {form.collaborators.map((collaborator, i) => (
-                <Tooltip key={i} title={collaborator.email} arrow>
-                  <Chip
-                    label={collaborator.name}
-                    onDelete={() => handleDeleteCollaborator(collaborator)}
-                  />
-                </Tooltip>
-              ))}
-            </ListItem>
-            <ListSubheader sx={{ background: "inherit" }}>
               Encuesta
             </ListSubheader>
             <ListItem>
-              <ListItemText primary="Admite respuestas" />
+              <ListItemText primary="Admitir respuestas" />
               <Switch
                 edge="end"
                 checked={settings.allowResponses}
@@ -257,7 +121,11 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
               <Switch
                 edge="end"
                 checked={limitResponses}
-                onChange={(e) => setLimitResponses(e.target.checked)}
+                onChange={(e) => {
+                  console.log("Ay");
+                  setChanges(true);
+                  setLimitResponses(e.target.checked);
+                }}
               />
             </ListItem>
             {limitResponses && (
@@ -288,7 +156,10 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
               <Switch
                 edge="end"
                 checked={startDate}
-                onChange={(e) => setStartDate(e.target.checked)}
+                onChange={(e) => {
+                  setChanges(true);
+                  setStartDate(e.target.checked);
+                }}
               />
             </ListItem>
             {startDate && (
@@ -311,7 +182,10 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
               <Switch
                 edge="end"
                 checked={endDate}
-                onChange={(e) => setEndDate(e.target.checked)}
+                onChange={(e) => {
+                  setChanges(true);
+                  setEndDate(e.target.checked);
+                }}
               />
             </ListItem>
             {endDate && (
@@ -337,41 +211,6 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
                 onChange={handleChangeChecked("randomOrder")}
               />
             </ListItem>
-            <ListItem>
-              <ListItemText primary="Hacer una copia" />
-              <LoadingButton
-                loading={duplicating}
-                variant="outlined"
-                onClick={handleDuplicateForm}
-              >
-                Duplicar
-              </LoadingButton>
-            </ListItem>
-            <ListSubheader sx={{ background: "inherit" }}>
-              Zona de peligro
-            </ListSubheader>
-            <ListItem>
-              {/* <ListItemText primary="Eliminar respuestas" /> */}
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={handleDeleteForm} // TODO
-                sx={{ width: "100%" }}
-              >
-                Eliminar respuestas
-              </Button>
-            </ListItem>
-            <ListItem>
-              {/* <ListItemText primary="Eliminar encuesta" /> */}
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={handleDeleteForm}
-                sx={{ width: "100%" }}
-              >
-                Eliminar encuesta
-              </Button>
-            </ListItem>
           </List>
         </DialogContent>
         <DialogActions>
@@ -385,21 +224,16 @@ const SettingsDialogBody = ({ closeDialog, discardDialog }) => {
       </>
     );
   }, [
-    adding,
     closeDialog,
-    collaborator,
     discardDialog,
-    duplicating,
     endDate,
     enqueueSnackbar,
     form,
     limitResponses,
-    navigate,
-    openAlert,
     saving,
+    setChanges,
     settings,
     startDate,
-    user,
   ]);
 };
 
@@ -407,18 +241,24 @@ const SettingsDialog = ({ open, setOpen }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const openAlert = useAlert();
+  const [changes, setChanges] = useState(false);
 
   const closeDialog = () => {
+    setChanges(false);
     setOpen(false);
   };
 
   const discardDialog = () => {
-    openAlert({
-      title: "¿Deseas descartar los cambios?",
-      message: "Si descartas los cambios, se perderán",
-      fullWidth: false,
-      action: closeDialog,
-    });
+    if (changes) {
+      openAlert({
+        title: "¿Deseas descartar los cambios?",
+        message: "Si descartas los cambios, se perderán",
+        fullWidth: false,
+        action: closeDialog,
+      });
+    } else {
+      closeDialog();
+    }
   };
 
   return (
@@ -431,6 +271,7 @@ const SettingsDialog = ({ open, setOpen }) => {
       keepMounted={false}
     >
       <SettingsDialogBody
+        setChanges={setChanges}
         discardDialog={discardDialog}
         closeDialog={closeDialog}
       />

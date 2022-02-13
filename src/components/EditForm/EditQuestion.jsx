@@ -272,22 +272,26 @@ const EditQuestion = ({ setOpenDrawer }) => {
         <EditOptions question={question} debouncedSave={debouncedSave} />
         <Box>
           {question.type === FILE && (
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={question.multipleFiles}
-              onChange={handleChangeChecked("multipleFiles")}
-              label="Múltiples archivos"
-            />
+            <Box>
+              <FormControlLabel
+                control={<Checkbox />}
+                checked={question.multipleFiles}
+                onChange={handleChangeChecked("multipleFiles")}
+                label="Múltiples archivos"
+              />
+            </Box>
           )}
           {needsOptions(question.type) && (
-            <FormControlLabel
-              control={<Checkbox />}
-              checked={question.randomOrder}
-              onChange={handleChangeChecked("randomOrder")}
-              label="Orden aleatorio"
-            />
+            <Box>
+              <FormControlLabel
+                control={<Checkbox />}
+                checked={question.randomOrder}
+                onChange={handleChangeChecked("randomOrder")}
+                label="Orden aleatorio"
+              />
+            </Box>
           )}
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box>
             <FormControlLabel
               control={<Checkbox />}
               disabled={question.type === SORTABLE}
@@ -295,17 +299,16 @@ const EditQuestion = ({ setOpenDrawer }) => {
               onChange={handleChangeChecked("required")}
               label="Obligatoria"
             />
-            <Tooltip title="Eliminar pregunta" arrow>
-              <IconButton onClick={() => removeQuestion(question.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography>Duplicar pregunta</Typography>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Tooltip title="Duplicar pregunta" arrow>
               <IconButton onClick={() => duplicateQuestion(question)}>
                 <ContentCopy />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Eliminar pregunta" arrow>
+              <IconButton onClick={() => removeQuestion(question.id)}>
+                <DeleteIcon />
               </IconButton>
             </Tooltip>
           </Box>

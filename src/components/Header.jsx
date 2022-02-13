@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Badge,
   Box,
   Button,
@@ -7,11 +8,19 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   ListItemIcon,
   Toolbar,
   Tooltip,
+  Typography,
 } from "@mui/material";
-import { AccountCircle, Notifications, Logout } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Notifications as NotificationsIcon,
+  Logout as LogoutIcon,
+} from "@mui/icons-material";
 import {
   usePopupState,
   bindTrigger,
@@ -26,9 +35,15 @@ import HeaderLogo from "./HeaderLogo";
 const Header = ({ leftIcons, rightIcons, moreMenu }) => {
   const user = useUser();
   const theme = useTheme();
+
   const popupStateUser = usePopupState({
     variant: "popover",
     popupId: "user-menu",
+  });
+
+  const popupStateNotifications = usePopupState({
+    variant: "popover",
+    popupId: "notifications-menu",
   });
 
   return (
@@ -51,12 +66,39 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
             {user ? (
               <>
                 <Tooltip title="Notificaciones" arrow>
-                  <IconButton size="large" color="inherit">
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                    {...bindTrigger(popupStateNotifications)}
+                  >
                     <Badge badgeContent={17} color="primary">
-                      <Notifications />
+                      <NotificationsIcon />
                     </Badge>
                   </IconButton>
                 </Tooltip>
+                <Menu
+                  PaperProps={{
+                    style: {
+                      maxHeight: 300,
+                      maxWidth: "30ch",
+                    },
+                  }}
+                  {...bindMenu(popupStateNotifications)}
+                >
+                  <MenuItem sx={{ whiteSpace: "pre-wrap" }}>
+                    Alguien ha respondido tu encuesta "Razones por las cuales no
+                    ir al cine hoy en día"
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem sx={{ whiteSpace: "pre-wrap" }}>
+                    Alguien ha respondido tu encuesta "No es cuestión de
+                    aquello"
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem sx={{ whiteSpace: "pre-wrap" }}>
+                    Alguien ha respondido tu encuesta "Qué pasa ehhh"
+                  </MenuItem>
+                </Menu>
                 <Tooltip title="Usuario" arrow>
                   <IconButton
                     size="large"
@@ -67,7 +109,6 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                     <AccountCircle />
                   </IconButton>
                 </Tooltip>
-                {moreMenu}
                 <Menu {...bindMenu(popupStateUser)}>
                   <MenuItem onClick={popupStateUser.close}>
                     <ListItemIcon>
@@ -78,11 +119,12 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                   <Divider />
                   <MenuItem onClick={signOut}>
                     <ListItemIcon>
-                      <Logout fontSize="small" />
+                      <LogoutIcon fontSize="small" />
                     </ListItemIcon>
                     Cerrar sesión
                   </MenuItem>
                 </Menu>
+                {moreMenu}
               </>
             ) : (
               <>

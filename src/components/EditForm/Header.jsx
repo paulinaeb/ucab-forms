@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Button,
   IconButton,
@@ -14,79 +14,130 @@ import {
   bindMenu,
 } from "material-ui-popup-state/hooks";
 import {
+  ContentCopy,
+  Delete as DeleteIcon,
   Menu as MenuIcon,
   MoreVert,
-  Send,
-  Settings,
+  People as PeopleIcon,
+  Send as SendIcon,
+  Settings as SettingsIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { deleteForm, duplicateForm } from "../../api/forms";
+import { useForm } from "../../hooks/useForm";
+import { useUser } from "../../hooks/useUser";
+import { useAlert } from "../../hooks/useAlert";
 import SettingsDialog from "./SettingsDialog";
 import SendDialog from "./SendDialog";
+import CollaboratorsDialog from "./CollaboratorsDialog";
 import Header from "../Header";
 
 const EditFormHeader = ({ setOpenDrawer }) => {
+  const { form } = useForm();
+  const user = useUser();
+  const openAlert = useAlert();
   const theme = useTheme();
   const upMd = useMediaQuery(theme.breakpoints.up("md"));
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   const [openSettings, setOpenSettings] = useState(false);
   const [openSend, setOpenSend] = useState(false);
+  const [openCollaborators, setOpenCollaborators] = useState(false);
 
   const popupStateMore = usePopupState({
     variant: "popover",
     popupId: "more-menu-aaaa",
   });
 
-  const handleClickOpenSettings = () => {
-    popupStateMore.close();
-    setOpenSettings(true);
-  };
+  return useMemo(() => {
+    const handleClickOpenSettings = () => {
+      popupStateMore.close();
+      setOpenSettings(true);
+    };
 
-  const handleClickOpenSend = () => {
-    popupStateMore.close();
-    setOpenSend(true);
-  };
+    const handleClickOpenSend = () => {
+      popupStateMore.close();
+      setOpenSend(true);
+    };
 
-  const toggleDrawer = () => {
-    setOpenDrawer((openDrawer) => !openDrawer);
-  };
+    const handleClickOpenCollaborators = () => {
+      popupStateMore.close();
+      setOpenCollaborators(true);
+    };
 
-  return (
-    <>
-      <Header
-        leftIcons={
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-            edge="start"
-            sx={{ display: { md: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-        }
-        rightIcons={
-          upMd && (
-            <>
-              <Tooltip title="Configuración" arrow>
-                <IconButton
-                  size="large"
-                  color="inherit"
-                  onClick={handleClickOpenSettings}
+    const toggleDrawer = () => {
+      setOpenDrawer((openDrawer) => !openDrawer);
+    };
+
+    const handleDeleteForm = async () => {
+      navigate("/dashboard");
+      await deleteForm(form.id);
+
+      enqueueSnackbar("Encuesta eliminada", { variant: "success" });
+    };
+
+    const handleDuplicateForm = async () => {
+      const { error, newForm } = await duplicateForm(form, user);
+
+      if (error) {
+        return enqueueSnackbar("Error al duplicar la encuesta", {
+          variant: "error",
+        });
+      }
+
+      enqueueSnackbar("Encuesta duplicada", { variant: "success" });
+      navigate(`/dashboard`);
+      navigate(`/forms/edit/${newForm.id}`);
+    };
+
+    const openDeleteDialog = () => {
+      popupStateMore.close();
+      openAlert({
+        title: "Eliminar encuesta",
+        message: "¿Estás seguro de que quieres eliminar esta encuesta?",
+        action: handleDeleteForm,
+      });
+    };
+
+    return (
+      <>
+        <Header
+          leftIcons={
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
+              edge="start"
+              sx={{ display: { md: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          }
+          rightIcons={
+            upMd && (
+              <>
+                <Tooltip title="Configuración" arrow>
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                    onClick={handleClickOpenSettings}
+                  >
+                    <SettingsIcon />
+                  </IconButton>
+                </Tooltip>
+                <Button
+                  variant="contained"
+                  sx={{ px: 3, ml: 1, mr: 2 }}
+                  onClick={handleClickOpenSend}
                 >
-                  <Settings />
-                </IconButton>
-              </Tooltip>
-              <Button
-                variant="contained"
-                sx={{ px: 3, ml: 1, mr: 2 }}
-                onClick={handleClickOpenSend}
-              >
-                Enviar
-              </Button>
-            </>
-          )
-        }
-        moreMenu={
-          !upMd && (
+                  Enviar
+                </Button>
+              </>
+            )
+          }
+          moreMenu={
             <>
               <Tooltip title="Más" arrow>
                 <IconButton
@@ -99,27 +150,63 @@ const EditFormHeader = ({ setOpenDrawer }) => {
                 </IconButton>
               </Tooltip>
               <Menu {...bindMenu(popupStateMore)} disableEnforceFocus>
-                <MenuItem onClick={handleClickOpenSend}>
+                {!upMd && [
+                  <MenuItem key={"0"} onClick={handleClickOpenSend}>
+                    <ListItemIcon>
+                      <SendIcon fontSize="small" />
+                    </ListItemIcon>
+                    Enviar
+                  </MenuItem>,
+                  <MenuItem key={"1"} onClick={handleClickOpenSettings}>
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    Configuración
+                  </MenuItem>,
+                ]}
+                <MenuItem onClick={handleClickOpenCollaborators}>
                   <ListItemIcon>
-                    <Send fontSize="small" />
+                    <PeopleIcon fontSize="small" />
                   </ListItemIcon>
-                  Enviar
+                  Colaboradores
                 </MenuItem>
-                <MenuItem onClick={handleClickOpenSettings}>
+                <MenuItem onClick={handleDuplicateForm}>
                   <ListItemIcon>
-                    <Settings fontSize="small" />
+                    <ContentCopy fontSize="small" />
                   </ListItemIcon>
-                  Configuración
+                  Duplicar encuesta
+                </MenuItem>
+                <MenuItem onClick={openDeleteDialog}>
+                  <ListItemIcon>
+                    <DeleteIcon fontSize="small" />
+                  </ListItemIcon>
+                  Eliminar encuesta
                 </MenuItem>
               </Menu>
             </>
-          )
-        }
-      />
-      <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
-      <SendDialog open={openSend} setOpen={setOpenSend} />
-    </>
-  );
+          }
+        />
+        <SettingsDialog open={openSettings} setOpen={setOpenSettings} />
+        <SendDialog open={openSend} setOpen={setOpenSend} />
+        <CollaboratorsDialog
+          open={openCollaborators}
+          setOpen={setOpenCollaborators}
+        />
+      </>
+    );
+  }, [
+    enqueueSnackbar,
+    form,
+    navigate,
+    openAlert,
+    openCollaborators,
+    openSend,
+    openSettings,
+    popupStateMore,
+    setOpenDrawer,
+    upMd,
+    user,
+  ]);
 };
 
 export default EditFormHeader;
