@@ -65,7 +65,7 @@ const Sent = () => {
           <Typography align="center" variant="h5">
             Enviada
           </Typography>
-          <Box sx={{ width: "50vmin" }}>
+          <Box sx={{ width: "40vmin" }}>
             <Lottie animationData={doneAnimation} />
           </Box>
           <Typography align="center" mb={2}>

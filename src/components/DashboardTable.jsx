@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  ContentCopy,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import {
   createForm,
   deleteForm,
+  duplicateForm,
   getUserForms,
   getCollaborationForms,
 } from "../api/forms";
@@ -30,12 +36,6 @@ const columns = [
     field: "author.name",
   },
   {
-    title: "Preguntas",
-    field: "questions",
-    type: "numeric",
-    align: "center",
-  },
-  {
     title: "Respuestas",
     field: "responses",
     type: "numeric",
@@ -53,6 +53,7 @@ const DashboardTable = () => {
   const [loadingUserForms, setLoadingUserForms] = useState(true);
   const [loadingCollaborationForms, setLoadingCollaborationForms] =
     useState(true);
+  const [duplicating, setDuplicating] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
@@ -94,6 +95,22 @@ const DashboardTable = () => {
     navigate("/forms/edit/" + form.id);
   };
 
+  const handleDuplicate = async (event, rowData) => {
+    setDuplicating(true);
+    const { tableData, ...form } = rowData;
+    const { error, newForm } = await duplicateForm(form, user);
+
+    if (error) {
+      setDuplicating(false);
+      return enqueueSnackbar("Error al duplicar la encuesta", {
+        variant: "error",
+      });
+    }
+
+    enqueueSnackbar("Encuesta duplicada", { variant: "success" });
+    navigate(`/forms/edit/${newForm.id}`);
+  };
+
   const handleDelete = (event, rowData) => {
     openAlert({
       title: "Eliminar encuesta",
@@ -119,23 +136,30 @@ const DashboardTable = () => {
       columns={columns}
       data={forms}
       title="Mis encuestas"
-      isLoading={loadingUserForms || loadingCollaborationForms || creating}
+      isLoading={
+        loadingUserForms || loadingCollaborationForms || creating || duplicating
+      }
       actions={[
         {
-          icon: () => <Add />,
+          icon: () => <AddIcon />,
           tooltip: "Crear",
           isFreeAction: true,
           onClick: createNewForm,
         },
         {
-          icon: () => <Edit />,
+          icon: () => <EditIcon />,
           tooltip: "Editar",
           onClick: (event, rowData) => {
             navigate("/forms/edit/" + rowData.id);
           },
         },
         {
-          icon: () => <Delete />,
+          icon: () => <ContentCopy />,
+          tooltip: "Duplicar",
+          onClick: handleDuplicate,
+        },
+        {
+          icon: () => <DeleteIcon />,
           tooltip: "Eliminar",
           onClick: handleDelete,
         },

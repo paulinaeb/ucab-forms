@@ -19,6 +19,7 @@ import {
   insertQuestion,
   insertQuestionWithoutIncrement,
 } from "./questions";
+import { sendNotification } from "./notifications";
 
 const formsRef = collection(db, "forms");
 
@@ -56,18 +57,18 @@ export const createForm = async (user) => {
 
 export const duplicateForm = async (form, user) => {
   try {
-    const newForm = {
-      ...form,
-      author: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      },
-      title: `${form.title} - Copia`,
-      createdAt: new Date(),
-      responses: 0,
-      collaborators: [],
+    const { id, ...newForm } = form;
+
+    newForm.author = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
     };
+
+    newForm.title = `${form.title} - Copia`;
+    newForm.createdAt = new Date();
+    newForm.responses = 0;
+    newForm.collaborators = [];
 
     const newFormRef = await addDoc(formsRef, newForm);
 
@@ -82,6 +83,7 @@ export const duplicateForm = async (form, user) => {
 
     return { newForm: newFormRef };
   } catch (error) {
+    console.log(error);
     return { error: "Error al duplicar la encuesta" };
   }
 };
@@ -94,8 +96,12 @@ export const getUserForms = (userId, callback) => {
       const form = doc.data();
       form.id = doc.id;
       form.createdAt = form.createdAt.toDate();
-      form.settings.startDate = form.settings.startDate?.toDate();
-      form.settings.endDate = form.settings.endDate?.toDate();
+      if (form.settings.startDate) {
+        form.settings.startDate = form.settings.startDate.toDate();
+      }
+      if (form.settings.endDate) {
+        form.settings.endDate = form.settings.endDate.toDate();
+      }
       return form;
     });
 
@@ -104,7 +110,7 @@ export const getUserForms = (userId, callback) => {
 };
 
 export const getCollaborationForms = (user, callback) => {
-  const collaborator = { email: user.email, name: user.name };
+  const collaborator = { id: user.id, email: user.email, name: user.name };
   const q = query(
     formsRef,
     where("collaborators", "array-contains", collaborator)
@@ -115,8 +121,12 @@ export const getCollaborationForms = (user, callback) => {
       const form = doc.data();
       form.id = doc.id;
       form.createdAt = form.createdAt.toDate();
-      form.settings.startDate = form.settings.startDate?.toDate();
-      form.settings.endDate = form.settings.endDate?.toDate();
+      if (form.settings.startDate) {
+        form.settings.startDate = form.settings.startDate.toDate();
+      }
+      if (form.settings.endDate) {
+        form.settings.endDate = form.settings.endDate.toDate();
+      }
       return form;
     });
 
@@ -137,8 +147,12 @@ export const getFormOnce = async (formId) => {
     const formData = form.data();
     formData.id = form.id;
     formData.createdAt = formData.createdAt.toDate();
-    formData.settings.startDate = formData.settings.startDate?.toDate();
-    formData.settings.endDate = formData.settings.endDate?.toDate();
+    if (form.settings.startDate) {
+      form.settings.startDate = form.settings.startDate.toDate();
+    }
+    if (form.settings.endDate) {
+      form.settings.endDate = form.settings.endDate.toDate();
+    }
 
     const questions = await getQuestionsOnce(formId);
 
@@ -207,15 +221,25 @@ export const addCollaborator = async (form, collaboratorEmail) => {
       return { error: "El usuario no existe" };
     }
 
+    const user = users.docs[0].data();
+    user.id = users.docs[0].id;
+
     const collaborator = {
-      email: users.docs[0].data().email,
-      name: users.docs[0].data().name,
+      id: user.id,
+      email: user.email,
+      name: user.name,
     };
 
     const formRef = doc(db, "forms", form.id);
 
     await updateDoc(formRef, {
       collaborators: arrayUnion(collaborator),
+    });
+
+    sendNotification({
+      userId: user.id,
+      message: `Te han agregado como colaborador en la encuesta "${form.title}"`,
+      goto: `/forms/edit/${form.id}`,
     });
 
     return { form: formRef };
@@ -230,6 +254,12 @@ export const deleteCollaborator = async (form, collaborator) => {
 
     await updateDoc(formRef, {
       collaborators: arrayRemove(collaborator),
+    });
+
+    sendNotification({
+      userId: collaborator.id,
+      message: `Te han eliminado como colaborador de la encuesta "${form.title}"`,
+      goto: `/forms/edit/${form.id}`,
     });
 
     return { form: formRef };

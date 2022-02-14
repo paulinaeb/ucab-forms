@@ -105,9 +105,6 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
         </DialogTitle>
         <DialogContent sx={{ background: "inherit" }}>
           <List sx={{ background: "inherit" }}>
-            <ListSubheader sx={{ background: "inherit" }}>
-              Encuesta
-            </ListSubheader>
             <ListItem>
               <ListItemText primary="Admitir respuestas" />
               <Switch
