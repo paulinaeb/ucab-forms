@@ -26,7 +26,7 @@ import {
   TIME,
   ratingLabels,
 } from "../../constants/questions";
-import { getResponseCountText } from "../../utils/stats";
+import { getResponseCountText, getSortableIndexes } from "../../utils/stats";
 import FilesResponse from "./FilesResponse";
 
 ChartJS.register(
@@ -442,6 +442,51 @@ const QuestionStat = ({ question, responses }) => {
               <FilesResponse key={i} files={r[question.id]} />
             ))}
           </Stack>
+        </>
+      );
+    case SORTABLE:
+      return (
+        <>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          <Container maxWidth="sm">
+            <table
+              style={{
+                width: "100%",
+                border: "1px solid white",
+                borderRadius: "4px",
+                padding: "8px",
+              }}
+            >
+              <tr>
+                <td />
+                {question.options.map((o, i) => (
+                  <td style={{ fontWeight: "bold" }} key={i}>
+                    {i + 1}
+                  </td>
+                ))}
+              </tr>
+              {question.options.map((option, i) => (
+                <tr key={i}>
+                  <td style={{ fontWeight: "bold" }}>{option}</td>
+                  {question.options.map((o, j) => (
+                    <td key={i}>
+                      {
+                        responses.filter((r) => r[question.id][j] === option)
+                          .length
+                      }
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          </Container>
         </>
       );
     default:

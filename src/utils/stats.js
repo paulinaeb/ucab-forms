@@ -8,7 +8,7 @@ import {
   TIME,
 } from "../constants/questions";
 
-const getResponseCountText = (count) => {
+export const getResponseCountText = (count) => {
   if (count === 1) {
     return "1 respuesta";
   }
@@ -16,7 +16,17 @@ const getResponseCountText = (count) => {
   return `${count} respuestas`;
 };
 
-const stringifyAnswers = (answers, questions) => {
+export const getSortableIndexes = (n) => {
+  const indexes = [];
+
+  for (let i = 1; i <= n; i++) {
+    indexes.push(i);
+  }
+
+  return indexes;
+};
+
+export const stringifyAnswers = (answers, questions) => {
   const newAnswers = {};
 
   for (const questionId in answers) {
@@ -60,5 +70,3 @@ const stringifyAnswers = (answers, questions) => {
 
   return newAnswers;
 };
-
-export { getResponseCountText, stringifyAnswers };
