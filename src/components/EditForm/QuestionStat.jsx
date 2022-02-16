@@ -1,4 +1,4 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Divider, Stack, Typography } from "@mui/material";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -50,7 +50,7 @@ const QuestionStat = ({ question, responses }) => {
         formatter: (value, ctx) => {
           let sum = 0;
           let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.map((data) => {
+          dataArr.forEach((data) => {
             sum += data;
           });
           let percentage = " ";
@@ -359,7 +359,7 @@ const QuestionStat = ({ question, responses }) => {
                     formatter: (value, ctx) => {
                       let sum = 0;
                       let dataArr = ctx.chart.data.datasets[0].data;
-                      dataArr.map((data) => {
+                      dataArr.forEach((data) => {
                         sum += data;
                       });
                       let percentage = " ";
@@ -409,7 +409,7 @@ const QuestionStat = ({ question, responses }) => {
                     formatter: (value, ctx) => {
                       let sum = 0;
                       let dataArr = ctx.chart.data.datasets[0].data;
-                      dataArr.map((data) => {
+                      dataArr.forEach((data) => {
                         sum += data;
                       });
                       let percentage = " ";

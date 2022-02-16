@@ -15,6 +15,7 @@ import Header from "../components/Header";
 import EditFormHeader from "../components/EditForm/Header";
 import DrawerLayout from "../components/EditForm/DrawerLayout";
 import Tabs from "../components/EditForm/Tabs";
+import AnswerPageText from "../components/AnswerPageText";
 
 const EditForm = () => {
   const user = useUser();
@@ -45,14 +46,7 @@ const EditForm = () => {
   }
 
   if (!form) {
-    return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">No se encontró la encuesta</Typography>
-        </Box>
-      </Box>
-    );
+    return <AnswerPageText>No se encontró la encuesta</AnswerPageText>;
   }
 
   if (
@@ -60,14 +54,9 @@ const EditForm = () => {
     !form.collaborators.find((c) => c.email === user.email)
   ) {
     return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">
-            No tienes permisos para editar esta encuesta
-          </Typography>
-        </Box>
-      </Box>
+      <AnswerPageText>
+        No tienes permisos para editar esta encuesta
+      </AnswerPageText>
     );
   }
 

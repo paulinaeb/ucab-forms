@@ -24,6 +24,7 @@ import {
 import { useUser } from "../hooks/useUser";
 import Header from "../components/Header";
 import Question from "../components/Question";
+import AnswerPageText from "../components/AnswerPageText";
 
 const AnswerForm = () => {
   const { id: formId } = useParams();
@@ -72,7 +73,6 @@ const AnswerForm = () => {
     const getForm = async () => {
       const form = await getFormOnce(formId);
       if (form) {
-        console.log(form);
         if (form.settings.onlyOneResponse && !user) {
           setForm(form);
           return setLoading(false);
@@ -168,27 +168,11 @@ const AnswerForm = () => {
   }
 
   if (!form) {
-    return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">No se encontró la encuesta</Typography>
-        </Box>
-      </Box>
-    );
+    return <AnswerPageText>No se encontró la encuesta</AnswerPageText>;
   }
 
   if (!form.settings.allowResponses) {
-    return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">
-            Esta encuesta no admite respuestas
-          </Typography>
-        </Box>
-      </Box>
-    );
+    return <AnswerPageText>Esta encuesta no admite respuestas</AnswerPageText>;
   }
 
   if (
@@ -196,68 +180,31 @@ const AnswerForm = () => {
     form.responses >= form.settings.maxResponses
   ) {
     return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">
-            Esta encuesta ya no admite más respuestas
-          </Typography>
-        </Box>
-      </Box>
+      <AnswerPageText>Esta encuesta ya no admite más respuestas</AnswerPageText>
     );
   }
 
   if (form.settings.startDate && form.settings.startDate > new Date()) {
     return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">
-            Esta encuesta aún no está disponible
-          </Typography>
-        </Box>
-      </Box>
+      <AnswerPageText>Esta encuesta aún no está disponible</AnswerPageText>
     );
   }
 
   if (form.settings.endDate && form.settings.endDate < new Date()) {
-    return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">
-            Esta encuesta ya no está disponible
-          </Typography>
-        </Box>
-      </Box>
-    );
+    return <AnswerPageText>Esta encuesta ya no está disponible</AnswerPageText>;
   }
 
   if (form.settings.onlyOneResponse) {
     if (!user) {
       return (
-        <Box>
-          <Header />
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4">
-              Debes estar registrado para responder esta encuesta
-            </Typography>
-          </Box>
-        </Box>
+        <AnswerPageText>
+          Debes estar registrado para responder esta encuesta
+        </AnswerPageText>
       );
     }
 
     if (userHasResponses) {
-      return (
-        <Box>
-          <Header />
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4">
-              Ya has respondido esta encuesta
-            </Typography>
-          </Box>
-        </Box>
-      );
+      return <AnswerPageText>Ya has respondido esta encuesta</AnswerPageText>;
     }
   }
 

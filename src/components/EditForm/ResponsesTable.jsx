@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Box, Link } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { format } from "date-fns";
 import Table from "../Table";
@@ -16,15 +17,24 @@ const ResponsesTable = () => {
         title: question.title,
         field: question.id,
         emptyValue: "-",
-        // ...(question.type === FILE && {
-        //   render: (rowData) => (
-        //     <>
-        //       {rowData[question.id].map((f, i) => (
-        //         <a key={i} href={f.url}>{f.name}</a>
-        //       ))}
-        //     </>
-        //   ),
-        // }),
+        ...(question.type === FILE && {
+          render: (rowData) => (
+            <>
+              {rowData[question.id].split(", ").map((url, i) => (
+                <Link
+                  key={i}
+                  href={url}
+                  noWrap
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ display: "block", maxWidth: "15ch" }}
+                >
+                  {url}
+                </Link>
+              ))}
+            </>
+          ),
+        }),
       })),
     ];
   }, [questions]);

@@ -11,6 +11,7 @@ import {
 import Lottie from "lottie-react";
 import { getFormOnce } from "../api/forms";
 import Header from "../components/Header";
+import AnswerPageText from "../components/AnswerPageText";
 import doneAnimation from "../img/done.json";
 
 const Sent = () => {
@@ -39,14 +40,7 @@ const Sent = () => {
   }
 
   if (!form) {
-    return (
-      <Box>
-        <Header />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">No se encontró la encuesta</Typography>
-        </Box>
-      </Box>
-    );
+    return <AnswerPageText>No se encontró la encuesta</AnswerPageText>;
   }
 
   return (

@@ -37,7 +37,12 @@ const FilesResponse = ({ files }) => {
         }
 
         return (
-          <Link key={i} download href={file.url}>
+          <Link
+            key={i}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={file.url}
+          >
             {file.name}
           </Link>
         );

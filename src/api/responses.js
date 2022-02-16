@@ -23,8 +23,7 @@ export const submitResponse = async (form, response) => {
       form.questions.map(async (question) => {
         if (question.type === FILE) {
           response.answers[question.id] = await uploadFiles(
-            response.answers[question.id],
-            `forms/${form.id}/questions/${question.id}`
+            response.answers[question.id]
           );
         }
       })

@@ -1,10 +1,10 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "./firebaseConfig";
 
-export const uploadFiles = async (files, path) => {
+export const uploadFiles = async (files) => {
   const snapshots = await Promise.all(
     files.map((file) => {
-      const fileRef = ref(storage, `${path}/${Date.now() + file.name}`);
+      const fileRef = ref(storage, `${Date.now() + file.name}`);
       return uploadBytes(fileRef, file);
     })
   );
