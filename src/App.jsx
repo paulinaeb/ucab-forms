@@ -6,6 +6,7 @@ import AuthPage from "./components/AuthPage";
 import UnAuthPage from "./components/UnAuthPage";
 import AuthLayout from "./components/AuthLayout";
 import Header from "./components/Header";
+import AnswerPageText from "./components/AnswerPageText";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -80,6 +81,12 @@ const App = () => {
             }
           />
           <Route path="/forms/answer/:id/sent" element={<Sent />} />
+          <Route
+            path="*"
+            element={
+              <AnswerPageText>No se encontró esta página</AnswerPageText>
+            }
+          />
         </Routes>
       </AlertProvider>
     </UserProvider>
