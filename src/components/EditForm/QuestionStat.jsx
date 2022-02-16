@@ -1,4 +1,4 @@
-import { Box, Typography, Container } from "@mui/material";
+import { Box, Container, Divider, Stack, Typography } from "@mui/material";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -6,41 +6,63 @@ import {
   Legend,
   CategoryScale,
   LinearScale,
-  Title,
   BarElement,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { format } from "date-fns";
 import {
   CHECKBOX,
   DATE,
   DATETIME,
+  FILE,
   RADIO,
+  RATING,
   SELECT,
   SLIDER,
+  SORTABLE,
   TEXT,
   TEXTAREA,
   TIME,
+  ratingLabels,
 } from "../../constants/questions";
+import { getResponseCountText, getSortableIndexes } from "../../utils/stats";
+import FilesResponse from "./FilesResponse";
 
 ChartJS.register(
   ArcElement,
   CategoryScale,
   LinearScale,
   BarElement,
-  Title,
   Tooltip,
   Legend
 );
 
-const QuestionSummary = ({ question, responses }) => {
-  const numberOfResponses = responses.filter((r) => r[question.id]).length;
+const QuestionStat = ({ question, responses }) => {
+  const responseCount = responses.filter((r) => r[question.id]).length;
 
-  const numberOfResponsesText =
-    numberOfResponses +
-    (numberOfResponses === 1 ? " respuesta" : " respuestas");
+  const responseCountText = getResponseCountText(responseCount);
 
   let data = {};
+  let options = {
+    plugins: {
+      datalabels: {
+        formatter: (value, ctx) => {
+          let sum = 0;
+          let dataArr = ctx.chart.data.datasets[0].data;
+          dataArr.forEach((data) => {
+            sum += data;
+          });
+          let percentage = " ";
+          if (value > 0) {
+            percentage = ((value * 100) / sum).toFixed(2) + "%";
+          }
+          return percentage;
+        },
+        color: "#fff",
+      },
+    },
+  };
 
   if ([RADIO, SELECT].includes(question.type)) {
     data = {
@@ -53,20 +75,34 @@ const QuestionSummary = ({ question, responses }) => {
               responses.filter((r) => r[question.id] === option).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
+            "rgba(124, 77, 255, 0.2)",
+            "rgba(204, 255, 144, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
+            "rgba(124, 77, 255, 1)",
+            "rgba(204, 255, 144, 1)",
           ],
           borderWidth: 1,
         },
@@ -85,20 +121,34 @@ const QuestionSummary = ({ question, responses }) => {
               responses.filter((r) => r[question.id]?.includes(option)).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
+            "rgba(124, 77, 255, 0.2)",
+            "rgba(204, 255, 144, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
+            "rgba(124, 77, 255, 1)",
+            "rgba(204, 255, 144, 1)",
           ],
         },
       ],
@@ -121,20 +171,60 @@ const QuestionSummary = ({ question, responses }) => {
             (n) => responses.filter((r) => r[question.id] === n).length
           ),
           backgroundColor: [
-            "rgba(255, 99, 132, 0.2)",
-            "rgba(54, 162, 235, 0.2)",
-            "rgba(255, 206, 86, 0.2)",
-            "rgba(75, 192, 192, 0.2)",
-            "rgba(153, 102, 255, 0.2)",
-            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+            "rgba(255, 145, 128, 0.2)",
+            "rgba(83, 109, 254, 0.2)",
+            "rgba(29, 233, 182, 0.2)",
+            "rgba(186, 104, 200, 0.2)",
+            "rgba(244, 143, 177, 0.2)",
+            "rgba(255, 204, 128, 0.2)",
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
+            "rgba(255, 145, 128, 1)",
+            "rgba(83, 109, 254, 1)",
+            "rgba(29, 233, 182, 1)",
+            "rgba(186, 104, 200, 1)",
+            "rgba(244, 143, 177, 1)",
+            "rgba(255, 204, 128, 1)",
+          ],
+        },
+      ],
+    };
+  }
+
+  if (question.type === RATING) {
+    const values = [1, 2, 3, 4, 5];
+
+    data = {
+      labels: ratingLabels.slice(1),
+      datasets: [
+        {
+          label: "Respuestas",
+          data: values.map(
+            (v) => responses.filter((r) => r[question.id] === v).length
+          ),
+          backgroundColor: [
+            "rgba(255, 64, 129, 0.2)",
+            "rgba(0, 230, 118, 0.2)",
+            "rgba(255, 241, 118, 0.2)",
+            "rgba(132, 255, 255, 0.2)",
+            "rgba(179, 136, 255, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 64, 129, 1)",
+            "rgba(0, 230, 118, 1)",
+            "rgba(255, 241, 118, 1)",
+            "rgba(132, 255, 255, 1)",
+            "rgba(179, 136, 255, 1)",
           ],
         },
       ],
@@ -146,9 +236,16 @@ const QuestionSummary = ({ question, responses }) => {
     case TEXTAREA:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
-          {responses.map((r) => (
-            <Typography key={r.id} variant="body2">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          {responses.map((r, i) => (
+            <Typography key={i} variant="body2">
               {r[question.id]}
             </Typography>
           ))}
@@ -157,9 +254,16 @@ const QuestionSummary = ({ question, responses }) => {
     case DATE:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
-          {responses.map((r) => (
-            <Typography key={r.id} variant="body2">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          {responses.map((r, i) => (
+            <Typography key={i} variant="body2">
               {r[question.id]
                 ? format(r[question.id].toDate(), "dd/MM/yyyy")
                 : ""}
@@ -170,9 +274,16 @@ const QuestionSummary = ({ question, responses }) => {
     case TIME:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
-          {responses.map((r) => (
-            <Typography key={r.id} variant="body2">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          {responses.map((r, i) => (
+            <Typography key={i} variant="body2">
               {r[question.id] ? format(r[question.id].toDate(), "hh:mm a") : ""}
             </Typography>
           ))}
@@ -181,9 +292,16 @@ const QuestionSummary = ({ question, responses }) => {
     case DATETIME:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
-          {responses.map((r) => (
-            <Typography key={r.id} variant="body2">
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          {responses.map((r, i) => (
+            <Typography key={i} variant="body2">
               {r[question.id]
                 ? format(r[question.id].toDate(), "dd/MM/yyyy hh:mm a")
                 : ""}
@@ -195,19 +313,34 @@ const QuestionSummary = ({ question, responses }) => {
     case SELECT:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
-            <Pie data={data} />
+            <Pie data={data} plugins={[ChartDataLabels]} options={options} />
           </Container>
         </>
       );
     case CHECKBOX:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
+              plugins={[ChartDataLabels]}
               options={{
                 indexAxis: "y",
                 elements: {
@@ -220,9 +353,22 @@ const QuestionSummary = ({ question, responses }) => {
                   legend: {
                     display: false,
                   },
-                  title: {
-                    display: true,
-                    text: question.title,
+                  datalabels: {
+                    align: "start",
+                    anchor: "end",
+                    formatter: (value, ctx) => {
+                      let sum = 0;
+                      let dataArr = ctx.chart.data.datasets[0].data;
+                      dataArr.forEach((data) => {
+                        sum += data;
+                      });
+                      let percentage = " ";
+                      if (value > 0) {
+                        percentage = ((value * 100) / sum).toFixed(2) + "%";
+                      }
+                      return percentage;
+                    },
+                    color: "#fff",
                   },
                 },
               }}
@@ -231,12 +377,21 @@ const QuestionSummary = ({ question, responses }) => {
         </>
       );
     case SLIDER:
+    case RATING:
       return (
         <>
-          <Typography variant="caption">{numberOfResponsesText}</Typography>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
           <Container maxWidth="sm">
             <Bar
               data={data}
+              plugins={[ChartDataLabels]}
               options={{
                 elements: {
                   bar: {
@@ -248,13 +403,89 @@ const QuestionSummary = ({ question, responses }) => {
                   legend: {
                     display: false,
                   },
-                  title: {
-                    display: true,
-                    text: question.title,
+                  datalabels: {
+                    align: "start",
+                    anchor: "end",
+                    formatter: (value, ctx) => {
+                      let sum = 0;
+                      let dataArr = ctx.chart.data.datasets[0].data;
+                      dataArr.forEach((data) => {
+                        sum += data;
+                      });
+                      let percentage = " ";
+                      if (value > 0) {
+                        percentage = ((value * 100) / sum).toFixed(2) + "%";
+                      }
+                      return percentage;
+                    },
+                    color: "#fff",
                   },
                 },
               }}
             />
+          </Container>
+        </>
+      );
+    case FILE:
+      return (
+        <>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          <Stack spacing={2}>
+            {responses.map((r, i) => (
+              <FilesResponse key={i} files={r[question.id]} />
+            ))}
+          </Stack>
+        </>
+      );
+    case SORTABLE:
+      return (
+        <>
+          <Typography
+            color="text.secondary"
+            variant="caption"
+            display="block"
+            mb={1}
+          >
+            {responseCountText}
+          </Typography>
+          <Container maxWidth="sm">
+            <table
+              style={{
+                width: "100%",
+                border: "1px solid white",
+                borderRadius: "4px",
+                padding: "8px",
+              }}
+            >
+              <tr>
+                <td />
+                {question.options.map((o, i) => (
+                  <td style={{ fontWeight: "bold" }} key={i}>
+                    {i + 1}
+                  </td>
+                ))}
+              </tr>
+              {question.options.map((option, i) => (
+                <tr key={i}>
+                  <td style={{ fontWeight: "bold" }}>{option}</td>
+                  {question.options.map((o, j) => (
+                    <td key={i}>
+                      {
+                        responses.filter((r) => r[question.id][j] === option)
+                          .length
+                      }
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </table>
           </Container>
         </>
       );
@@ -263,4 +494,4 @@ const QuestionSummary = ({ question, responses }) => {
   }
 };
 
-export default QuestionSummary;
+export default QuestionStat;

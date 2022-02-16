@@ -15,7 +15,7 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
 
     return (
       <Card
-        sx={{ p: 3 }}
+        sx={{ p: 3, cursor: "pointer" }}
         onClick={handleClick}
         elevation={question.id === current ? 5 : 0}
         variant={question.id === current ? "elevation" : "outlined"}

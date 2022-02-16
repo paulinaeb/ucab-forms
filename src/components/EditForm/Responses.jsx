@@ -1,25 +1,84 @@
-import { useMemo } from "react";
-import { Box, Card, Typography, Stack } from "@mui/material";
+import { useMemo, useState } from "react";
+import {
+  Box,
+  Card,
+  Pagination,
+  PaginationItem,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+  Stack,
+} from "@mui/material";
 import { useForm } from "../../hooks/useForm";
-import QuestionStat from "./QuestionStat";
+import { getResponseCountText } from "../../utils/stats";
+import ResponsesSummary from "./ResponsesSummary";
+import ResponsesByPerson from "./ResponsesByPerson";
+import ResponsesByQuestion from "./ResponsesByQuestion";
+import ResponsesTable from "./ResponsesTable";
 
 const Responses = () => {
-  const { questions, responses } = useForm();
+  const { responses, questions } = useForm();
+  const [view, setView] = useState("summary");
 
   return useMemo(() => {
+    if (!questions.length) {
+      return <Typography>No hay preguntas</Typography>;
+    }
+
     return (
       <Box>
-        <Stack spacing={2}>
-          {questions.map((question) => (
-            <Card key={question.id} sx={{ p: 3 }} variant="outlined">
-              <Typography>{question.title}</Typography>
-              <QuestionStat question={question} responses={responses} />
-            </Card>
-          ))}
-        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column-reverse", sm: "row" },
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 2,
+            mb: 4,
+          }}
+        >
+          <ToggleButtonGroup
+            color="primary"
+            value={view}
+            exclusive
+            onChange={(event, value) => setView(value)}
+          >
+            <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="summary">
+              Resumen
+            </ToggleButton>
+            <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="table">
+              Tabla
+            </ToggleButton>
+            <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="question">
+              Pregunta
+            </ToggleButton>
+            <ToggleButton sx={{ px: { sm: 2, lg: 3 } }} value="person">
+              Persona
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Typography fontSize="h6.fontSize">
+            {getResponseCountText(responses.length)}
+          </Typography>
+        </Box>
+        {responses.length === 0 ? (
+          <Typography>No hay respuestas</Typography>
+        ) : (
+          <>
+            {view === "summary" && <ResponsesSummary />}
+            {view === "question" && <ResponsesByQuestion />}
+            {view === "person" && <ResponsesByPerson />}
+            {view === "table" && <ResponsesTable />}
+            {!view && (
+              <Typography>
+                Selecciona una opción para visualizar las respuestas
+              </Typography>
+            )}
+          </>
+        )}
       </Box>
     );
-  }, [questions, responses]);
+  }, [questions.length, responses.length, view]);
 };
 
 export default Responses;

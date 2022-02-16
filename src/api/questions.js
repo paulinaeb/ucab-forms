@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   increment,
   onSnapshot,
   orderBy,
@@ -10,6 +11,23 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
+
+export const getQuestionsOnce = async (formId) => {
+  const questionsRef = collection(db, "forms", formId, "questions");
+
+  const q = query(questionsRef, orderBy("index"));
+
+  const snapshot = await getDocs(q);
+
+  const questions = snapshot.docs.map((doc) => {
+    const question = doc.data();
+    question.id = doc.id;
+
+    return question;
+  });
+
+  return questions;
+};
 
 export const getQuestions = (formId, callback) => {
   const questionsRef = collection(db, "forms", formId, "questions");
@@ -53,6 +71,17 @@ export const insertQuestion = async (formId, question) => {
     updateDoc(formRef, {
       questions: increment(1),
     });
+
+    return { question: questionRef };
+  } catch (error) {
+    return { error: { message: "Error al insertar la pregunta" } };
+  }
+};
+
+export const insertQuestionWithoutIncrement = async (formId, question) => {
+  try {
+    const questionsRef = collection(db, "forms", formId, "questions");
+    const questionRef = await addDoc(questionsRef, question);
 
     return { question: questionRef };
   } catch (error) {

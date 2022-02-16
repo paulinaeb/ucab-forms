@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Badge,
   Box,
   Button,
@@ -7,19 +8,16 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   ListItemIcon,
+  ListSubheader,
   Toolbar,
   Tooltip,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
-import {
-  AccountCircle,
-  MoreVert,
-  Notifications,
-  Logout,
-  Settings,
-} from "@mui/icons-material";
+import { AccountCircle, Logout as LogoutIcon } from "@mui/icons-material";
 import {
   usePopupState,
   bindTrigger,
@@ -30,10 +28,12 @@ import { Link } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { signOut } from "../api/auth";
 import HeaderLogo from "./HeaderLogo";
+import Notifications from "./Notifications";
 
 const Header = ({ leftIcons, rightIcons, moreMenu }) => {
   const user = useUser();
   const theme = useTheme();
+
   const popupStateUser = usePopupState({
     variant: "popover",
     popupId: "user-menu",
@@ -58,13 +58,7 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
             {rightIcons}
             {user ? (
               <>
-                <Tooltip title="Notificaciones" arrow>
-                  <IconButton size="large" color="inherit">
-                    <Badge badgeContent={17} color="primary">
-                      <Notifications />
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
+                <Notifications />
                 <Tooltip title="Usuario" arrow>
                   <IconButton
                     size="large"
@@ -75,7 +69,6 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                     <AccountCircle />
                   </IconButton>
                 </Tooltip>
-                {moreMenu}
                 <Menu {...bindMenu(popupStateUser)}>
                   <MenuItem onClick={popupStateUser.close}>
                     <ListItemIcon>
@@ -86,11 +79,12 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                   <Divider />
                   <MenuItem onClick={signOut}>
                     <ListItemIcon>
-                      <Logout fontSize="small" />
+                      <LogoutIcon fontSize="small" />
                     </ListItemIcon>
                     Cerrar sesión
                   </MenuItem>
                 </Menu>
+                {moreMenu}
               </>
             ) : (
               <>

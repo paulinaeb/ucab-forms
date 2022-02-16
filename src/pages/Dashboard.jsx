@@ -1,10 +1,10 @@
 import { Container } from "@mui/material";
-import Table from "../components/Table";
+import DashboardTable from "../components/DashboardTable";
 
 const Dashboard = () => {
   return (
-    <Container maxWidth="md" sx={{ py: 3 }}>
-      <Table />
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <DashboardTable />
     </Container>
   );
 };

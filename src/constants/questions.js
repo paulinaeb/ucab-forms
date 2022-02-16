@@ -1,14 +1,26 @@
-const TEXT = "text";
-const TEXTAREA = "textarea";
-const RADIO = "radio";
-const CHECKBOX = "checkbox";
-const SELECT = "select";
-const SLIDER = "slider";
-const DATE = "date";
-const TIME = "time";
-const DATETIME = "datetime";
+export const TEXT = "text";
+export const TEXTAREA = "textarea";
+export const RADIO = "radio";
+export const CHECKBOX = "checkbox";
+export const SELECT = "select";
+export const SORTABLE = "sortable";
+export const SLIDER = "slider";
+export const RATING = "rating";
+export const DATE = "date";
+export const TIME = "time";
+export const DATETIME = "datetime";
+export const FILE = "file";
 
-const questionTypes = [
+export const ratingLabels = [
+  "Sin calificar",
+  "Malo",
+  "Deficiente",
+  "Regular",
+  "Bueno",
+  "Excelente",
+];
+
+export const questionTypes = [
   {
     value: TEXT,
     label: "Respuesta breve",
@@ -30,8 +42,16 @@ const questionTypes = [
     label: "Lista desplegable",
   },
   {
+    value: SORTABLE,
+    label: "Lista ordenada",
+  },
+  {
     value: SLIDER,
     label: "Escala lineal",
+  },
+  {
+    value: RATING,
+    label: "Escala de valoración",
   },
   {
     value: DATE,
@@ -45,24 +65,15 @@ const questionTypes = [
     value: DATETIME,
     label: "Fecha y hora",
   },
+  {
+    value: FILE,
+    label: "Carga de archivo",
+  },
 ];
 
-const defaultQuestion = {
+export const defaultQuestion = {
   title: "Pregunta sin título",
   type: TEXT,
   required: false,
-};
-
-export {
-  defaultQuestion,
-  questionTypes,
-  TEXT,
-  TEXTAREA,
-  RADIO,
-  CHECKBOX,
-  SELECT,
-  SLIDER,
-  DATE,
-  TIME,
-  DATETIME,
+  specialType: "",
 };
