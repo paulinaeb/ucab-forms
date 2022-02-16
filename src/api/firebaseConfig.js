@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 import {
   initializeFirestore,
   CACHE_SIZE_UNLIMITED,
@@ -20,8 +21,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+const storage = getStorage(app);
 const db = initializeFirestore(app, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
 
 enableMultiTabIndexedDbPersistence(db);
 
-export { auth, db };
+export { auth, db, storage };

@@ -1,97 +1,91 @@
-import { useEffect, useState } from "react";
-import { Box, TextField, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { getForm, getQuestions, saveForm } from "../api/forms";
+import { useMemo, useState } from "react";
+import {
+  Box,
+  Card,
+  LinearProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import debounce from "lodash.debounce";
+import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
-import useAutoSave from "../hooks/useAutoSave";
-import EditQuestionsList from "../components/EditQuestionsList";
+import { useForm } from "../hooks/useForm";
+import Header from "../components/Header";
+import EditFormHeader from "../components/EditForm/Header";
+import DrawerLayout from "../components/EditForm/DrawerLayout";
+import Tabs from "../components/EditForm/Tabs";
+import AnswerPageText from "../components/AnswerPageText";
 
 const EditForm = () => {
   const user = useUser();
-  const { id: formId } = useParams();
-  const [form, setForm] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [loadingForm, setLoadingForm] = useState(true);
-  const autoSave = useAutoSave();
+  const { form, setForm, loading } = useForm();
+  const [openDrawer, setOpenDrawer] = useState(false);
 
-  useEffect(() => {
-    const unsubscribeForm = getForm(formId, (form) => {
-      setForm(form);
-      setLoadingForm(false);
-    });
-
-    const unsubscribeQuestions = getQuestions(formId, (changes) => {
-      setQuestions((oldQuestions) => {
-        const questions = [...oldQuestions];
-
-        changes.forEach((change) => {
-          if (change.type === "added") {
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "modified") {
-            questions.splice(change.oldIndex, 1);
-            questions.splice(change.newIndex, 0, change.question);
-          } else if (change.type === "removed") {
-            questions.splice(change.oldIndex, 1);
-          }
-        });
-
-        return questions;
-      });
-    });
-
-    return () => {
-      unsubscribeForm();
-      unsubscribeQuestions();
-    };
-  }, [formId]);
+  const debouncedSave = useMemo(() => {
+    return debounce(async (form) => {
+      await saveForm(form);
+    }, 1500);
+  }, []);
 
   const handleChange = (field) => (e) => {
     const value = e.target.value;
     const newForm = { ...form, [field]: value };
 
-    autoSave(async () => {
-      await saveForm(newForm);
-      alert("Encuesta guardada");
-    });
-
+    debouncedSave(newForm);
     setForm(newForm);
   };
 
-  if (loadingForm) {
-    return <Typography variant="h2">Loading...</Typography>;
+  if (loading) {
+    return (
+      <Box>
+        <Header />
+        <LinearProgress />
+      </Box>
+    );
   }
 
   if (!form) {
-    return <Typography variant="h2">No se encontró la encuesta</Typography>;
+    return <AnswerPageText>No se encontró la encuesta</AnswerPageText>;
   }
 
-  if (form.userId !== user.id) {
-    return <Typography variant="h2">No autorizado</Typography>;
+  if (
+    form.author.id !== user.id &&
+    !form.collaborators.find((c) => c.email === user.email)
+  ) {
+    return (
+      <AnswerPageText>
+        No tienes permisos para editar esta encuesta
+      </AnswerPageText>
+    );
   }
 
   return (
     <Box>
-      <Typography variant="h2">Edit Form</Typography>
-      <TextField
-        variant="standard"
-        multiline
-        placeholder="Título de la encuesta"
-        value={form.title}
-        onChange={handleChange("title")}
-      />
-      <TextField
-        variant="standard"
-        multiline
-        placeholder="Descripción de la encuesta"
-        value={form.description}
-        onChange={handleChange("description")}
-      />
-      <Typography variant="h2">Questions</Typography>
-      <EditQuestionsList
-        formId={formId}
-        questions={questions}
-        setQuestions={setQuestions}
-      />
+      <EditFormHeader setOpenDrawer={setOpenDrawer} />
+      <DrawerLayout open={openDrawer} setOpen={setOpenDrawer}>
+        <Stack spacing={2}>
+          <Card variant="outlined" sx={{ p: 3 }}>
+            <Stack spacing={2}>
+              <TextField
+                variant="standard"
+                multiline
+                label="Título"
+                value={form.title}
+                onChange={handleChange("title")}
+              />
+              <TextField
+                variant="standard"
+                multiline
+                label="Descripción"
+                value={form.description}
+                onChange={handleChange("description")}
+              />
+            </Stack>
+          </Card>
+          <Tabs setOpenDrawer={setOpenDrawer} />
+        </Stack>
+      </DrawerLayout>
     </Box>
   );
 };
