@@ -13,6 +13,7 @@ import {
 import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
 import { FILE } from "../constants/questions";
+import { sendNotification } from "./notifications";
 
 export const submitResponse = async (form, response) => {
   try {
@@ -35,6 +36,20 @@ export const submitResponse = async (form, response) => {
     const formRef = doc(db, "forms", form.id);
     updateDoc(formRef, {
       responses: increment(1),
+    });
+
+    sendNotification({
+      userId: form.author.id,
+      message: `Alguien ha respondido tu encuesta "${form.title}"`,
+      goto: `/forms/edit/${form.id}`,
+    });
+
+    form.collaborators.forEach((collaborator) => {
+      sendNotification({
+        userId: collaborator.id,
+        message: `Alguien ha respondido la encuesta "${form.title}"`,
+        goto: `/forms/edit/${form.id}`,
+      });
     });
 
     return { response: responseRef };

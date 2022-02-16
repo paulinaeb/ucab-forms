@@ -72,6 +72,7 @@ const AnswerForm = () => {
     const getForm = async () => {
       const form = await getFormOnce(formId);
       if (form) {
+        console.log(form);
         if (form.settings.onlyOneResponse && !user) {
           setForm(form);
           return setLoading(false);

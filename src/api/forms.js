@@ -147,11 +147,11 @@ export const getFormOnce = async (formId) => {
     const formData = form.data();
     formData.id = form.id;
     formData.createdAt = formData.createdAt.toDate();
-    if (form.settings.startDate) {
-      form.settings.startDate = form.settings.startDate.toDate();
+    if (formData.settings.startDate) {
+      formData.settings.startDate = formData.settings.startDate.toDate();
     }
-    if (form.settings.endDate) {
-      form.settings.endDate = form.settings.endDate.toDate();
+    if (formData.settings.endDate) {
+      formData.settings.endDate = formData.settings.endDate.toDate();
     }
 
     const questions = await getQuestionsOnce(formId);
@@ -160,6 +160,7 @@ export const getFormOnce = async (formId) => {
 
     return formData;
   } catch (error) {
+    console.log(error);
     return { error: { message: "Error al buscar la encuesta" } };
   }
 };
