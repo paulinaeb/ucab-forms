@@ -1,29 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  AppBar,
-  Avatar,
   Badge,
-  Box,
-  Button,
   Divider,
   IconButton,
   Menu,
   MenuItem,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemIcon,
-  ListSubheader,
-  Toolbar,
   Tooltip,
-  Typography,
 } from "@mui/material";
-import {
-  AccountCircle,
-  Circle,
-  Notifications as NotificationsIcon,
-  Logout as LogoutIcon,
-} from "@mui/icons-material";
+import { Notifications as NotificationsIcon } from "@mui/icons-material";
 import {
   usePopupState,
   bindTrigger,

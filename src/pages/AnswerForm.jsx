@@ -208,8 +208,6 @@ const AnswerForm = () => {
     }
   }
 
-  console.log(answers);
-
   return (
     <Box>
       <Header />

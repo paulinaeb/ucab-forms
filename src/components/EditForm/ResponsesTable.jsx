@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Box, Link } from "@mui/material";
+import { Link } from "@mui/material";
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 import { format } from "date-fns";
 import Table from "../Table";

@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Stack, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -26,7 +26,7 @@ import {
   TIME,
   ratingLabels,
 } from "../../constants/questions";
-import { getResponseCountText, getSortableIndexes } from "../../utils/stats";
+import { getResponseCountText } from "../../utils/stats";
 import FilesResponse from "./FilesResponse";
 
 ChartJS.register(
@@ -39,7 +39,10 @@ ChartJS.register(
 );
 
 const QuestionStat = ({ question, responses }) => {
-  const responseCount = responses.filter((r) => r[question.id]).length;
+  const responseCount = responses.filter(
+    (r) =>
+      (r[question.id] || r[question.id] === 0) && r[question.id].length !== 0
+  ).length;
 
   const responseCountText = getResponseCountText(responseCount);
 
@@ -321,9 +324,11 @@ const QuestionStat = ({ question, responses }) => {
           >
             {responseCountText}
           </Typography>
-          <Container maxWidth="sm">
-            <Pie data={data} plugins={[ChartDataLabels]} options={options} />
-          </Container>
+          {responseCount > 0 && (
+            <Container maxWidth="sm">
+              <Pie data={data} plugins={[ChartDataLabels]} options={options} />
+            </Container>
+          )}
         </>
       );
     case CHECKBOX:
@@ -437,11 +442,13 @@ const QuestionStat = ({ question, responses }) => {
           >
             {responseCountText}
           </Typography>
-          <Stack spacing={2}>
-            {responses.map((r, i) => (
-              <FilesResponse key={i} files={r[question.id]} />
-            ))}
-          </Stack>
+          {responseCount > 0 && (
+            <Stack spacing={2}>
+              {responses.map((r, i) => (
+                <FilesResponse key={i} files={r[question.id]} />
+              ))}
+            </Stack>
+          )}
         </>
       );
     case SORTABLE:

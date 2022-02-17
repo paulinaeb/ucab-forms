@@ -18,8 +18,8 @@ import {
 } from "@mui/icons-material";
 import Lottie from "lottie-react";
 import debounce from "lodash.debounce";
-import { useSnackbar } from "notistack";
 import {
+  compatibility,
   questionTypes,
   CHECKBOX,
   FILE,
@@ -42,8 +42,8 @@ import { calculateNewIndex } from "../../utils/questions";
 import selectAnimation from "../../img/select.json";
 
 const EditQuestion = ({ setOpenDrawer }) => {
-  const { form, questions, setQuestions, current, setCurrent } = useForm();
-  const { enqueueSnackbar } = useSnackbar();
+  const { form, questions, setQuestions, current, setCurrent, responses } =
+    useForm();
   const openAlert = useAlert();
 
   const question = useMemo(() => {
@@ -52,8 +52,8 @@ const EditQuestion = ({ setOpenDrawer }) => {
 
   const debouncedSave = useMemo(
     () =>
-      debounce(async (newQuestion) => {
-        await saveQuestion(form.id, newQuestion);
+      debounce((newQuestion) => {
+        saveQuestion(form.id, newQuestion);
       }, 1500),
     [form.id]
   );
@@ -149,13 +149,8 @@ const EditQuestion = ({ setOpenDrawer }) => {
       openAlert({
         title: "Eliminar pregunta",
         message: "¿Estás seguro de eliminar esta pregunta?",
-        action: async () => {
-          const { error } = await deleteQuestion(form.id, questionId);
-
-          if (error) {
-            return alert(error.message);
-          }
-
+        action: () => {
+          deleteQuestion(form.id, questionId);
           setOpenDrawer(false);
         },
       });
@@ -197,23 +192,33 @@ const EditQuestion = ({ setOpenDrawer }) => {
       );
     };
 
-    const duplicateQuestion = async (question) => {
+    const duplicateQuestion = (question) => {
       const newIndex = calculateNewIndex(questions, question.id);
       const { id, ...questionData } = question;
 
       questionData.index = newIndex;
 
-      const { question: newQuestion, error } = await insertQuestion(
-        form.id,
-        questionData
-      );
+      const newQuestionId = insertQuestion(form.id, questionData);
 
-      if (error) {
-        return enqueueSnackbar(error.message, { variant: "error" });
+      setCurrent(newQuestionId);
+      setOpenDrawer(true);
+    };
+
+    const disableType = (type) => {
+      let shouldCheckDisable = false;
+
+      responses.forEach((r) => {
+        const answer = r.answers[question.id];
+        if (answer || answer === 0) {
+          shouldCheckDisable = true;
+        }
+      });
+
+      if (!shouldCheckDisable) {
+        return false;
       }
 
-      setCurrent(newQuestion.id);
-      setOpenDrawer(true);
+      return !compatibility[question.type].includes(type);
     };
 
     return (
@@ -264,7 +269,11 @@ const EditQuestion = ({ setOpenDrawer }) => {
           onChange={handleChangeType}
         >
           {questionTypes.map((type) => (
-            <MenuItem key={type.value} value={type.value}>
+            <MenuItem
+              key={type.value}
+              value={type.value}
+              disabled={disableType(type.value)}
+            >
               {type.label}
             </MenuItem>
           ))}
@@ -317,11 +326,11 @@ const EditQuestion = ({ setOpenDrawer }) => {
     );
   }, [
     debouncedSave,
-    enqueueSnackbar,
     form.id,
     openAlert,
     question,
     questions,
+    responses,
     setCurrent,
     setOpenDrawer,
     setQuestions,

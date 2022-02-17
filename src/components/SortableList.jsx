@@ -1,14 +1,5 @@
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
-import {
-  Card,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { DragHandle as DragHandleIcon } from "@mui/icons-material";
 import { arrayMoveImmutable } from "array-move";
 

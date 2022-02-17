@@ -14,8 +14,6 @@ import EditForm from "./pages/EditForm";
 import AnswerForm from "./pages/AnswerForm";
 import Sent from "./pages/Sent";
 
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-
 const App = () => {
   return (
     <UserProvider>
@@ -57,29 +55,7 @@ const App = () => {
               }
             />
           </Route>
-          <Route
-            path="/forms/answer/:id"
-            element={
-              <ThemeProvider
-                theme={(theme) =>
-                  createTheme({
-                    ...theme,
-                    // typography: {
-                    //   fontFamily: "Helvetica",
-                    // },
-                    // palette: {
-                    //   ...theme.palette,
-                    //   primary: {
-                    //     main: "#f1e458",
-                    //   },
-                    // },
-                  })
-                }
-              >
-                <AnswerForm />
-              </ThemeProvider>
-            }
-          />
+          <Route path="/forms/answer/:id" element={<AnswerForm />} />
           <Route path="/forms/answer/:id/sent" element={<Sent />} />
           <Route
             path="*"

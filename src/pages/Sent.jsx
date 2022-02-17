@@ -43,6 +43,12 @@ const Sent = () => {
     return <AnswerPageText>No se encontró la encuesta</AnswerPageText>;
   }
 
+  const sentText = window.navigator.onLine ? "Enviada" : "Por Enviar";
+
+  const successText = window.navigator.onLine
+    ? "Hemos recibido tu respuesta con éxito."
+    : "Tu respuesta será enviada cuando tengas conexión.";
+
   return (
     <Box>
       <Header />
@@ -57,13 +63,13 @@ const Sent = () => {
           variant="outlined"
         >
           <Typography align="center" variant="h5">
-            Enviada
+            {sentText}
           </Typography>
           <Box sx={{ width: "40vmin" }}>
             <Lottie animationData={doneAnimation} />
           </Box>
           <Typography align="center" mb={2}>
-            ¡Gracias por tu colaboración! Hemos recibido tu respuesta con éxito.
+            ¡Gracias por tu colaboración! {successText}
           </Typography>
           {!form.settings.onlyOneResponse && (
             <Button

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSnackbar } from "notistack";
-import { useTheme } from "@mui/material/styles";
 import {
   Add as AddIcon,
   ContentCopy,
@@ -49,13 +48,11 @@ const DashboardTable = () => {
   const navigate = useNavigate();
   const [userForms, setUserForms] = useState([]);
   const [collaborationForms, setCollaborationForms] = useState([]);
-  const [creating, setCreating] = useState(false);
   const [loadingUserForms, setLoadingUserForms] = useState(true);
   const [loadingCollaborationForms, setLoadingCollaborationForms] =
     useState(true);
   const [duplicating, setDuplicating] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
 
   useEffect(() => {
     const unsubscribeUserForms = getUserForms(user.id, (forms) => {
@@ -83,22 +80,15 @@ const DashboardTable = () => {
     });
   }, [userForms, collaborationForms]);
 
-  const createNewForm = async () => {
-    setCreating(true);
-    const { form, error } = await createForm(user);
-
-    if (error) {
-      setCreating(false);
-      return enqueueSnackbar(error, { variant: "error" });
-    }
-
-    navigate("/forms/edit/" + form.id);
+  const createNewForm = () => {
+    const formId = createForm(user);
+    navigate("/forms/edit/" + formId);
   };
 
   const handleDuplicate = async (event, rowData) => {
     setDuplicating(true);
     const { tableData, ...form } = rowData;
-    const { error, newForm } = await duplicateForm(form, user);
+    const { error, newFormId } = await duplicateForm(form, user);
 
     if (error) {
       setDuplicating(false);
@@ -108,21 +98,15 @@ const DashboardTable = () => {
     }
 
     enqueueSnackbar("Encuesta duplicada", { variant: "success" });
-    navigate(`/forms/edit/${newForm.id}`);
+    navigate(`/forms/edit/${newFormId}`);
   };
 
   const handleDelete = (event, rowData) => {
     openAlert({
       title: "Eliminar encuesta",
       message: "¿Estás seguro de eliminar esta encuesta?",
-      action: async () => {
-        const { error } = await deleteForm(rowData.id);
-
-        if (error) {
-          return enqueueSnackbar("Error al eliminar la encuesta ", {
-            variant: "error",
-          });
-        }
+      action: () => {
+        deleteForm(rowData.id);
 
         enqueueSnackbar("Encuesta eliminada", {
           variant: "success",
@@ -136,9 +120,7 @@ const DashboardTable = () => {
       columns={columns}
       data={forms}
       title="Mis encuestas"
-      isLoading={
-        loadingUserForms || loadingCollaborationForms || creating || duplicating
-      }
+      isLoading={loadingUserForms || loadingCollaborationForms || duplicating}
       actions={[
         {
           icon: () => <AddIcon />,

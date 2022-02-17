@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   Button,
-  Chip,
   Dialog,
   DialogContent,
   DialogActions,
@@ -10,7 +9,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListSubheader,
   Switch,
   TextField,
   Tooltip,
@@ -19,7 +17,6 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import { DateTimePicker } from "@mui/lab";
 import { useTheme } from "@mui/material/styles";
-import { useSnackbar } from "notistack";
 import { saveForm } from "../../api/forms";
 import { useForm } from "../../hooks/useForm";
 import { useAlert } from "../../hooks/useAlert";
@@ -32,8 +29,6 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
   );
   const [startDate, setStartDate] = useState(!!form.settings.startDate);
   const [endDate, setEndDate] = useState(!!form.settings.endDate);
-  const [saving, setSaving] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   return useMemo(() => {
     const handleChangeValue = (field) => (e) => {
@@ -59,7 +54,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
       setSettings(newSettings);
     };
 
-    const handleSaveForm = async () => {
+    const handleSaveForm = () => {
       const formData = { ...form, settings };
 
       if (!limitResponses) {
@@ -74,15 +69,7 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
         formData.settings.endDate = null;
       }
 
-      setSaving(true);
-      const { error } = await saveForm(formData);
-
-      if (error) {
-        setSaving(false);
-        return enqueueSnackbar("No se pudo guardar la encuesta", {
-          variant: "error",
-        });
-      }
+      saveForm(formData);
 
       closeDialog();
     };
@@ -119,7 +106,6 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
                 edge="end"
                 checked={limitResponses}
                 onChange={(e) => {
-                  console.log("Ay");
                   setChanges(true);
                   setLimitResponses(e.target.checked);
                 }}
@@ -211,12 +197,8 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button disabled={saving} onClick={discardDialog}>
-            Descartar
-          </Button>
-          <Button disabled={saving} onClick={handleSaveForm}>
-            Guardar
-          </Button>
+          <Button onClick={discardDialog}>Descartar</Button>
+          <Button onClick={handleSaveForm}>Guardar</Button>
         </DialogActions>
       </>
     );
@@ -224,10 +206,8 @@ const SettingsDialogBody = ({ closeDialog, discardDialog, setChanges }) => {
     closeDialog,
     discardDialog,
     endDate,
-    enqueueSnackbar,
     form,
     limitResponses,
-    saving,
     setChanges,
     settings,
     startDate,

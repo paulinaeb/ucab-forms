@@ -3,11 +3,9 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogContentText,
   DialogActions,
   DialogTitle,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useForm } from "../../hooks/useForm";

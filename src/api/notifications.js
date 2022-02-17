@@ -1,17 +1,11 @@
 import {
   addDoc,
-  arrayUnion,
-  arrayRemove,
   collection,
-  deleteDoc,
   doc,
   orderBy,
-  getDoc,
-  getDocs,
   onSnapshot,
   query,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 

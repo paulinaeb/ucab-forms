@@ -1,13 +1,12 @@
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
   getDocs,
-  increment,
   onSnapshot,
   orderBy,
   query,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
@@ -62,57 +61,21 @@ export const getQuestionsChanges = (formId, callback) => {
   });
 };
 
-export const insertQuestion = async (formId, question) => {
-  try {
-    const questionsRef = collection(db, "forms", formId, "questions");
-    const questionRef = await addDoc(questionsRef, question);
+export const insertQuestion = (formId, question) => {
+  const questionsRef = collection(db, "forms", formId, "questions");
+  const questionRef = doc(questionsRef);
+  setDoc(questionRef, question);
 
-    const formRef = doc(db, "forms", formId);
-    updateDoc(formRef, {
-      questions: increment(1),
-    });
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al insertar la pregunta" } };
-  }
+  return questionRef.id;
 };
 
-export const insertQuestionWithoutIncrement = async (formId, question) => {
-  try {
-    const questionsRef = collection(db, "forms", formId, "questions");
-    const questionRef = await addDoc(questionsRef, question);
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al insertar la pregunta" } };
-  }
+export const saveQuestion = (formId, question) => {
+  const { id: questionId, ...questionData } = question;
+  const questionRef = doc(db, "forms", formId, "questions", questionId);
+  updateDoc(questionRef, questionData);
 };
 
-export const saveQuestion = async (formId, question) => {
-  try {
-    const { id: questionId, ...questionData } = question;
-    const questionRef = doc(db, "forms", formId, "questions", questionId);
-    await updateDoc(questionRef, questionData);
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al guardar la pregunta" } };
-  }
-};
-
-export const deleteQuestion = async (formId, questionId) => {
-  try {
-    const questionRef = doc(db, "forms", formId, "questions", questionId);
-    deleteDoc(questionRef);
-
-    const formRef = doc(db, "forms", formId);
-    updateDoc(formRef, {
-      questions: increment(-1),
-    });
-
-    return { question: questionRef };
-  } catch (error) {
-    return { error: { message: "Error al eliminar la pregunta" } };
-  }
+export const deleteQuestion = (formId, questionId) => {
+  const questionRef = doc(db, "forms", formId, "questions", questionId);
+  deleteDoc(questionRef);
 };

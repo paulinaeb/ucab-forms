@@ -4,10 +4,8 @@ import {
   Button,
   Checkbox,
   Divider,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   IconButton,
   MenuItem,
   Radio,
@@ -38,7 +36,6 @@ import SortableList from "./SortableList";
 import UploadButton from "./UploadButton";
 import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
-import { Upload } from "@mui/icons-material";
 
 const Question = ({ answers, question, setAnswers }) => {
   const [other, setOther] = useState("");

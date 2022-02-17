@@ -1,12 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Box,
-  Card,
-  LinearProgress,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Card, LinearProgress, Stack, TextField } from "@mui/material";
 import debounce from "lodash.debounce";
 import { saveForm } from "../api/forms";
 import { useUser } from "../hooks/useUser";
@@ -23,8 +16,8 @@ const EditForm = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const debouncedSave = useMemo(() => {
-    return debounce(async (form) => {
-      await saveForm(form);
+    return debounce((form) => {
+      saveForm(form);
     }, 1500);
   }, []);
 

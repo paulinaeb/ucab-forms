@@ -18,7 +18,6 @@ import {
 import { Clear as ClearIcon } from "@mui/icons-material";
 import {
   CHECKBOX,
-  FILE,
   RADIO,
   SELECT,
   SORTABLE,
@@ -97,18 +96,6 @@ const Options = ({ question, debouncedSave }) => {
       const value = e.target.value;
 
       const newQuestion = { ...question, [field]: value };
-
-      debouncedSave(newQuestion);
-
-      setQuestions((questions) =>
-        questions.map((q) => (q.id === question.id ? newQuestion : q))
-      );
-    };
-
-    const handleChangeChecked = (field) => (e) => {
-      const checked = e.target.checked;
-
-      const newQuestion = { ...question, [field]: checked };
 
       debouncedSave(newQuestion);
 

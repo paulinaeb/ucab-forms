@@ -22,8 +22,8 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const storage = getStorage(app);
-const db = initializeFirestore(app, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
 
+const db = initializeFirestore(app, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
 enableMultiTabIndexedDbPersistence(db);
 
 export { auth, db, storage };

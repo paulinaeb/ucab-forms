@@ -1,5 +1,4 @@
 import {
-  addDoc,
   arrayUnion,
   arrayRemove,
   collection,
@@ -9,50 +8,44 @@ import {
   getDocs,
   onSnapshot,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
-import {
-  getQuestionsOnce,
-  insertQuestion,
-  insertQuestionWithoutIncrement,
-} from "./questions";
+import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
 
 const formsRef = collection(db, "forms");
 
-export const createForm = async (user) => {
-  try {
-    const formRef = await addDoc(formsRef, {
-      author: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      },
-      title: "Encuesta sin título",
-      description: "",
-      createdAt: new Date(),
-      questions: 0,
-      responses: 0,
-      collaborators: [],
-      settings: {
-        allowResponses: true,
-        maxResponses: "",
-        onlyOneResponse: false,
-        startDate: null,
-        endDate: null,
-        randomOrder: false,
-      },
-    });
+export const createForm = (user) => {
+  const formRef = doc(formsRef);
 
-    insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });
+  setDoc(formRef, {
+    author: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    },
+    title: "Encuesta sin título",
+    description: "",
+    createdAt: new Date(),
+    responses: 0,
+    collaborators: [],
+    settings: {
+      allowResponses: true,
+      maxResponses: "",
+      onlyOneResponse: false,
+      startDate: null,
+      endDate: null,
+      randomOrder: false,
+    },
+  });
 
-    return { form: formRef };
-  } catch (error) {
-    return { error: "Error al crear la encuesta" };
-  }
+  insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });
+
+  return formRef.id;
 };
 
 export const duplicateForm = async (form, user) => {
@@ -70,20 +63,18 @@ export const duplicateForm = async (form, user) => {
     newForm.responses = 0;
     newForm.collaborators = [];
 
-    const newFormRef = await addDoc(formsRef, newForm);
+    const newFormRef = doc(formsRef);
+    setDoc(newFormRef, newForm);
 
     const questions = await getQuestionsOnce(form.id);
 
-    await Promise.all(
-      questions.map((question) => {
-        const { id, ...questionData } = question;
-        return insertQuestionWithoutIncrement(newFormRef.id, questionData);
-      })
-    );
+    questions.forEach((question) => {
+      const { id, ...questionData } = question;
+      insertQuestion(newFormRef.id, questionData);
+    });
 
-    return { newForm: newFormRef };
+    return { newFormId: newFormRef.id };
   } catch (error) {
-    console.log(error);
     return { error: "Error al duplicar la encuesta" };
   }
 };
@@ -160,7 +151,6 @@ export const getFormOnce = async (formId) => {
 
     return formData;
   } catch (error) {
-    console.log(error);
     return { error: { message: "Error al buscar la encuesta" } };
   }
 };
@@ -186,30 +176,15 @@ export const getForm = (id, callback) => {
   });
 };
 
-export const saveForm = async (form) => {
-  try {
-    const { id: formId, ...formData } = form;
-    const formRef = doc(db, "forms", formId);
-    await updateDoc(formRef, formData);
-
-    console.log(formData);
-
-    return { form: formRef };
-  } catch (error) {
-    console.log(error);
-    return { error: { message: "Error al guardar la encuesta" } };
-  }
+export const saveForm = (form) => {
+  const { id: formId, ...formData } = form;
+  const formRef = doc(db, "forms", formId);
+  updateDoc(formRef, formData);
 };
 
-export const deleteForm = async (formId) => {
-  try {
-    const formRef = doc(db, "forms", formId);
-    await deleteDoc(formRef);
-
-    return { form: formRef };
-  } catch (error) {
-    return { error: { message: "Error al eliminar la encuesta" } };
-  }
+export const deleteForm = (formId) => {
+  const formRef = doc(db, "forms", formId);
+  deleteDoc(formRef);
 };
 
 export const addCollaborator = async (form, collaboratorEmail) => {
@@ -233,7 +208,7 @@ export const addCollaborator = async (form, collaboratorEmail) => {
 
     const formRef = doc(db, "forms", form.id);
 
-    await updateDoc(formRef, {
+    updateDoc(formRef, {
       collaborators: arrayUnion(collaborator),
     });
 
@@ -243,28 +218,22 @@ export const addCollaborator = async (form, collaboratorEmail) => {
       goto: `/forms/edit/${form.id}`,
     });
 
-    return { form: formRef };
+    return { formId: formRef.id };
   } catch (error) {
     return { error: { message: "Error al agregar el colaborador" } };
   }
 };
 
-export const deleteCollaborator = async (form, collaborator) => {
-  try {
-    const formRef = doc(db, "forms", form.id);
+export const deleteCollaborator = (form, collaborator) => {
+  const formRef = doc(db, "forms", form.id);
 
-    await updateDoc(formRef, {
-      collaborators: arrayRemove(collaborator),
-    });
+  updateDoc(formRef, {
+    collaborators: arrayRemove(collaborator),
+  });
 
-    sendNotification({
-      userId: collaborator.id,
-      message: `Te han eliminado como colaborador de la encuesta "${form.title}"`,
-      goto: `/forms/edit/${form.id}`,
-    });
-
-    return { form: formRef };
-  } catch (error) {
-    return { error: { message: "Error al eliminar el colaborador" } };
-  }
+  sendNotification({
+    userId: collaborator.id,
+    message: `Te han eliminado como colaborador de la encuesta "${form.title}"`,
+    goto: `/forms/edit/${form.id}`,
+  });
 };

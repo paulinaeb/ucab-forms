@@ -6,22 +6,12 @@ import {
   Avatar,
   Box,
   Button,
-  ButtonGroup,
   Card,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  FormGroup,
-  Link,
-  Pagination,
-  PaginationItem,
   TextField,
-  Tooltip,
   Typography,
   Stack,
 } from "@mui/material";
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
-import { useSnackbar } from "notistack";
 import { format } from "date-fns";
 import { useForm } from "../../hooks/useForm";
 import { useUser } from "../../hooks/useUser";
@@ -31,13 +21,12 @@ const Comments = ({ response, question }) => {
   const { form } = useForm();
   const [myComment, setMyComment] = useState("");
   const [commenting, setCommenting] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const user = useUser();
 
   return useMemo(() => {
     const comments = response.comments[question.id] || [];
 
-    const handleAddComment = async (e) => {
+    const handleAddComment = (e) => {
       e.preventDefault();
 
       setCommenting(true);
@@ -53,12 +42,7 @@ const Comments = ({ response, question }) => {
         [question.id]: [...comments, comment],
       };
 
-      const { error } = await addComment(form.id, response.id, newComments);
-
-      if (error) {
-        enqueueSnackbar("Error al comentar", { variant: "error" });
-        return setCommenting(false);
-      }
+      addComment(form.id, response.id, newComments);
 
       setMyComment("");
       setCommenting(false);
@@ -130,7 +114,6 @@ const Comments = ({ response, question }) => {
     );
   }, [
     commenting,
-    enqueueSnackbar,
     form.id,
     myComment,
     question.id,

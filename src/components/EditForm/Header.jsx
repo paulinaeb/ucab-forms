@@ -74,9 +74,9 @@ const EditFormHeader = ({ setOpenDrawer }) => {
       setOpenDrawer((openDrawer) => !openDrawer);
     };
 
-    const handleDeleteForm = async () => {
+    const handleDeleteForm = () => {
       navigate("/dashboard");
-      await deleteForm(form.id);
+      deleteForm(form.id);
 
       enqueueSnackbar("Encuesta eliminada", { variant: "success" });
     };
@@ -84,7 +84,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
     const handleDuplicateForm = async () => {
       popupStateMore.close();
       setDuplicating(true);
-      const { error, newForm } = await duplicateForm(form, user);
+      const { error, newFormId } = await duplicateForm(form, user);
 
       if (error) {
         setDuplicating(false);
@@ -95,7 +95,7 @@ const EditFormHeader = ({ setOpenDrawer }) => {
 
       enqueueSnackbar("Encuesta duplicada", { variant: "success" });
       navigate(`/dashboard`);
-      navigate(`/forms/edit/${newForm.id}`);
+      navigate(`/forms/edit/${newFormId}`);
     };
 
     const openDeleteDialog = () => {

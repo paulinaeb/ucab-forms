@@ -1,15 +1,10 @@
 import { memo } from "react";
 import {
-  Box,
   Card,
   Checkbox,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   MenuItem,
-  ListItemIcon,
-  ListItemText,
   Radio,
   Rating,
   RadioGroup,
@@ -132,7 +127,7 @@ const QuestionPreview = ({ question }) => {
         </Stack>
       );
     case SLIDER:
-      return <Slider disabled question={question} />;
+      return <Slider disabled defaultValue={1} question={question} />;
     case RATING:
       return <Rating disabled />;
     case DATE:

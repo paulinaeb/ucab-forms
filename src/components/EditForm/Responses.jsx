@@ -1,14 +1,9 @@
 import { useMemo, useState } from "react";
 import {
   Box,
-  Card,
-  Pagination,
-  PaginationItem,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip,
   Typography,
-  Stack,
 } from "@mui/material";
 import { useForm } from "../../hooks/useForm";
 import { getResponseCountText } from "../../utils/stats";

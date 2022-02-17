@@ -16,16 +16,6 @@ export const getResponseCountText = (count) => {
   return `${count} respuestas`;
 };
 
-export const getSortableIndexes = (n) => {
-  const indexes = [];
-
-  for (let i = 1; i <= n; i++) {
-    indexes.push(i);
-  }
-
-  return indexes;
-};
-
 export const stringifyAnswers = (answers, questions) => {
   const newAnswers = {};
 
@@ -55,7 +45,6 @@ export const stringifyAnswers = (answers, questions) => {
         break;
       case FILE:
         newAnswers[questionId] = answer.map((f) => f.url).join(", ");
-        // newAnswers[questionId] = answer;
         break;
       case CHECKBOX:
       case SORTABLE:
@@ -65,8 +54,6 @@ export const stringifyAnswers = (answers, questions) => {
         newAnswers[questionId] = answer;
     }
   }
-
-  console.log(newAnswers);
 
   return newAnswers;
 };

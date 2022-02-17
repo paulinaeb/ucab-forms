@@ -11,6 +11,21 @@ export const TIME = "time";
 export const DATETIME = "datetime";
 export const FILE = "file";
 
+export const compatibility = {
+  [TEXT]: [TEXT, TEXTAREA, RADIO, SELECT],
+  [TEXTAREA]: [TEXT, TEXTAREA, RADIO, SELECT],
+  [RADIO]: [TEXT, TEXTAREA, RADIO, SELECT],
+  [CHECKBOX]: [CHECKBOX],
+  [SELECT]: [TEXT, TEXTAREA, RADIO, SELECT],
+  [SORTABLE]: [SORTABLE],
+  [SLIDER]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING],
+  [RATING]: [TEXT, TEXTAREA, RADIO, SELECT, SLIDER, RATING],
+  [DATE]: [DATE, TIME, DATETIME],
+  [TIME]: [DATE, TIME, DATETIME],
+  [DATETIME]: [DATE, TIME, DATETIME],
+  [FILE]: [FILE],
+};
+
 export const ratingLabels = [
   "Sin calificar",
   "Malo",

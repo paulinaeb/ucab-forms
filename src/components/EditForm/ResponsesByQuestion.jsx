@@ -5,7 +5,6 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
-  Link,
   Pagination,
   PaginationItem,
   Tooltip,
@@ -43,6 +42,9 @@ const ResponsesByQuestion = () => {
       let value = response[question.id];
 
       if (question.type === CHECKBOX) {
+        if (!value) {
+          value = [];
+        }
         value = [...value].sort();
       } else if (question.type === DATE && value) {
         value = format(value.toDate(), "dd/MM/yyyy");
@@ -50,6 +52,14 @@ const ResponsesByQuestion = () => {
         value = format(value.toDate(), "dd/MM/yyyy hh:mm a");
       } else if (question.type === TIME && value) {
         value = format(value.toDate(), "hh:mm a");
+      }
+
+      if (question.type === FILE && !value) {
+        value = [];
+      }
+
+      if (!value) {
+        value = "";
       }
 
       value = JSON.stringify(value);
@@ -153,7 +163,10 @@ const ResponsesByQuestion = () => {
           {answersWithStats.map((response, i) => (
             <Card key={i} sx={{ p: 3 }} variant="outlined">
               <Box sx={{ mb: 1 }}>
-                {response.value === "" || response.value.length === 0 ? (
+                {response.value === "" ||
+                response.value === undefined ||
+                response.value === null ||
+                response.value.length === 0 ? (
                   <Typography fontStyle="italic">Respuesta vacía</Typography>
                 ) : (
                   renderValue(response.value)

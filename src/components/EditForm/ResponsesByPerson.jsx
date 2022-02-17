@@ -1,21 +1,12 @@
 import { useMemo, useState } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Avatar,
   Box,
-  Button,
-  ButtonGroup,
   Card,
   Checkbox,
-  Divider,
   FormControlLabel,
   FormGroup,
-  Link,
   Pagination,
   PaginationItem,
-  TextField,
   Tooltip,
   Typography,
   Stack,
@@ -169,8 +160,10 @@ const Response = () => {
             <Box>
               <Card key={question.id} sx={{ p: 3, mb: 1 }} variant="outlined">
                 <Typography gutterBottom>{question.title}</Typography>
-                {response.answers[question.id].value === "" ||
-                response.answers[question.id].length === 0 ? (
+                {response.answers[question.id] === "" ||
+                response.answers[question.id] === null ||
+                response.answers[question.id] === undefined ||
+                response.answers[question.id]?.length === 0 ? (
                   <Typography fontStyle="italic">Respuesta vacía</Typography>
                 ) : (
                   <Stack spacing={1}>

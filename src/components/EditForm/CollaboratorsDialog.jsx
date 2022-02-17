@@ -66,14 +66,8 @@ const CollaboratorsDialogBody = ({ closeDialog }) => {
         title: "Eliminar colaborador",
         message: "¿Estás seguro de eliminar este colaborador?",
         fullWidth: false,
-        action: async () => {
-          const { error } = await deleteCollaborator(form, collaborator);
-
-          if (error) {
-            return enqueueSnackbar("No se pudo eliminar el colaborador", {
-              variant: "error",
-            });
-          }
+        action: () => {
+          deleteCollaborator(form, collaborator);
 
           enqueueSnackbar("Colaborador eliminado", {
             variant: "success",

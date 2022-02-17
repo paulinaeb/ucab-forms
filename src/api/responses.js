@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   doc,
   getDocs,
@@ -7,6 +6,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -30,7 +30,9 @@ export const submitResponse = async (form, response) => {
     );
 
     const responsesRef = collection(db, "forms", form.id, "responses");
-    const responseRef = await addDoc(responsesRef, response);
+    const responseRef = doc(responsesRef);
+
+    setDoc(responseRef, response);
 
     const formRef = doc(db, "forms", form.id);
     updateDoc(formRef, {
@@ -51,7 +53,7 @@ export const submitResponse = async (form, response) => {
       });
     });
 
-    return { response: responseRef };
+    return { responseId: responseRef.id };
   } catch (error) {
     console.log(error);
     return { error: { message: "Error al guardar las respuestas" } };
@@ -88,14 +90,7 @@ export const checkUserHasResponses = async (formId, userId) => {
   }
 };
 
-export const addComment = async (formId, responseId, comments) => {
-  try {
-    const responseRef = doc(db, "forms", formId, "responses", responseId);
-
-    await updateDoc(responseRef, { comments });
-
-    return { response: responseRef };
-  } catch (error) {
-    return { error: { message: "Error al guardar el comentario" } };
-  }
+export const addComment = (formId, responseId, comments) => {
+  const responseRef = doc(db, "forms", formId, "responses", responseId);
+  updateDoc(responseRef, { comments });
 };

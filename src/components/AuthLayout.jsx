@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Container, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import background from "../img/background.jpg";
 import logo from "../img/logo.svg";

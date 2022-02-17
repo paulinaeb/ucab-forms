@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import { Box, Button, Fab, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Fab, Stack, Tooltip } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useSnackbar } from "notistack";
 import { defaultQuestion } from "../../constants/questions";
 import { useForm } from "../../hooks/useForm";
 import { insertQuestion } from "../../api/questions";
@@ -10,27 +9,21 @@ import { calculateNewIndex } from "../../utils/questions";
 
 const Questions = ({ setOpenDrawer }) => {
   const { form, questions, current, setCurrent } = useForm();
-  const { enqueueSnackbar } = useSnackbar();
 
   return useMemo(() => {
-    const addQuestion = async () => {
+    const addQuestion = () => {
       const newIndex = calculateNewIndex(questions, current);
 
       const newQuestion = { index: newIndex, ...defaultQuestion };
 
-      const { question, error } = await insertQuestion(form.id, newQuestion);
+      const questionId = insertQuestion(form.id, newQuestion);
 
-      if (error) {
-        return enqueueSnackbar(error.message, { variant: "error" });
-      }
-
-      setCurrent(question.id);
+      setCurrent(questionId);
       setOpenDrawer(true);
     };
 
     return (
       <Box>
-        {!questions.length && <Typography>No hay preguntas</Typography>}
         <Stack spacing={2}>
           {questions.map((question, i) => (
             <QuestionPreview
@@ -51,7 +44,7 @@ const Questions = ({ setOpenDrawer }) => {
         </Tooltip>
       </Box>
     );
-  }, [current, enqueueSnackbar, form.id, questions, setCurrent, setOpenDrawer]);
+  }, [current, form.id, questions, setCurrent, setOpenDrawer]);
 };
 
 export default Questions;
