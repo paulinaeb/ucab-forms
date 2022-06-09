@@ -8,13 +8,12 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC8QEkSwKQje02leX_Mh9dEZZduLLQEqw0",
-  authDomain: "ucab-forms.firebaseapp.com",
-  projectId: "ucab-forms",
-  storageBucket: "ucab-forms.appspot.com",
-  messagingSenderId: "674123606931",
-  appId: "1:674123606931:web:7e3a2ccea12cd5cfe41666",
-  measurementId: "G-8CGMPLSZWE",
+  apiKey: "AIzaSyDAKhHXAZxgBo5fzjyHAAZFV0My6FdAS1o",
+  authDomain: "bd-ucab-forms.firebaseapp.com",
+  projectId: "bd-ucab-forms",
+  storageBucket: "bd-ucab-forms.appspot.com",
+  messagingSenderId: "294291653199",
+  appId: "1:294291653199:web:56d4d237626ba2b551e03a",
 };
 
 // Initialize Firebase
