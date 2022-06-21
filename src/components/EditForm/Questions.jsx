@@ -42,6 +42,15 @@ const Questions = ({ setOpenDrawer }) => {
             <Add />
           </Fab>
         </Tooltip>
+        <Tooltip title="Agregar seccion" arrow>
+          <Fab
+            color="primary"
+            sx={{ position: "fixed", bottom: "8%", right: "10%" }}
+            onClick={addQuestion}
+          >
+            <Add />
+          </Fab>
+        </Tooltip>
       </Box>
     );
   }, [current, form.id, questions, setCurrent, setOpenDrawer]);

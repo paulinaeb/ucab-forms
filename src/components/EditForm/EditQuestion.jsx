@@ -263,6 +263,13 @@ const EditQuestion = ({ setOpenDrawer }) => {
         />
         <TextField
           variant="standard"
+          multiline
+          label="Instrucciones de la pregunta"
+          value={question.instruction}
+          onChange={handleChange("instruction")}
+        />
+        <TextField
+          variant="standard"
           select
           label="Tipo de pregunta"
           value={question.type}
@@ -297,6 +304,12 @@ const EditQuestion = ({ setOpenDrawer }) => {
                 checked={question.randomOrder}
                 onChange={handleChangeChecked("randomOrder")}
                 label="Orden aleatorio"
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                checked={question.nestedQuestion}
+                onChange={handleChangeChecked("nestedQuestion")}
+                label="Pregunta condicionada"
               />
             </Box>
           )}

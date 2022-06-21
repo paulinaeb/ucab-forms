@@ -218,6 +218,7 @@ const AnswerForm = () => {
               <Typography variant="h5" mb={2}>
                 {form.title}
               </Typography>
+              <Typography mb={2}>{form.instruction}</Typography>
               <Typography mb={2}>{form.description}</Typography>
               <Typography color="error" variant="caption">
                 * Obligatorio

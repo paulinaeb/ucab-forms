@@ -16,6 +16,8 @@ import { db } from "./firebaseConfig";
 import { defaultQuestion } from "../constants/questions";
 import { getQuestionsOnce, insertQuestion } from "./questions";
 import { sendNotification } from "./notifications";
+import { defaultSection } from "../constants/sections";
+import { insertSection } from "./sections";
 
 const formsRef = collection(db, "forms");
 
@@ -29,6 +31,7 @@ export const createForm = (user) => {
       name: user.name,
     },
     title: "Encuesta sin título",
+    instruction: "",
     description: "",
     createdAt: new Date(),
     responses: 0,
@@ -40,9 +43,11 @@ export const createForm = (user) => {
       startDate: null,
       endDate: null,
       randomOrder: false,
+      nestedQuestion: false,
     },
   });
 
+  insertSection(formRef.id, { ...defaultSection, index: 0 });
   insertQuestion(formRef.id, { ...defaultQuestion, index: 0 });
 
   return formRef.id;

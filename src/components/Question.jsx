@@ -382,6 +382,7 @@ const Question = ({ answers, question, setAnswers }) => {
         {question.title}
         <RequiredMark question={question} />
       </Typography>
+      <Typography mb={2}>{question.instruction}</Typography>
       {renderQuestion()}
     </Box>
   );

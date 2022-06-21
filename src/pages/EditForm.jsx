@@ -70,6 +70,13 @@ const EditForm = () => {
               <TextField
                 variant="standard"
                 multiline
+                label="Instrucciones"
+                value={form.instruction}
+                onChange={handleChange("instruction")}
+              />
+              <TextField
+                variant="standard"
+                multiline
                 label="Descripción"
                 value={form.description}
                 onChange={handleChange("description")}
