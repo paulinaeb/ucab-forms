@@ -38,6 +38,7 @@ import UploadButton from "./UploadButton";
 import UploadImage from "./UploadImage";
 import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
+import TakePhoto from "./TakePhoto";
 
 const Question = ({ answers, question, setAnswers }) => {
   const [other, setOther] = useState("");
@@ -406,15 +407,28 @@ const Question = ({ answers, question, setAnswers }) => {
             <UploadImage
               inputId={question.id}
               multiple={question.multipleFiles}
-              onChange={(file) => {
+              onChange={(files) => {
                 if (question.multipleFiles) {
                   return setAnswers({
                     ...answers,
-                    [question.id]: [...answer, ...file],
+                    [question.id]: [...answer, ...files],
                   });
                 }
 
-                setAnswers({ ...answers, [question.id]: [...file] });
+                setAnswers({ ...answers, [question.id]: [...files] });
+              }}
+            />
+            <TakePhoto
+              inputId={question.id}
+              getImage={(getImage) => {
+                if (question.multipleFiles) {
+                  return setAnswers({
+                    ...answers,
+                    [question.id]: [...answer, ...getImage],
+                  });
+                }
+
+                setAnswers({ ...answers, [question.id]: [...getImage] });
               }}
             />
           </Box>

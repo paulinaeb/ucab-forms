@@ -33,6 +33,7 @@ import Select from "./Select";
 import Slider from "./Slider";
 import UploadButton from "./UploadButton";
 import UploadImage from "./UploadImage";
+import TakePhoto from "./TakePhoto";
 
 const QuestionPreview = ({ question }) => {
   switch (question.type) {
@@ -165,7 +166,12 @@ const QuestionPreview = ({ question }) => {
     case FILE:
       return <UploadButton disabled />;
     case IMAGE:
-      return <UploadImage disabled />;
+      return (
+        <label>
+          <UploadImage disabled />
+          <TakePhoto disabled />
+        </label>
+      );
     default:
       return null;
   }
