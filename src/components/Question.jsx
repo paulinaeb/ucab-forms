@@ -29,11 +29,13 @@ import {
   TEXT,
   TEXTAREA,
   TIME,
+  IMAGE,
 } from "../constants/questions";
 import Select from "./Select";
 import Slider from "./Slider";
 import SortableList from "./SortableList";
 import UploadButton from "./UploadButton";
+import UploadImage from "./UploadImage";
 import Rating from "./Rating";
 import RequiredMark from "./RequiredMark";
 
@@ -367,6 +369,52 @@ const Question = ({ answers, question, setAnswers }) => {
                 }
 
                 setAnswers({ ...answers, [question.id]: [...files] });
+              }}
+            />
+          </Box>
+        );
+      case IMAGE:
+        return (
+          <Box>
+            <Box sx={{ mb: 2 }}>
+              {answer.map((file, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography noWrap>{file.name}</Typography>
+                  <Tooltip title="Eliminar" arrow>
+                    <IconButton
+                      onClick={() => {
+                        const newAnswers = { ...answers };
+                        newAnswers[question.id] = newAnswers[
+                          question.id
+                        ].filter((f, j) => j !== i);
+                        setAnswers(newAnswers);
+                      }}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              ))}
+            </Box>
+            <UploadImage
+              inputId={question.id}
+              multiple={question.multipleFiles}
+              onChange={(file) => {
+                if (question.multipleFiles) {
+                  return setAnswers({
+                    ...answers,
+                    [question.id]: [...answer, ...file],
+                  });
+                }
+
+                setAnswers({ ...answers, [question.id]: [...file] });
               }}
             />
           </Box>

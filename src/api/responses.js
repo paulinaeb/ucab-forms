@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { uploadFiles } from "./storage";
-import { FILE } from "../constants/questions";
+import { FILE, IMAGE } from "../constants/questions";
 import { sendNotification } from "./notifications";
 
 export const submitResponse = async (form, response) => {
@@ -21,7 +21,7 @@ export const submitResponse = async (form, response) => {
 
     await Promise.all(
       form.questions.map(async (question) => {
-        if (question.type === FILE) {
+        if (question.type === FILE || question.type === IMAGE) {
           response.answers[question.id] = await uploadFiles(
             response.answers[question.id]
           );

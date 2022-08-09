@@ -27,10 +27,12 @@ import {
   TEXT,
   TEXTAREA,
   TIME,
+  IMAGE,
 } from "../constants/questions";
 import Select from "./Select";
 import Slider from "./Slider";
 import UploadButton from "./UploadButton";
+import UploadImage from "./UploadImage";
 
 const QuestionPreview = ({ question }) => {
   switch (question.type) {
@@ -162,6 +164,8 @@ const QuestionPreview = ({ question }) => {
       );
     case FILE:
       return <UploadButton disabled />;
+    case IMAGE:
+      return <UploadImage disabled />;
     default:
       return null;
   }
