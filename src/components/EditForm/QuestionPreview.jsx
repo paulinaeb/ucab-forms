@@ -24,6 +24,9 @@ const EditQuestion = ({ question, setOpenDrawer }) => {
           {question.title}
           <RequiredMark question={question} />
         </Typography>
+        <Typography variant="subtitle2" mb={2}>
+          {question.instruction}
+        </Typography>
         <AllQuestionsPreview question={question} />
       </Card>
     );

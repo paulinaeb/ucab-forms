@@ -263,6 +263,13 @@ const EditQuestion = ({ setOpenDrawer }) => {
         />
         <TextField
           variant="standard"
+          multiline
+          label="Instrucciones de la pregunta"
+          value={question.instruction}
+          onChange={handleChange("instruction")}
+        />
+        <TextField
+          variant="standard"
           select
           label="Tipo de pregunta"
           value={question.type}

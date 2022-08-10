@@ -15,6 +15,7 @@ const ResponsesTable = () => {
       { title: "Fecha de respuesta", field: "submittedAt" },
       ...questions.map((question) => ({
         title: question.title,
+        instruction: question.instruction,
         field: question.id,
         emptyValue: "-",
         ...(question.type === FILE && {

@@ -160,6 +160,9 @@ const Response = () => {
             <Box>
               <Card key={question.id} sx={{ p: 3, mb: 1 }} variant="outlined">
                 <Typography gutterBottom>{question.title}</Typography>
+                <Typography gutterBottom variant="subtitle2">
+                  {question.instruction}
+                </Typography>
                 {response.answers[question.id] === "" ||
                 response.answers[question.id] === null ||
                 response.answers[question.id] === undefined ||

@@ -14,6 +14,9 @@ const ResponsesSummary = () => {
           {questions.map((question) => (
             <Card key={question.id} sx={{ p: 3 }} variant="outlined">
               <Typography>{question.title}</Typography>
+              <Typography variant="subtitle2">
+                {question.instruction}
+              </Typography>
               <QuestionStat question={question} responses={answers} />
             </Card>
           ))}

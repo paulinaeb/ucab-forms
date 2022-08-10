@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { AccountCircle, Logout as LogoutIcon } from "@mui/icons-material";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
 import {
   usePopupState,
   bindTrigger,
@@ -68,6 +69,13 @@ const Header = ({ leftIcons, rightIcons, moreMenu }) => {
                       <AccountCircle fontSize="small" />
                     </ListItemIcon>
                     {user.name}
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={signOut}>
+                    <ListItemIcon>
+                      <ColorLensIcon fontSize="small" />
+                    </ListItemIcon>
+                    Seleccionar Tema
                   </MenuItem>
                   <Divider />
                   <MenuItem onClick={signOut}>
